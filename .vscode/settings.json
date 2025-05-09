@@ -1,0 +1,14 @@
+{
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "diffEditor.experimental.showMoves": true,
+  "editor.formatOnSaveMode": "file",
+  "git.autorefresh": false,
+  "git.enabled": true,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true
+  }
+}
