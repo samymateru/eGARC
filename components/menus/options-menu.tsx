@@ -38,31 +38,34 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-[250px] dark:bg-black p-1">
+      <PopoverContent className="w-[250px] dark:bg-black p-2 pop-bg">
         <ul className="text-sm divide-y">
           <Button
             onClick={() => router.push("/preferences")}
             variant="ghost"
-            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1">
+            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1">
             <Settings size={16} strokeWidth={3} />
             Preferences
           </Button>
           <NotificationCenter>
-            <Button className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1">
+            <Button
+              variant="ghost"
+              className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1">
               <Bell size={16} strokeWidth={3} />
               Notification
             </Button>
           </NotificationCenter>
           <li
-            className="cursor-pointer rounded-md relative p-2 flex justify-start gap-1 dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full dark:bg-black dark:text-neutral-300 font-serif font-semibold"
+            className="cursor-pointer hover:bg-white rounded-md relative p-2 flex justify-start gap-1 dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full dark:bg-black dark:text-neutral-300 font-hel-heading"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <Moon size={16} strokeWidth={3} />
             Theme
             {showSubmenu && (
-              <section className="p-1 absolute top-0 right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10">
+              <section className="p-1 absolute top-0 right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg">
                 <Button
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1"
+                  variant="ghost"
+                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
                   onClick={() => {
                     setShowSubmenu(false);
                     setTheme("light");
@@ -71,7 +74,8 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
                   Light
                 </Button>
                 <Button
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1"
+                  variant="ghost"
+                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
                   onClick={() => {
                     setShowSubmenu(false);
                     setTheme("dark");
@@ -80,7 +84,8 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
                   Dark
                 </Button>
                 <Button
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1"
+                  variant="ghost"
+                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
                   onClick={() => {
                     setShowSubmenu(false);
                     setTheme("system");
@@ -92,7 +97,8 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
             )}
           </li>
           <Button
-            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-serif font-semibold flex justify-start gap-1"
+            variant="ghost"
+            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
             onClick={() => router.push("/")}>
             <X size={16} strokeWidth={3} />
             Quit

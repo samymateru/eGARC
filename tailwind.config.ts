@@ -145,9 +145,23 @@ const config: Config = {
 		function ({ addUtilities }) {
 		addUtilities({
 		".font-table": {
-        fontFamily: 'Helvetica, "Arial", sans-serif',
-        fontSize: "13px",
-		},
+        	fontFamily: 'Helvetica, "Arial", sans-serif',
+        	fontSize: "14px",
+			},
+		".font-hel-heading": {
+			fontFamily: 'Helvetica, "Arial", sans-serif',
+			fontWeight: "520",
+			fontSize: "15px",
+			},
+		".font-hel-heading-bold": {
+			fontFamily: 'Helvetica, "Arial", sans-serif',
+			fontWeight: "700",
+			fontSize: "18px",
+			},
+		".pop-bg": {
+			backgroundColor: '#334155',
+			color: "#d4d4d4"
+			}
 		});
 		},
 	],

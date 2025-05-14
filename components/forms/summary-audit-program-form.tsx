@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { Response, SummaryAuditProgramSchema } from "@/lib/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -71,9 +71,6 @@ export const SummaryAuditProgramForm = ({
   const methods = useForm<SummaryAuditProgramValues>({
     resolver: zodResolver(SummaryAuditProgramSchema),
   });
-
-  const query_client = useQueryClient();
-
   const [programOpen, setProgramOpen] = useState(false);
   const [subProcedureOpen, setSubProcedureOpen] = useState(false);
   const [programId, setProgramId] = useState<string>("");
@@ -93,7 +90,11 @@ export const SummaryAuditProgramForm = ({
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch control");
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
       }
       return await response.json();
     },
@@ -149,9 +150,6 @@ export const SummaryAuditProgramForm = ({
     };
     createSummaryAuditProgram(summaryAuditProgramData, {
       onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_summary_audit_program_"],
-        });
         showToast(data.detail, "success");
       },
       onError: (error) => {
@@ -168,7 +166,9 @@ export const SummaryAuditProgramForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent
+          className="p-0 max-w-[500px] dark:bg-black"
+          onClick={(e) => e.stopPropagation()}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
               <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
@@ -270,12 +270,16 @@ export const SummaryAuditProgramForm = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  setOpen(false);
+                  e.stopPropagation();
+                }}
                 className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
+                onClick={(e) => e.stopPropagation()}
                 disabled={createSummaryAuditProgramLoading}
                 type="submit"
                 variant="ghost"

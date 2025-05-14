@@ -82,7 +82,7 @@ export const MainProgramForm = ({
     createMainProgram(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["_main_program_"],
+          queryKey: ["work_program"],
         });
         showToast(data.detail, "success");
       },

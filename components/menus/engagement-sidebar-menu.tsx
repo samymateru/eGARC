@@ -19,7 +19,7 @@ export const EngagementSidebarMenu = () => {
       <ScrollArea className="max-h-[550px] overflow-y-auto hide-scrollbar">
         <Button
           variant={"ghost"}
-          className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-serif font-semibold tracking-wide"
+          className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-hel-heading"
           onClick={() => setAction("administration")}>
           <Briefcase size={16} strokeWidth={3} />
           Adminstation

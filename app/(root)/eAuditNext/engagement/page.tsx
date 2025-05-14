@@ -10,6 +10,20 @@ import { SummaryProcedure } from "./_fieldwork/summary-procedures";
 import { useSearchParams } from "next/navigation";
 import { SummaryReviewComments } from "./_fieldwork/summary-review-comments";
 import { Tasks } from "./_fieldwork/summary-tasks";
+import { WorkProgramProcedure } from "@/components/shared/work_program_procedure";
+import { Loader } from "@/components/shared/loader";
+
+type Procedure = {
+  procedure_id?: string;
+  procedure_title?: string;
+};
+
+type WorkProgramResponse = {
+  id?: string;
+  name?: string;
+  procedures: Array<Procedure>;
+};
+
 const fetchData = async (endpont: string, id: string | null) => {
   const response = await fetch(`${BASE_URL}/engagements/${endpont}/${id}`, {
     headers: {
@@ -29,7 +43,7 @@ export default function EngagementPage() {
   const results = useQueries({
     queries: [
       {
-        queryKey: ["planning"],
+        queryKey: ["planning", params.get("id")],
         queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
           fetchData("planning_procedures", params.get("id")),
         refetchOnMount: false,
@@ -38,7 +52,7 @@ export default function EngagementPage() {
         enabled: !!params.get("id"),
       },
       {
-        queryKey: ["finalization"],
+        queryKey: ["finalization", params.get("id")],
         queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
           fetchData("finalization_procedures", params.get("id")),
         refetchOnMount: false,
@@ -47,9 +61,18 @@ export default function EngagementPage() {
         enabled: !!params.get("id"),
       },
       {
-        queryKey: ["reporting"],
+        queryKey: ["reporting", params.get("id")],
         queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
           fetchData("reporting_procedures", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
+      {
+        queryKey: ["work_program", params.get("id")],
+        queryFn: async (): Promise<WorkProgramResponse[]> =>
+          fetchData("work_program", params.get("id")),
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
@@ -58,17 +81,27 @@ export default function EngagementPage() {
     ],
   });
 
-  if (results[0].isLoading || results[1].isLoading || results[2].isLoading) {
-    return <div>loading...</div>;
+  if (
+    results[0].isLoading ||
+    results[1].isLoading ||
+    results[2].isLoading ||
+    results[3].isLoading
+  ) {
+    return <Loader size={15} />;
   }
-  if (results[0].isError || results[1].isError || results[2].isError) {
+  if (
+    results[0].isError ||
+    results[1].isError ||
+    results[2].isError ||
+    results[3].isError
+  ) {
     return <div>Error</div>;
   }
 
   return (
     <Tabs
       value={params.get("action") ?? "administation"}
-      className="w-full flex-1 flex">
+      className="w-full flex-1 flex flex-col">
       <TabsContent
         value="administration"
         className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden">
@@ -90,30 +123,44 @@ export default function EngagementPage() {
 
       {results[0].data?.map((item, index) => (
         <TabsContent
-          value={item.reference}
+          value={item.id}
           key={index}
-          className="w-full data-[state=active]:flex-1 data-[state=inactive]:bg-white mt-0 data-[state=active]:flex">
+          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
           <StandardTemplateProcedure data={item} />
         </TabsContent>
       ))}
 
       {results[1].data?.map((item, index) => (
         <TabsContent
-          value={item.reference}
+          value={item.id}
           key={index}
-          className="w-full data-[state=active]:flex-1 data-[state=inactive]:bg-white mt-0 data-[state=active]:flex">
+          className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
           <StandardTemplateProcedure data={item} />
         </TabsContent>
       ))}
 
       {results[2].data?.map((item, index) => (
         <TabsContent
-          value={item.reference}
+          value={item.id}
           key={index}
-          className="w-full data-[state=active]:flex-1 data-[state=inactive]:bg-white mt-0 data-[state=active]:flex">
+          className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
           <StandardTemplateProcedure data={item} />
         </TabsContent>
       ))}
+      {results[3].data?.map((item) =>
+        item.procedures
+          ?.filter(
+            (procedure) => procedure.procedure_id && procedure.procedure_title
+          )
+          .map((procedure) => (
+            <TabsContent
+              value={procedure?.procedure_id ?? ""}
+              key={procedure.procedure_id}
+              className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1  mt-0 data-[state=active]:flex">
+              <WorkProgramProcedure id={procedure.procedure_id} />
+            </TabsContent>
+          ))
+      )}
     </Tabs>
   );
 }

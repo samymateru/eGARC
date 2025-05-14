@@ -289,3 +289,31 @@ export const TasksSchema = z.object({
   decision: z.string(),
   status: z.string(),
 });
+
+export const SubProgramSchema_ = z.object({
+  id: z.string(),
+  reference: z.string(),
+  title: z.string(),
+  brief_description: z.string(),
+  audit_objective: z.string(),
+  test_description: z.string(),
+  test_type: z.string(),
+  sampling_approach: z.string(),
+  results_of_test: z.string(),
+  observation: z.string(),
+  extended_testing: z.boolean(),
+  extended_procedure: z.string(),
+  extended_results: z.string(),
+  effectiveness: z.string(),
+  reviewed_by: z.object({
+    name: z.string(),
+    email: z.string().email(),
+    date_issued: z.string().datetime(), // or z.coerce.date() if you want a Date object
+  }),
+  prepared_by: z.object({
+    name: z.string(),
+    email: z.string().email(),
+    date_issued: z.string().datetime(), // same here
+  }),
+  conclusion: z.string(),
+});

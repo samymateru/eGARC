@@ -6,7 +6,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -31,6 +31,7 @@ interface SubProgramFormPros {
   endpoint: string;
   title: string;
   mode?: string;
+  setOnSuccess?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SubProgramForm = ({
@@ -38,6 +39,7 @@ export const SubProgramForm = ({
   id,
   endpoint,
   title,
+  setOnSuccess,
 }: SubProgramFormPros) => {
   const [open, setOpen] = useState(false);
 
@@ -82,8 +84,9 @@ export const SubProgramForm = ({
   const onSubmit = (data: SubProgramValues) => {
     createSubProgram(data, {
       onSuccess: (data) => {
+        setOnSuccess?.(false);
         query_client.invalidateQueries({
-          queryKey: ["_sub_program_"],
+          queryKey: ["work_program"],
         });
         showToast(data.detail, "success");
       },

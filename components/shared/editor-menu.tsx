@@ -27,6 +27,8 @@ import {
 
 import { useState } from "react";
 import { TextColorPicker } from "./color-picker";
+import { FontFamilyPicker } from "./font-picker";
+import { TableMenu } from "./table-menu";
 
 interface EditorProps {
   editor?: Editor;
@@ -57,6 +59,7 @@ export const EditorMenu = ({ editor }: EditorProps) => {
         </Button>
       </div>
       <div className="flex items-center gap-1">
+        <FontFamilyPicker editor={editor} />
         <Button
           onClick={() => editor?.chain().focus().toggleBold().run()}
           variant={"ghost"}
@@ -163,11 +166,13 @@ export const EditorMenu = ({ editor }: EditorProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Button
-          variant={"ghost"}
-          className="w-[30px] h-[30px] rounded-md flex justify-center items-center">
-          <Table size={16} />
-        </Button>
+        <TableMenu editor={editor}>
+          <Button
+            variant={"ghost"}
+            className="w-[30px] h-[30px] rounded-md flex justify-center items-center">
+            <Table size={16} />
+          </Button>
+        </TableMenu>
       </div>
     </section>
   );

@@ -106,10 +106,10 @@ export const PlanningForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 w-max-h-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 w-max-h-[500px] dark:bg-black pop-bg">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-hel-heading-bold">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
@@ -118,9 +118,7 @@ export const PlanningForm = ({
             <Separator className="" />
             <section className="px-5 py-3 flex flex-col gap-2">
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="name"
-                  className="ml-[2px] font-serif tracking-wide scroll-m-0 text-[14px] font-semibold">
+                <Label htmlFor="name" className="ml-[2px] font-table">
                   Name
                 </Label>
                 <Input
@@ -132,9 +130,7 @@ export const PlanningForm = ({
               </div>
 
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="year"
-                  className="ml-[2px] font-serif tracking-wide scroll-m-0 text-[14px] font-semibold">
+                <Label htmlFor="year" className="ml-[2px] font-table">
                   Year
                 </Label>
                 <Input
@@ -145,9 +141,7 @@ export const PlanningForm = ({
                 <FormError error={errors.year} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="attachment"
-                  className="ml-[2px] font-serif tracking-wide scroll-m-0 text-[14px] font-semibold">
+                <Label htmlFor="attachment" className="ml-[2px] font-table">
                   Attachment
                 </Label>
 
@@ -185,7 +179,7 @@ export const PlanningForm = ({
                 <div className="*:not-first:mt-2 flex-1 flex flex-col">
                   <Label
                     htmlFor="year"
-                    className="ml-[2px] font-serif tracking-wide scroll-m-0 text-[14px] font-semibold">
+                    className="ml-[2px] font-table pb-[3px]">
                     Start
                   </Label>
                   <Controller
@@ -207,7 +201,7 @@ export const PlanningForm = ({
                 <div className="*:not-first:mt-2 flex-1 flex flex-col">
                   <Label
                     htmlFor="year"
-                    className="ml-[2px] font-serif tracking-wide scroll-m-0 text-[14px] font-semibold">
+                    className="ml-[2px] font-table pb-[3px]">
                     End
                   </Label>
                   <Controller
@@ -236,7 +230,7 @@ export const PlanningForm = ({
                 onClick={() => {
                   setOpen(false);
                 }}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-red-800 text-white flex-1 font-table">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
@@ -244,7 +238,7 @@ export const PlanningForm = ({
                 disabled={isPending}
                 type="submit"
                 variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-800 text-white flex-1 font-table">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

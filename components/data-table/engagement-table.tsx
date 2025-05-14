@@ -216,6 +216,7 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
                   query: {
                     id: row.original.id,
                     action: "administration",
+                    name: row.original.name,
                   },
                 }}
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">

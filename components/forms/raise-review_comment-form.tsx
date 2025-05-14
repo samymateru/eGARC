@@ -49,7 +49,7 @@ export const RaiseReviewComment = ({
 
   const query_client = useQueryClient();
 
-  const { data: userData, isLoading: userLoading } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ["__users_"],
     queryFn: async (): Promise<UserResponse[]> => {
       const response = await fetch(`${BASE_URL}/users`, {
@@ -69,9 +69,10 @@ export const RaiseReviewComment = ({
       }
       return await response.json();
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
-
-  console.log(userLoading);
 
   const { mutate: raiseReviewComment, isPending: raiseReviewCommentPending } =
     useMutation({

@@ -1,13 +1,15 @@
 import { RegulationsTable } from "@/components/data-table/regulations-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const Regulations = () => {
+  const params = useSearchParams();
   const { data } = useQuery({
-    queryKey: ["_regulations_"],
+    queryKey: ["_regulations_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/engagements/context/regulations/${"0d19fb18dd59"}`,
+        `${BASE_URL}/engagements/context/regulations/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -18,13 +20,18 @@ export const Regulations = () => {
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch ");
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
       }
       return await response.json();
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
+    enabled: !!params.get("id"),
   });
 
   return <RegulationsTable data={data ?? []} />;

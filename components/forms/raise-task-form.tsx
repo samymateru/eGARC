@@ -74,6 +74,9 @@ export const RaiseTask = ({
       }
       return await response.json();
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 
   const { mutate: raiseTask, isPending: raiseTaskPending } = useMutation({

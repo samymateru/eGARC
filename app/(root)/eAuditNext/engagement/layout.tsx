@@ -20,7 +20,7 @@ export default function EngagementLayout({
       </header>
       <Separator />
       <main className="flex-1 flex h-full">
-        <section className="w-[300px] h-full px-1 pt-1">
+        <section className="w-[320px] h-full px-1 pt-1">
           <EngagementSidebarMenu />
         </section>
         <Separator orientation="vertical" />

@@ -80,29 +80,19 @@ type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
 const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 5,
   },
   {
     id: "name",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Name
-      </Label>
-    ),
+    header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.name}
       </Label>
     ),
@@ -110,13 +100,9 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "year",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 text-[14px]">
-        Year
-      </Label>
-    ),
+    header: () => <Label className="font-table">Year</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 text-[14px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.year}
       </Label>
     ),
@@ -124,13 +110,9 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "status",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 text-[14px]">
-        Status
-      </Label>
-    ),
+    header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-[arial] tracking-wide scroll-m-0 text-[13px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.status}
       </Label>
     ),
@@ -138,11 +120,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "start",
-    header: () => (
-      <Label className="font-[Georgia] tracking-wide scroll-m-0  text-[12px]">
-        Start
-      </Label>
-    ),
+    header: () => <Label className="font-table">Start</Label>,
     accessorKey: "start",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -151,7 +129,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         day: "numeric",
       }).format(new Date(row.getValue("start")));
       return (
-        <Label className="ml-2 font-[Georgia] tracking-wide scroll-m-0 text-[13px] truncate text-balance">
+        <Label className="ml-2 font-table truncate text-balance">
           {formatted}
         </Label>
       );
@@ -159,11 +137,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "end",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 text-[14px]">
-        End
-      </Label>
-    ),
+    header: () => <Label className="font-table">End</Label>,
     accessorKey: "end",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -172,7 +146,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         day: "numeric",
       }).format(new Date(row.getValue("end")));
       return (
-        <Label className="ml-2 font-[helvetica] tracking-wide scroll-m-0 text-[13px] truncate text-balance">
+        <Label className="ml-2 font-table truncate text-balance">
           {formatted}
         </Label>
       );
@@ -180,29 +154,21 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "attachment",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 text-[14px]">
-        Attachment
-      </Label>
-    ),
+    header: () => <Label className="font-table">Attachment</Label>,
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
         href={row.getValue("attachment")}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-serif tracking-wide scroll-m-0 text-[14px]">
+        className="text-blue-500 hover:underline font-table">
         View Attachment
       </a>
     ),
   },
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 text-[14px]">
-        Actions
-      </Label>
-    ),
+    header: () => <Label className="font-table">Actions</Label>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -213,29 +179,29 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
+          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
             <div className="flex flex-col divide-y">
               <Link
                 href={{
                   pathname: "/eAuditNext/engagements",
                   query: { id: row.original.id },
                 }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
                 <SendHorizonal size={16} strokeWidth={3} />
                 Engage
               </Link>
-              <Link
-                href="#"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+              <Button
+                variant="ghost"
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
                 <Edit size={16} strokeWidth={3} />
                 Edit
-              </Link>
-              <Link
-                href="#"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
                 <Trash2 className="text-red-800" size={16} strokeWidth={3} />
                 Delete
-              </Link>
+              </Button>
             </div>
           </PopoverContent>
         </Popover>
