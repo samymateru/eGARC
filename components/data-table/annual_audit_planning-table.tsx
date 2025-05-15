@@ -92,17 +92,17 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.name}
       </Label>
     ),
-    size: 250,
+    size: 350,
   },
   {
     id: "year",
     header: () => <Label className="font-table">Year</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.year}
       </Label>
     ),
@@ -112,7 +112,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     id: "status",
     header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.status}
       </Label>
     ),
@@ -129,7 +129,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         day: "numeric",
       }).format(new Date(row.getValue("start")));
       return (
-        <Label className="ml-2 font-table truncate text-balance">
+        <Label className="ml-2 font-table truncate overflow-hidden">
           {formatted}
         </Label>
       );
@@ -146,7 +146,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         day: "numeric",
       }).format(new Date(row.getValue("end")));
       return (
-        <Label className="ml-2 font-table truncate text-balance">
+        <Label className="ml-2 font-table truncate overflow-hidden">
           {formatted}
         </Label>
       );
@@ -304,9 +304,13 @@ export default function AnnualAuditPlanningTable({
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1">
-        <section className="flex items-center gap-3">
-          <SearchInput value={searchName} onChange={setSearchName} />
+      <div className="flex items-center justify-between pr-2 pb-1 ">
+        <section className="flex items-center gap-3 pl-2">
+          <SearchInput
+            placeholder="Plan name"
+            value={searchName}
+            onChange={setSearchName}
+          />
           <MultiStatusFilter
             options={statusOptions}
             value={selectedStatuses}
@@ -320,7 +324,7 @@ export default function AnnualAuditPlanningTable({
           company_module_id={params.get("id") ?? undefined}>
           <Button
             variant="ghost"
-            className="dark:bg-neutral-800 dark:hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
+            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
             <CirclePlus size={16} strokeWidth={3} />
             Plan
           </Button>

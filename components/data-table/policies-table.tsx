@@ -73,29 +73,19 @@ type PoliciesValues = z.infer<typeof PolicySchema>;
 const columns: ColumnDef<PoliciesValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 10,
   },
   {
     id: "name",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Name
-      </Label>
-    ),
+    header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.name}
       </Label>
     ),
@@ -103,13 +93,9 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "key_areas",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Key areas
-      </Label>
-    ),
+    header: () => <Label className="font-table">Key areas</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.key_areas}
       </Label>
     ),
@@ -118,13 +104,9 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "version",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Version
-      </Label>
-    ),
+    header: () => <Label className="font-table">Version</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.version}
       </Label>
     ),
@@ -133,18 +115,14 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "attachment",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Attachment
-      </Label>
-    ),
+    header: () => <Label className="font-table">Attachment</Label>,
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
         href={row.getValue("attachment")}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-serif tracking-wide scroll-m-0 text-[15px]">
+        className="text-blue-500 hover:underline font-table">
         View Attachment
       </a>
     ),
@@ -152,11 +130,7 @@ const columns: ColumnDef<PoliciesValues>[] = [
 
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        More
-      </Label>
-    ),
+    header: () => <Label className="font-table">More</Label>,
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -171,13 +145,13 @@ const columns: ColumnDef<PoliciesValues>[] = [
             <div className="flex flex-col divide-y">
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Pencil size={16} strokeWidth={3} />
                 Edit
               </Button>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Trash size={16} strokeWidth={3} className="text-red-800" />
                 Delete
               </Button>

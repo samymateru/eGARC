@@ -73,29 +73,19 @@ type SummaryProcedureValues = z.infer<typeof SummaryProcedureSchema>;
 const columns: ColumnDef<SummaryProcedureValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 5,
   },
   {
     id: "reference",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Reference
-      </Label>
-    ),
+    header: () => <Label className="font-table">Reference</Label>,
     accessorKey: "reference",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.reference}
       </Label>
     ),
@@ -103,13 +93,9 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "program",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Program
-      </Label>
-    ),
+    header: () => <Label className="font-table">Program</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.program}
       </Label>
     ),
@@ -117,13 +103,9 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "title",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Title
-      </Label>
-    ),
+    header: () => <Label className="font-table">Title</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.title}
       </Label>
     ),
@@ -131,15 +113,11 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "effectiveness",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Effectiveness
-      </Label>
-    ),
+    header: () => <Label className="font-table">Effectiveness</Label>,
     accessorKey: "effectiveness",
     cell: ({ row }) => {
       return (
-        <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+        <Label className="ml-2 font-table truncate overflow-hidden">
           {row.original.effectiveness}
         </Label>
       );
@@ -147,15 +125,11 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "end",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Issues
-      </Label>
-    ),
+    header: () => <Label className="font-table">Issues</Label>,
     accessorKey: "issue_count",
     cell: ({ row }) => {
       return (
-        <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+        <Label className="ml-2 font-table truncate overflow-hidden">
           {row.original.issue_count}
         </Label>
       );
@@ -163,11 +137,7 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Actions
-      </Label>
-    ),
+    header: () => <Label className="font-table">Actions</Label>,
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -184,7 +154,7 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
                 href={{
                   pathname: "/eAuditNext/engagements",
                 }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <SendHorizonal size={16} strokeWidth={3} />
                 Engage
               </Link>

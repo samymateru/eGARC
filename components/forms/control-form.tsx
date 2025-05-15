@@ -41,7 +41,7 @@ type ControlTypeResponse = {
 interface DialogHelperProps {
   children: ReactNode;
   title: string;
-  id: string;
+  id: string | null;
   endpoint: string;
   mode?: string;
 }

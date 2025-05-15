@@ -28,6 +28,7 @@ import {
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { ScrollArea } from "../ui/scroll-area";
 import { showToast } from "../shared/toast";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type PRCMFormValues = z.infer<typeof PRCMSchema>;
 
@@ -81,6 +82,8 @@ export const PRCMForm = ({ children, id, endpoint, title }: PRCMFormPros) => {
   const [open, setOpen] = useState(false);
 
   const query_client = useQueryClient();
+
+  const params = useSearchParams();
 
   const methods = useForm<PRCMFormValues>({
     resolver: zodResolver(PRCMSchema),
@@ -154,7 +157,7 @@ export const PRCMForm = ({ children, id, endpoint, title }: PRCMFormPros) => {
     createPRCM(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["_prcm_"],
+          queryKey: ["_prcm_", params.get("id")],
         });
         showToast(data.detail, "success");
       },

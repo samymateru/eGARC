@@ -10,7 +10,7 @@ type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 export const SummaryAuditProgram = () => {
   const params = useSearchParams();
   const { data, isLoading } = useQuery({
-    queryKey: ["_prcm_"],
+    queryKey: ["_summary_program_", params.get("id")],
     queryFn: async (): Promise<SummaryAuditProgramValues[]> => {
       const response = await fetch(
         `${BASE_URL}/engagements/summary_audit_program/${params.get("id")}`,

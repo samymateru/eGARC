@@ -30,28 +30,28 @@ export default function AuditNextPage() {
     <Tabs
       defaultValue="dashboard"
       className="w-full flex-1 flex flex-col justify-start">
-      <TabsList className="bg-blue-800 dark:bg-background flex gap-1 rounded-none justify-start py-5 pl-1 w-full">
+      <TabsList className="bg-blue-950 flex gap-1 rounded-none justify-start py-5 pl-1 w-full">
         <TabsTrigger
           value="dashboard"
-          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-serif tracking-wide scroll-m-0 flex gap-1 w-[120px]">
+          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
           <CircleGauge size={16} strokeWidth={3} />
           Dashboard
         </TabsTrigger>
         <TabsTrigger
           value="audit_plan"
-          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200  hover:dark:bg-neutral-800 font-serif tracking-wide scroll-m-0 flex gap-1 w-[120px]">
+          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200  hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
           <Notebook size={16} strokeWidth={3} />
           Audit plans
         </TabsTrigger>
         <TabsTrigger
           value="follow_up"
-          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-serif tracking-wide scroll-m-0 flex gap-1 w-[120px]">
+          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
           <ListCollapse size={16} strokeWidth={3} />
           Follow up
         </TabsTrigger>
         <TabsTrigger
           value="report"
-          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-serif tracking-wide scroll-m-0 flex gap-1 w-[120px]">
+          className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
           <Folder size={16} strokeWidth={3} />
           Reports
         </TabsTrigger>
@@ -59,7 +59,7 @@ export default function AuditNextPage() {
           <OptionsMenu>
             <Button
               variant="ghost"
-              className="dark:hover:bg-neutral-800 px-3 py-1 h-7 w-[120px]  dark:bg-background dark:text-neutral-400 font-serif font-semibold flex items-center gap-1">
+              className="bg-black hover:bg-neutral-800 hover:text-neutral-200 text-neutral-200 px-3 py-1 h-7 w-[120px] font-serif font-table flex items-center gap-1">
               <List size={16} strokeWidth={3} />
               Options
             </Button>
@@ -67,7 +67,7 @@ export default function AuditNextPage() {
           <ModuleDropdown>
             <Button
               variant="ghost"
-              className="dark:hover:bg-neutral-800 px-3 py-1 h-7 w-[120px]  dark:bg-background dark:text-neutral-400 font-serif font-semibold flex items-center gap-1">
+              className="bg-black hover:bg-neutral-800 hover:text-neutral-200 text-neutral-200  px-3 py-1 h-7 w-[120px] font-table flex items-center gap-1">
               <Package size={16} strokeWidth={3} />
               Modules
             </Button>

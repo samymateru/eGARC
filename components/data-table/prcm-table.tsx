@@ -67,35 +67,26 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PRCMSchema } from "@/lib/types";
+import { SummaryAuditProgramForm } from "../forms/summary-audit-program-form";
 
 type PRCMValues = z.infer<typeof PRCMSchema>;
 
 const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 10,
   },
   {
     id: "process",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Process
-      </Label>
-    ),
+    header: () => <Label className="font-table">Process</Label>,
     accessorKey: "process",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.process}
       </Label>
     ),
@@ -103,13 +94,9 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "risk",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Risk
-      </Label>
-    ),
+    header: () => <Label className="font-table">Risk</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.risk}
       </Label>
     ),
@@ -118,13 +105,9 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Control
-      </Label>
-    ),
+    header: () => <Label className="font-table">Control</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.control}
       </Label>
     ),
@@ -133,13 +116,9 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control_type",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Control Type
-      </Label>
-    ),
+    header: () => <Label className="font-table">Control Type</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.control_type}
       </Label>
     ),
@@ -148,13 +127,9 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control_objective",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Control Objective
-      </Label>
-    ),
+    header: () => <Label className="font-table">Control Objective</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.control_objective}
       </Label>
     ),
@@ -163,40 +138,50 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        More
-      </Label>
-    ),
-    cell: () => (
-      <div className="flex justify-center items-center w-full h-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
+    header: () => <Label className="font-table">More</Label>,
+    cell: ({ row }) => {
+      return (
+        <div className="flex justify-center items-center w-full h-full">
+          <Popover>
+            <PopoverTrigger asChild>
               <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
+                className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+                variant="ghost">
+                <Ellipsis />
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-    ),
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
+              <div className="flex flex-col divide-y">
+                <SummaryAuditProgramForm
+                  title="Work Program"
+                  endpoint="engagements/summary_audit_program"
+                  prcm_id={row.original.id ?? null}
+                  process={row.original.process}
+                  risk={row.original.risk}
+                  risk_rating={row.original.risk_rating}
+                  control_={row.original.control}
+                  control_objective={row.original.control_objective}
+                  control_type={row.original.control_type}>
+                  <Button
+                    variant="ghost"
+                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                    <Pencil size={16} strokeWidth={3} />
+                    Work Program
+                  </Button>
+                </SummaryAuditProgramForm>
+
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                  <Trash size={16} strokeWidth={3} className="text-red-800" />
+                  Delete
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      );
+    },
     size: 10,
     minSize: 3,
   },

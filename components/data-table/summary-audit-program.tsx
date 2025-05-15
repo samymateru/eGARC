@@ -31,6 +31,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+
 import {
   Popover,
   PopoverContent,
@@ -44,7 +45,6 @@ import {
   ChevronUpIcon,
   Ellipsis,
   GripVerticalIcon,
-  Pencil,
   Trash,
 } from "lucide-react";
 
@@ -73,29 +73,19 @@ type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 10,
   },
   {
     id: "process",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Process
-      </Label>
-    ),
+    header: () => <Label className="font-table">Process</Label>,
     accessorKey: "process",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.process}
       </Label>
     ),
@@ -103,13 +93,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "risk",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Risk
-      </Label>
-    ),
+    header: () => <Label className="font-table">Risk</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.risk}
       </Label>
     ),
@@ -118,13 +104,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "control",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Control
-      </Label>
-    ),
+    header: () => <Label className="font-table">Control</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.control}
       </Label>
     ),
@@ -133,13 +115,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "control_type",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Control Type
-      </Label>
-    ),
+    header: () => <Label className="font-table">Control Type</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.control_type}
       </Label>
     ),
@@ -148,13 +126,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "program",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Program
-      </Label>
-    ),
+    header: () => <Label className="font-table">Program</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.program}
       </Label>
     ),
@@ -163,13 +137,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "procedure",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Procedure
-      </Label>
-    ),
+    header: () => <Label className="font-table">Procedure</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.procedure}
       </Label>
     ),
@@ -178,11 +148,7 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        More
-      </Label>
-    ),
+    header: () => <Label className="font-table">More</Label>,
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -195,12 +161,6 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">

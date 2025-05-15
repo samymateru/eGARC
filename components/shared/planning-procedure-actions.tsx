@@ -73,13 +73,6 @@ export const PlanningProcedureActions = ({
                 Add PRCM
               </Button>
             </PRCMForm>
-          ) : data?.type === "program" ? (
-            <Button
-              variant={"ghost"}
-              className="w-full flex justify-start items-center h-[30px]">
-              <MessagesSquare size={16} strokeWidth={3} />
-              Add Program
-            </Button>
           ) : null}
           {data?.prepared_by === null ? (
             <Button

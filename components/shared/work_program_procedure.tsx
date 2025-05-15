@@ -355,7 +355,7 @@ const TemplateWrapper = ({
           value={item.id}
           key={item.id}
           className="flex flex-col border-none w-full px-2">
-          <AccordionTrigger className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md text-[15px] leading-6 hover:no-underline w-full font-serif font-semibold tracking-wide">
+          <AccordionTrigger className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md font-hel-heading">
             <span className="flex items-center gap-3">
               <span>{item.title}</span>
             </span>

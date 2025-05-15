@@ -84,29 +84,19 @@ type ReviewCommentsValues = z.infer<typeof ReviewCommentsSchema>;
 const columns: ColumnDef<ReviewCommentsValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     accessorKey: "",
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 5,
   },
   {
     id: "reference",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Reference
-      </Label>
-    ),
+    header: () => <Label className="font-table">Reference</Label>,
     accessorKey: "reference",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate text-balance overflow-hidden">
         {row.original.reference}
       </Label>
     ),
@@ -114,13 +104,9 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
   },
   {
     id: "title",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Title
-      </Label>
-    ),
+    header: () => <Label className="font-table">Title</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.title}
       </Label>
     ),
@@ -128,13 +114,9 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
   },
   {
     id: "raised_by",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Raised
-      </Label>
-    ),
+    header: () => <Label className="font-table">Raised</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.raised_by.name}
       </Label>
     ),
@@ -142,13 +124,9 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
   },
   {
     id: "resolved_by",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Resolved
-      </Label>
-    ),
+    header: () => <Label className="font-table">Resolved</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate overflow-hidden">
         {row.original.resolved_by?.name}
       </Label>
     ),
@@ -157,11 +135,7 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
 
   {
     id: "actions",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        More
-      </Label>
-    ),
+    header: () => <Label className="font-table">More</Label>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -176,7 +150,7 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
             <div className="flex flex-col divide-y">
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Info size={16} strokeWidth={3} />
                 Details
               </Button>
@@ -184,7 +158,7 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
               row.original.status === Status.RE_OPEN ? (
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                   <SendHorizonal size={16} strokeWidth={3} />
                   Resolve
                 </Button>
@@ -193,13 +167,13 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
                 <section className="divide-y">
                   <Button
                     variant="ghost"
-                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                     <CircleCheck size={16} strokeWidth={3} />
                     Accept & Close
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                     <Undo size={16} strokeWidth={3} />
                     Re-open
                   </Button>
@@ -209,7 +183,7 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
               row.original.status === Status.RE_OPEN ? (
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                   <Pencil size={16} strokeWidth={3} />
                   Edit
                 </Button>
@@ -217,7 +191,7 @@ const columns: ColumnDef<ReviewCommentsValues>[] = [
 
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Trash size={16} strokeWidth={3} className="text-red-800" />
                 Delete
               </Button>

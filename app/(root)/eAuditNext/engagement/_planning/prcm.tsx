@@ -10,7 +10,7 @@ type PRCMValues = z.infer<typeof PRCMSchema>;
 export const PRCM = () => {
   const params = useSearchParams();
   const { data, isLoading } = useQuery({
-    queryKey: ["_prcm_"],
+    queryKey: ["_prcm_", params.get("id")],
     queryFn: async (): Promise<PRCMValues[]> => {
       const response = await fetch(
         `${BASE_URL}/engagements/PRCM/${params.get("id")}`,

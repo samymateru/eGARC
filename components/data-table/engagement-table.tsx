@@ -80,82 +80,48 @@ type EngagementSchemaValues = z.infer<typeof EngagementSchema>;
 const columns: ColumnDef<EngagementSchemaValues>[] = [
   {
     id: "sn",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        S/N
-      </Label>
-    ),
+    header: () => <Label className="font-table">S/N</Label>,
     cell: ({ row }) => (
-      <Label className="ml-4 font-mono tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.index + 1}
-      </Label>
+      <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
     size: 5,
   },
   {
     id: "name",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Name
-      </Label>
-    ),
+    header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.original.name}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
     ),
     size: 250,
   },
   {
     id: "code",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Code
-      </Label>
-    ),
+    header: () => <Label className="font-table">Code</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.original.code}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.code}</Label>
     ),
     accessorKey: "code",
   },
   {
     id: "status",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Status
-      </Label>
-    ),
+    header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.original.status}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.status}</Label>
     ),
     accessorKey: "status",
   },
   {
     id: "stage",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Stage
-      </Label>
-    ),
+    header: () => <Label className="font-table">Stage</Label>,
     accessorKey: "stage",
     cell: ({ row }) => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        {row.original.stage}
-      </Label>
+      <Label className="font-table truncate">{row.original.stage}</Label>
     ),
   },
   {
     id: "start_date",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Start
-      </Label>
-    ),
+    header: () => <Label className="font-table">Start</Label>,
     accessorKey: "start_date",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -163,20 +129,12 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.original.start_date ?? ""));
-      return (
-        <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
     },
   },
   {
     id: "end_date",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        End
-      </Label>
-    ),
+    header: () => <Label className="font-table">End</Label>,
     accessorKey: "end_date",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -184,22 +142,14 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.original.end_date ?? ""));
-      return (
-        <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table">{formatted}</Label>;
     },
   },
   {
     id: "actions",
-    header: () => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Actions
-      </Label>
-    ),
+    header: () => <Label className="ml-2 ffont-table">Actions</Label>,
     cell: ({ row }) => (
-      <div className="flex justify-center items-center w-full h-full">
+      <div className="flex justify-center items-center w-full h-full font-table">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -219,22 +169,22 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
                     name: row.original.name,
                   },
                 }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <SendHorizonal size={16} strokeWidth={3} />
                 Engage
               </Link>
-              <Link
-                href="#"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+              <Button
+                variant="ghost"
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Edit size={16} strokeWidth={3} />
                 Edit
-              </Link>
-              <Link
-                href="#"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
                 <Trash2 className="text-red-800" size={16} strokeWidth={3} />
                 Delete
-              </Link>
+              </Button>
             </div>
           </PopoverContent>
         </Popover>
@@ -337,8 +287,12 @@ export default function EngagementTable({ data }: EngagementTableProps) {
       onDragEnd={handleDragEnd}
       sensors={sensors}>
       <div className="flex items-center justify-between pr-2 pb-1">
-        <section className="flex items-center gap-3">
-          <SearchInput value={searchName} onChange={setSearchName} />
+        <section className="flex items-center gap-3 pl-2">
+          <SearchInput
+            placeholder="Engagement name"
+            value={searchName}
+            onChange={setSearchName}
+          />
           <MultiStatusFilter
             options={statusOptions}
             value={selectedStatuses}
@@ -352,7 +306,7 @@ export default function EngagementTable({ data }: EngagementTableProps) {
           id={params.get("id") ?? undefined}>
           <Button
             variant="ghost"
-            className="dark:bg-neutral-800 dark:hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-fit justify-start font-serif tracking-wide scroll-m-0">
+            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900  flex items-center gap-2 h-[30px] w-fit justify-start font-serif tracking-wide scroll-m-0">
             <CirclePlus size={16} strokeWidth={3} />
             Engagement
           </Button>

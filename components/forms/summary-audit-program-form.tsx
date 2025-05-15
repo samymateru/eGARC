@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { Response, SummaryAuditProgramSchema } from "@/lib/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -27,12 +27,14 @@ import {
 } from "../ui/select";
 import { ScrollArea } from "../ui/scroll-area";
 import { showToast } from "../shared/toast";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 
 interface SummaryAuditProgramFormProps {
   children: React.ReactNode;
-  id: string | null;
+  prcm_id: string | null;
   process: string;
   risk: string;
   risk_rating: string;
@@ -57,8 +59,8 @@ type WorkProgramResponse = {
 
 export const SummaryAuditProgramForm = ({
   children,
-  id,
   process,
+  prcm_id,
   risk,
   risk_rating,
   control_,
@@ -75,11 +77,15 @@ export const SummaryAuditProgramForm = ({
   const [subProcedureOpen, setSubProcedureOpen] = useState(false);
   const [programId, setProgramId] = useState<string>("");
 
+  const params = useSearchParams();
+
+  const query_client = useQueryClient();
+
   const { data } = useQuery({
-    queryKey: ["_program_"],
+    queryKey: ["work_program", params.get("id")],
     queryFn: async (): Promise<WorkProgramResponse[]> => {
       const response = await fetch(
-        `${BASE_URL}/engagements/work_program/${"0d19fb18dd59"}`,
+        `${BASE_URL}/engagements/work_program/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -101,6 +107,7 @@ export const SummaryAuditProgramForm = ({
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
+    enabled: !!params.get("id"),
   });
 
   const {
@@ -109,16 +116,19 @@ export const SummaryAuditProgramForm = ({
   } = useMutation({
     mutationKey: ["_create_summary_audit_program_"],
     mutationFn: async (data: SummaryAuditProgramValues): Promise<Response> => {
-      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${BASE_URL}/${endpoint}/${params.get("id")}?prcm_id=${prcm_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw {
@@ -150,6 +160,9 @@ export const SummaryAuditProgramForm = ({
     };
     createSummaryAuditProgram(summaryAuditProgramData, {
       onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["_summary_program_", params.get("id")],
+        });
         showToast(data.detail, "success");
       },
       onError: (error) => {
@@ -248,9 +261,9 @@ export const SummaryAuditProgramForm = ({
                             ?.procedures.filter(
                               (procedure) => !!procedure.procedure_title
                             )
-                            .map((procedure) => (
+                            .map((procedure, index: number) => (
                               <SelectItem
-                                key={procedure.procedure_id}
+                                key={index}
                                 value={procedure.procedure_title ?? ""}
                                 className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer">
                                 {procedure.procedure_title}

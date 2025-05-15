@@ -5,11 +5,16 @@ import { LoaderCircleIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type SearchInputProps = {
+  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
 };
 
-export default function SearchInput({ value, onChange }: SearchInputProps) {
+export default function SearchInput({
+  value,
+  onChange,
+  placeholder,
+}: SearchInputProps) {
   const id = useId();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +35,7 @@ export default function SearchInput({ value, onChange }: SearchInputProps) {
         <Input
           id={id}
           className="peer ps-9 pe-9 h-[31px] w-[270px]"
-          placeholder="Search..."
+          placeholder={placeholder}
           type="search"
           value={value}
           onChange={(e) => onChange(e.target.value)}

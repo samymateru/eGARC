@@ -18,6 +18,7 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { RiskForm } from "../forms/risk-form";
 import { useSearchParams } from "next/navigation";
+import { ControlForm } from "../forms/control-form";
 
 interface ProcedureActionProps {
   children?: ReactNode;
@@ -47,13 +48,18 @@ export const ProcedureAction = ({ children, side }: ProcedureActionProps) => {
               Add Risk
             </Button>
           </RiskForm>
+          <ControlForm
+            title="Add Control"
+            endpoint="control"
+            id={params.get("action")}>
+            <Button
+              variant="ghost"
+              className="w-full flex justify-start gap-2 items-center h-[30px]">
+              <Cog size={16} strokeWidth={3} />
+              Add Control
+            </Button>
+          </ControlForm>
 
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <Cog size={16} strokeWidth={3} />
-            Add Control
-          </Button>
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 items-center h-[30px]">

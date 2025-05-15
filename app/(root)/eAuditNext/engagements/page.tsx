@@ -56,19 +56,21 @@ export default function EngagementPage() {
   }, [isLoading, isSuccess, data]);
 
   return (
-    <Tabs className="w-full dark:bg-background" defaultValue="dashboard">
-      <TabsList className="dark:bg-background w-full rounded-none py-5 pl-1">
+    <Tabs
+      className="w-full dark:bg-background flex flex-col gap-[6px]"
+      defaultValue="dashboard">
+      <TabsList className="bg-blue-950 w-full rounded-none flex gap-1 justify-start py-5 pl-1">
         <section className="flex items-center justify-between w-full">
           <section className="flex items-center justify-start w-fit gap-1">
             <TabsTrigger
               value="dashboard"
-              className="flex items-center gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+              className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
               <CircleGauge size={16} strokeWidth={3} />
               Dashboard
             </TabsTrigger>
             <TabsTrigger
               value="engagements"
-              className="flex items-center gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+              className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[140px]">
               <ListCollapse size={16} strokeWidth={3} />
               Engagements
             </TabsTrigger>
