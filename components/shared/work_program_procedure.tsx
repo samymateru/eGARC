@@ -129,7 +129,6 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
   });
 
   useEffect(() => {
-    console.log(data);
     setBriefDescription(data?.brief_description ?? "");
     setObjective(data?.audit_objective ?? "");
     setTestDescription(data?.test_description ?? "");

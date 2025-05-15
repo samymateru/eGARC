@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { RiskForm } from "../forms/risk-form";
+import { useSearchParams } from "next/navigation";
 
 interface ProcedureActionProps {
   children?: ReactNode;
@@ -27,6 +29,7 @@ const handleOpen = (isOpen: boolean) => {
 };
 
 export const ProcedureAction = ({ children, side }: ProcedureActionProps) => {
+  const params = useSearchParams();
   return (
     <Popover onOpenChange={handleOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -36,12 +39,15 @@ export const ProcedureAction = ({ children, side }: ProcedureActionProps) => {
         </Label>
         <Separator />
         <section className="mt-1">
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <TriangleAlert size={16} strokeWidth={3} />
-            Add Risk
-          </Button>
+          <RiskForm title="Add Risk" endpoint="risk" id={params.get("action")}>
+            <Button
+              variant="ghost"
+              className="w-full flex justify-start gap-2 items-center h-[30px]">
+              <TriangleAlert size={16} strokeWidth={3} />
+              Add Risk
+            </Button>
+          </RiskForm>
+
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 items-center h-[30px]">

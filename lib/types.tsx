@@ -317,3 +317,10 @@ export const SubProgramSchema_ = z.object({
   }),
   conclusion: z.string(),
 });
+
+export const EngagementRiskSchema = z.object({
+  name: z.string().min(1, "Risk name is required"),
+  rating: z
+    .string({ required_error: "Provide risk rating" })
+    .min(1, "Provide risk rating"),
+});

@@ -68,7 +68,11 @@ const fetchData = async (endpont: string, id?: string) => {
     },
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch modules");
+    const errorBody = await response.json().catch(() => ({}));
+    throw {
+      status: response.status,
+      body: errorBody,
+    };
   }
   return await response.json();
 };
@@ -272,7 +276,7 @@ export const PRCMForm = ({ children, id, endpoint, title }: PRCMFormPros) => {
                   <Label
                     htmlFor="control"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Risk name<span className="text-destructive">*</span>
+                    Control name<span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="control"

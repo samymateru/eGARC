@@ -21,15 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FormError } from "../shared/form-error";
 import { showToast } from "../shared/toast";
 import { ControlSchema } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+type ControlValues = z.infer<typeof ControlSchema>;
 
 type ControlTypeResponse = {
   values?: Array<string>;
@@ -38,17 +41,22 @@ type ControlTypeResponse = {
 interface DialogHelperProps {
   children: ReactNode;
   title: string;
-  submit_text?: string;
-  sub_program_id: number;
+  id: string;
+  endpoint: string;
+  mode?: string;
 }
 
 export const ControlForm = ({
   children,
   title,
-  submit_text,
-  sub_program_id,
+  id,
+  endpoint,
 }: DialogHelperProps) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  const query_client = useQueryClient();
+
+  const params = useSearchParams();
 
   const { data, isLoading } = useQuery({
     queryKey: ["control_type"],
@@ -70,30 +78,33 @@ export const ControlForm = ({
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
-  console.log(data);
 
-  const { mutate, isPending } = useMutation({
-    mutationKey: ["signin"],
-    mutationFn: async (data: z.infer<typeof ControlSchema>) => {
-      console.log(data);
-      const response = await fetch(`${BASE_URL}/control/${sub_program_id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-      return await response.json();
-    },
-  });
+  const { mutate: createControl, isPending: createControlLoading } =
+    useMutation({
+      mutationKey: ["signin"],
+      mutationFn: async (data: ControlValues) => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return await response.json();
+      },
+    });
 
-  const methods = useForm<z.infer<typeof ControlSchema>>({
+  const methods = useForm<ControlValues>({
     resolver: zodResolver(ControlSchema),
   });
 
@@ -105,15 +116,20 @@ export const ControlForm = ({
     formState: { errors },
   } = methods;
 
-  const onSubmit = (control_data: z.infer<typeof ControlSchema>) => {
-    mutate(control_data, {
+  const onSubmit = (data: ControlValues) => {
+    createControl(data, {
       onSuccess: (data) => {
-        setOpen(false);
-        reset();
-        console.log(data);
+        query_client.invalidateQueries({
+          queryKey: ["sub_program_procedure", params.get("action")],
+        });
+        showToast(data.detail, "success");
       },
       onError: (error) => {
-        showToast(error.message, "error");
+        console.log(error);
+      },
+      onSettled: () => {
+        reset();
+        setOpen(false);
       },
     });
   };
@@ -217,11 +233,11 @@ export const ControlForm = ({
               </Button>
               <Button
                 variant="ghost"
-                disabled={isPending}
+                disabled={createControlLoading}
                 type="submit"
                 className="bg-green-800 font-serif font-semibold flex-1">
                 <Send size={16} strokeWidth={3} />
-                {submit_text ?? "Submit"}
+                {"Submit"}
               </Button>
             </footer>
           </form>

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { RaiseReviewComment } from "../forms/raise-review_comment-form";
 import { Separator } from "../ui/separator";
+import { PRCMForm } from "../forms/prcm-form";
 
 interface PlanningProcedureActionsProps {
   children?: ReactNode;
@@ -61,12 +62,17 @@ export const PlanningProcedureActions = ({
             </Button>
           </RaiseReviewComment>
           {data?.type === "risk" ? (
-            <Button
-              variant={"ghost"}
-              className="w-full flex justify-start items-center h-[30px]">
-              <AlertTriangle size={16} strokeWidth={3} />
-              Add PRCM
-            </Button>
+            <PRCMForm
+              title="Add PRCM"
+              endpoint="engagements/PRCM"
+              id={params.get("id")}>
+              <Button
+                variant={"ghost"}
+                className="w-full flex justify-start items-center h-[30px]">
+                <AlertTriangle size={16} strokeWidth={3} />
+                Add PRCM
+              </Button>
+            </PRCMForm>
           ) : data?.type === "program" ? (
             <Button
               variant={"ghost"}
