@@ -11,14 +11,14 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 
 interface PersonInfo {
-  name: string;
-  email: string;
-  date: string; // ISO format recommended
+  name?: string;
+  email?: string;
+  date_issued?: string; // ISO format recommended
 }
 
 interface PreparedReviewedByProps {
-  preparedBy: PersonInfo;
-  reviewedBy: PersonInfo;
+  preparedBy?: PersonInfo;
+  reviewedBy?: PersonInfo;
 }
 
 interface UserDetailProps extends PersonInfo {
@@ -31,32 +31,36 @@ const UserDetail: React.FC<UserDetailProps> = ({
   title,
   name,
   email,
-  date,
+  date_issued,
 }) => {
   return (
-    <div className="flex items-start space-x-4 rounded-md shadow-md p-5 w-full md:w-1/2">
+    <div className="border border-neutral-800 flex flex-col items-start space-x-4 rounded-md shadow-md p-5 w-full md:w-1/2">
       <div className="text-blue-700 mt-1">
         <Icon size={24} />
       </div>
       <div className="flex-1 flex flex-col mt-2">
         <Label className="font-hel-heading-bold mb-1">{title}</Label>
         <div className="flex items-center font-table mt-1">
-          <User className="mr-1.5" size={16} strokeWidth={3} />
+          {name ? <User className="mr-1.5" size={16} strokeWidth={3} /> : null}
           <Label className="font-table">{name}</Label>
         </div>
         <div className="flex items-center font-table mt-1">
-          <Mail className="mr-1.5" size={16} strokeWidth={3} />
+          {email ? <Mail className="mr-1.5" size={16} strokeWidth={3} /> : null}
           <Link href={`mailto:${email}`} className="hover:underline">
             {email}
           </Link>
         </div>
         <Label className="flex items-center font-table mt-1">
-          <CalendarDays className="mr-1.5" size={16} />
-          {new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }).format(new Date(date))}
+          {email ? (
+            <CalendarDays className="mr-1.5" size={16} strokeWidth={3} />
+          ) : null}
+          {date_issued
+            ? new Intl.DateTimeFormat("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }).format(new Date(date_issued))
+            : ""}
         </Label>
       </div>
     </div>
@@ -72,16 +76,16 @@ const PreparedReviewedBy: React.FC<PreparedReviewedByProps> = ({
       <UserDetail
         icon={UserCog}
         title="Prepared By"
-        name={preparedBy.name}
-        email={preparedBy.email}
-        date={preparedBy.date}
+        name={preparedBy?.name ?? ""}
+        email={preparedBy?.email ?? ""}
+        date_issued={preparedBy?.date_issued}
       />
       <UserDetail
         icon={UserCheck}
         title="Reviewed By"
-        name={reviewedBy.name}
-        email={reviewedBy.email}
-        date={reviewedBy.date}
+        name={reviewedBy?.name ?? ""}
+        email={reviewedBy?.email ?? ""}
+        date_issued={reviewedBy?.date_issued}
       />
     </div>
   );

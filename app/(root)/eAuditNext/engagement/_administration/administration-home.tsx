@@ -15,6 +15,13 @@ import { Policies } from "./policies";
 import { Regulations } from "./regulations";
 import { EngagementProcesses } from "./engagement-processes";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -25,6 +32,39 @@ import { PolicyForm } from "@/components/forms/policy-form";
 import { RegulationForm } from "@/components/forms/regulation-form";
 import { EngagementProcessForm } from "./../../../../../components/forms/engagement-process-form";
 import { useSearchParams } from "next/navigation";
+import TextEditor from "@/components/shared/tiptap-text-editor";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const items = [
+  {
+    id: "1",
+    title: "Audit Background",
+  },
+  {
+    id: "2",
+    title: "Audit Objectives",
+  },
+  {
+    id: "3",
+    title: "Key Legislations",
+  },
+  {
+    id: "4",
+    title: "Relevant Systems",
+  },
+  {
+    id: "5",
+    title: "Key Changes",
+  },
+  {
+    id: "6",
+    title: "Reliance",
+  },
+  {
+    id: "7",
+    title: "Scope Exclusion",
+  },
+];
 
 export const Administration = () => {
   const [showSubmenu, setShowSubmenu] = useState(false);
@@ -120,7 +160,9 @@ export const Administration = () => {
         </section>
       </TabsList>
       <TabsContent value="profile" className="flex-1 w-full">
-        Profile
+        <ScrollArea className="h-[524px] overflow-auto ">
+          <TemplateWrapper />
+        </ScrollArea>
       </TabsContent>
       <TabsContent value="business_context" className="flex-1 w-full">
         Context
@@ -193,5 +235,74 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
         </section>
       </PopoverContent>
     </Popover>
+  );
+};
+
+const TemplateWrapper = () => {
+  const [auditBackground, setAuditBackground] = useState<string>("");
+  const [auditObjectives, setAuditObjectives] = useState<string>("");
+  const [keyLegislations, setKeyLegislations] = useState<string>("");
+  const [relevantSystems, setRelevantSystems] = useState<string>("");
+  const [keyChanges, setKeyChanges] = useState<string>("");
+  const [reliance, setReliance] = useState<string>("");
+  const [scopeExclusion, setScopeExclusion] = useState<string>("");
+
+  return (
+    <section className="flex py-3 flex-col gap-2">
+      <Label className="font-hel-heading-bold pl-2">Engagement Details</Label>
+      <Accordion type="multiple" className="w-full flex flex-col gap-1">
+        {items.map((item) => (
+          <AccordionItem
+            value={item.id}
+            key={item.id}
+            className="flex flex-col border-none w-full px-2">
+            <AccordionTrigger
+              suppressHydrationWarning
+              icon={item.id === "8" || item.id === "4" ? false : true}
+              className={`px-4 py-4 hover:no-underline h-9 rounded-md font-hel-heading dark:bg-neutral-800 dark:hover:bg-neutral-800`}>
+              <span className="flex items-center gap-3">
+                <span>{item.title}</span>
+              </span>
+            </AccordionTrigger>
+
+            <AccordionContent className="text-muted-foreground">
+              {item.id === "1" ? (
+                <TextEditor
+                  initialContent={auditBackground}
+                  onChange={setAuditBackground}
+                />
+              ) : item.id === "2" ? (
+                <TextEditor
+                  initialContent={auditObjectives}
+                  onChange={setAuditObjectives}
+                />
+              ) : item.id === "3" ? (
+                <TextEditor
+                  initialContent={keyLegislations}
+                  onChange={setKeyLegislations}
+                />
+              ) : item.id === "4" ? (
+                <TextEditor
+                  initialContent={relevantSystems}
+                  onChange={setRelevantSystems}
+                />
+              ) : item.id === "5" ? (
+                <TextEditor
+                  initialContent={keyChanges}
+                  onChange={setKeyChanges}
+                />
+              ) : item.id === "6" ? (
+                <TextEditor initialContent={reliance} onChange={setReliance} />
+              ) : item.id === "7" ? (
+                <TextEditor
+                  initialContent={scopeExclusion}
+                  onChange={setScopeExclusion}
+                />
+              ) : null}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </section>
   );
 };

@@ -1,6 +1,13 @@
 import z from "zod";
 import { Button } from "../ui/button";
-import { CircleAlert, Menu, PanelLeft, Save } from "lucide-react";
+import {
+  CircleAlert,
+  Menu,
+  PanelLeft,
+  Save,
+  UserCheck,
+  UserCog,
+} from "lucide-react";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import TextEditor from "@/components/shared/tiptap-text-editor";
 import {
@@ -25,6 +32,12 @@ type SaveWorkProgramProcedure = {
   extended_results?: string;
   effectiveness?: string;
   conclusion?: string;
+};
+
+type PreparedReviewedBy = {
+  name: string;
+  email: string;
+  date_issued: string;
 };
 
 const items = [
@@ -87,33 +100,24 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-import { Response, SubProgramSchema_ } from "@/lib/types";
+import { SubProgramSchema_ } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { ProcedureAction } from "./procedure-action";
 import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
 import { showToast } from "./toast";
 import { ProcedureRiskControlMatrix } from "./procedure-risk-control-matrix";
 import PreparedReviewedBy from "./prepared_reviewed_by";
+import { useSaveWorkProgramProcedure } from "@/hooks/use-save-workprogram-procedure";
+import { useWorkProgramProcedurePrepare } from "@/hooks/use-edit-workprogram-prepared";
+import { useWorkProgramProcedureReview } from "@/hooks/use-edit-workprogram-reviewed";
 
 type SubProgramValues = z.infer<typeof SubProgramSchema_>;
 
 interface WorkProgramProcedureProps {
   id?: string;
 }
-
-const prepared = {
-  name: "Alice Johnson",
-  email: "alice.johnson@example.com",
-  date: "2025-05-13",
-};
-
-const reviewed = {
-  name: "Robert Lee",
-  email: "robert.lee@example.com",
-  date: "2025-05-14",
-};
 
 export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
   const query_client = useQueryClient();
@@ -131,6 +135,8 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
   const [extendedResults, setExtendedResults] = useState<string>("");
   const [effectiveness, setEffectiveness] = useState<string>("");
   const [conclusion, setConclusion] = useState<string>("");
+  const [preparedBy, setPreparedBy] = useState<PreparedReviewedBy>();
+  const [reviewedBy, setRevieweddBy] = useState<PreparedReviewedBy>();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["sub_program_procedure", params.get("action")],
@@ -174,39 +180,32 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
     setExtendedResults(data?.extended_results ?? "");
     setEffectiveness(data?.effectiveness ?? "");
     setConclusion(data?.conclusion ?? "");
+    if (data?.prepared_by) {
+      setPreparedBy({
+        name: data.prepared_by.name ?? "",
+        email: data.prepared_by.email ?? "",
+        date_issued: data.prepared_by.date_issued,
+      });
+    }
+    if (data?.reviewed_by) {
+      setRevieweddBy({
+        name: data.reviewed_by.name ?? "",
+        email: data.reviewed_by.email ?? "",
+        date_issued: data.reviewed_by.date_issued,
+      });
+    }
   }, [data]);
 
   const { mutate: saveProcedure, isPending: saveProcedureLoading } =
-    useMutation({
-      mutationKey: ["_save_work_program_procedure"],
-      mutationFn: async (data: SaveWorkProgramProcedure): Promise<Response> => {
-        const response = await fetch(
-          `${BASE_URL}/engagements/sub_program/save/${params.get("action")}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                typeof window === "undefined"
-                  ? ""
-                  : localStorage.getItem("token")
-              }`,
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({}));
-          throw {
-            status: response.status,
-            body: errorBody,
-          };
-        }
-        return response.json();
-      },
-    });
+    useSaveWorkProgramProcedure(params.get("action"));
 
-  const onSubmit = () => {
+  const { mutate: prepare, isPending: prepareLoading } =
+    useWorkProgramProcedurePrepare(params.get("action"));
+
+  const { mutate: review, isPending: reviewLoading } =
+    useWorkProgramProcedureReview(params.get("action"));
+
+  const onSubmit = (mode: string) => {
     const procedure: SaveWorkProgramProcedure = {
       brief_description: briefDescription,
       audit_objective: objective,
@@ -225,7 +224,51 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
     saveProcedure(procedure, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["work_program"],
+          queryKey: ["sub_program_procedure", params.get("action")],
+        });
+        if (mode === "manual") {
+          showToast(data.detail, "success");
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+      onSettled: () => {},
+    });
+  };
+
+  const onPrepare = () => {
+    const preparedData: PreparedReviewedBy = {
+      name: localStorage.getItem("user_name") ?? "",
+      email: localStorage.getItem("user_email") ?? "",
+      date_issued: new Date().toISOString(),
+    };
+
+    prepare(preparedData, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["sub_program_procedure", params.get("action")],
+        });
+        showToast(data.detail, "success");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+      onSettled: () => {},
+    });
+  };
+
+  const onReview = () => {
+    const reviewData: PreparedReviewedBy = {
+      name: localStorage.getItem("user_name") ?? "",
+      email: localStorage.getItem("user_email") ?? "",
+      date_issued: new Date().toISOString(),
+    };
+
+    review(reviewData, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["sub_program_procedure", params.get("action")],
         });
         showToast(data.detail, "success");
       },
@@ -281,7 +324,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSubmit();
+                  onSubmit("manual");
                 }}
                 className="w-[100px] h-[30px] flex items-center justify-start dark:hover:bg-neutral-800 rounded-md">
                 <Save size={16} />
@@ -330,10 +373,32 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 setConclusion={setConclusion}
               />
               <Separator />
+              <section className="flex items-center gap-2 pt-3 pb-2 pl-2">
+                {!preparedBy ? (
+                  <Button
+                    disabled={prepareLoading}
+                    onClick={onPrepare}
+                    variant="ghost"
+                    className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                    <UserCog size={16} strokeWidth={3} />
+                    Prepare
+                  </Button>
+                ) : null}
+                {!reviewedBy && !!preparedBy ? (
+                  <Button
+                    onClick={onReview}
+                    disabled={reviewLoading}
+                    variant="ghost"
+                    className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                    <UserCheck size={16} strokeWidth={3} />
+                    Review
+                  </Button>
+                ) : null}
+              </section>
               <div className="px-2 pb-2">
                 <PreparedReviewedBy
-                  preparedBy={prepared}
-                  reviewedBy={reviewed}
+                  preparedBy={preparedBy}
+                  reviewedBy={reviewedBy}
                 />
               </div>
             </ScrollArea>
@@ -435,13 +500,9 @@ const TemplateWrapper = ({
   return (
     <section className="flex py-3 flex-col gap-2">
       <Label className="font-hel-heading-bold pl-2">Procedure Details</Label>
-      <Accordion
-        suppressHydrationWarning
-        type="multiple"
-        className="w-full flex flex-col gap-1">
+      <Accordion type="multiple" className="w-full flex flex-col gap-1">
         {items.map((item) => (
           <AccordionItem
-            suppressHydrationWarning
             value={item.id}
             key={item.id}
             className="flex flex-col border-none w-full px-2">
@@ -470,7 +531,7 @@ const TemplateWrapper = ({
                           aria-label="Toggle switch"
                           className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors pointer-events-auto
                           ${
-                            extendedTesting ? "bg-blue-500" : "bg-neutral-500"
+                            extendedTesting ? "bg-blue-950" : "bg-neutral-500"
                           }`}>
                           <div
                             className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform
@@ -505,7 +566,7 @@ const TemplateWrapper = ({
                               }
                             }}
                             className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
-                              control ? "bg-blue-500" : "bg-white"
+                              control ? "bg-blue-950" : "bg-white"
                             }`}>
                             {control && (
                               <svg
@@ -541,7 +602,7 @@ const TemplateWrapper = ({
                               }
                             }}
                             className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
-                              substantive ? "bg-blue-500" : "bg-white"
+                              substantive ? "bg-blue-950" : "bg-white"
                             }`}>
                             {substantive && (
                               <svg

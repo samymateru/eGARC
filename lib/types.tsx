@@ -336,3 +336,32 @@ export const EngagementProcessSchema = z.object({
   description: z.string().min(1, "Description is required"),
   business_unit: z.string().min(1, "Business unit is required"),
 });
+
+export const EngagementProfileSchema = z.object({
+  id: z.string(),
+  audit_background: z.object({
+    value: z.string(),
+  }),
+  audit_objectives: z.object({
+    value: z.string(),
+  }),
+  key_legislations: z.object({
+    value: z.string(),
+  }),
+  relevant_systems: z.object({
+    value: z.string(),
+  }),
+  key_changes: z.object({
+    value: z.string(),
+  }),
+  reliance: z.object({
+    value: z.string(),
+  }),
+  scope_exclusion: z.object({
+    value: z.string(),
+  }),
+  core_risk: z.array(z.string()),
+  estimated_dates: z.object({
+    value: z.string(),
+  }),
+});
