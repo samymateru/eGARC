@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useEffect, useId, useMemo, useState } from "react";
+import { CSSProperties, useId, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -42,11 +42,9 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  Edit,
   Ellipsis,
   GripVerticalIcon,
-  SendHorizonal,
-  Trash2,
+  Trash,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -67,157 +65,125 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { EngagementSchema } from "@/lib/types";
-import Link from "next/link";
-import SearchInput from "../shared/search-input";
-import MultiStatusFilter from "../shared/multi-status-filter";
+import { RiskControlSchema } from "@/lib/types";
 
-type EngagementSchemaValues = z.infer<typeof EngagementSchema>;
+type PRCMValues = z.infer<typeof RiskControlSchema>;
 
-const columns: ColumnDef<EngagementSchemaValues>[] = [
+const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "sn",
     header: () => <Label className="font-table">S/N</Label>,
+    accessorKey: "",
     cell: ({ row }) => (
       <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
-    size: 5,
+    size: 10,
   },
   {
-    id: "name",
-    header: () => <Label className="font-table">Name</Label>,
-    accessorKey: "name",
+    id: "risk",
+    header: () => <Label className="font-table">Risk</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.risk}
+      </Label>
     ),
-    size: 250,
+    accessorKey: "risk",
+    size: 150,
   },
   {
-    id: "code",
-    header: () => <Label className="font-table">Code</Label>,
+    id: "risk_rating",
+    header: () => <Label className="font-table">Risk Rating</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.code}</Label>
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.risk_rating}
+      </Label>
     ),
-    accessorKey: "code",
+    accessorKey: "risk_rating",
+    size: 150,
   },
   {
-    id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    id: "control",
+    header: () => <Label className="font-table">Control</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.status}</Label>
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.control}
+      </Label>
     ),
-    accessorKey: "status",
+    accessorKey: "control",
+    size: 150,
   },
   {
-    id: "stage",
-    header: () => <Label className="font-table">Stage</Label>,
-    accessorKey: "stage",
+    id: "control_type",
+    header: () => <Label className="font-table">Control Type</Label>,
     cell: ({ row }) => (
-      <Label className="font-table truncate">{row.original.stage}</Label>
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.control_type}
+      </Label>
     ),
+    accessorKey: "control_type",
+    size: 150,
   },
   {
-    id: "start_date",
-    header: () => <Label className="font-table">Start</Label>,
-    accessorKey: "start_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.original.start_date ?? ""));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
-    },
-  },
-  {
-    id: "end_date",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.original.end_date ?? ""));
-      return <Label className="ml-2 font-table">{formatted}</Label>;
-    },
+    id: "control_objective",
+    header: () => <Label className="font-table">Control Objective</Label>,
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.control_objective}
+      </Label>
+    ),
+    accessorKey: "control_objective",
+    size: 150,
   },
   {
     id: "actions",
-    header: () => <Label className="ml-2 ffont-table">Actions</Label>,
-    cell: ({ row }) => (
-      <div className="flex justify-center items-center w-full h-full font-table">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
-              <Link
-                href={{
-                  pathname: "/eAuditNext/engagement",
-                  query: {
-                    id: row.original.id,
-                    action: "administration",
-                    name: row.original.name,
-                  },
-                }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <SendHorizonal size={16} strokeWidth={3} />
-                Engage
-              </Link>
+    header: () => <Label className="font-table">More</Label>,
+    cell: () => {
+      return (
+        <div className="flex justify-center items-center w-full h-full">
+          <Popover>
+            <PopoverTrigger asChild>
               <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
+                className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+                variant="ghost">
+                <Ellipsis />
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-    ),
-    size: 20,
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
+              <div className="flex flex-col divide-y">
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                  <Trash size={16} strokeWidth={3} className="text-red-800" />
+                  Delete
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      );
+    },
+    size: 10,
     minSize: 3,
   },
 ];
 
-interface EngagementTableProps {
-  data: EngagementSchemaValues[];
+interface RiskControlTableProps {
+  data: PRCMValues[];
 }
 
-export default function EngagementTable({ data }: EngagementTableProps) {
+export const RiskControlTable = ({ data }: RiskControlTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
 
-  const [searchName, setSearchName] = useState("");
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<EngagementSchemaValues[]>([]);
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
 
-  const statusOptions = useMemo(() => {
-    return Array.from(new Set(data.map((item) => String(item.status))));
-  }, [data]);
-
   const table = useReactTable({
-    data: tableData,
+    data,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -239,21 +205,6 @@ export default function EngagementTable({ data }: EngagementTableProps) {
     totalPages: table.getPageCount(),
     paginationItemsToDisplay: 5,
   });
-
-  useEffect(() => {
-    const filtered = data.filter((row) => {
-      const matchesName = row.name
-        .toLowerCase()
-        .includes(searchName.toLowerCase());
-
-      const matchesStatus =
-        selectedStatuses.length === 0 ||
-        selectedStatuses.includes(row.status ?? "");
-
-      return matchesName && matchesStatus;
-    });
-    setTableData(filtered);
-  }, [data, searchName, selectedStatuses]);
 
   // reorder columns after drag & drop
   function handleDragEnd(event: DragEndEvent) {
@@ -281,20 +232,6 @@ export default function EngagementTable({ data }: EngagementTableProps) {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1">
-        <section className="flex items-center gap-3 pl-2">
-          <SearchInput
-            placeholder="Engagement name"
-            value={searchName}
-            onChange={setSearchName}
-          />
-          <MultiStatusFilter
-            options={statusOptions}
-            value={selectedStatuses}
-            onChange={setSelectedStatuses}
-          />
-        </section>
-      </div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -398,12 +335,12 @@ export default function EngagementTable({ data }: EngagementTableProps) {
       </div>
     </DndContext>
   );
-}
+};
 
 const DraggableTableHeader = ({
   header,
 }: {
-  header: Header<EngagementSchemaValues, unknown>;
+  header: Header<PRCMValues, unknown>;
 }) => {
   const {
     attributes,
@@ -505,11 +442,7 @@ const DraggableTableHeader = ({
   );
 };
 
-const DragAlongCell = ({
-  cell,
-}: {
-  cell: Cell<EngagementSchemaValues, unknown>;
-}) => {
+const DragAlongCell = ({ cell }: { cell: Cell<PRCMValues, unknown> }) => {
   const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: cell.column.id,
   });

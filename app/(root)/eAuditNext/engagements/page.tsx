@@ -1,14 +1,16 @@
 "use client";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import z from "zod";
-import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
-import { CircleGauge, ListCollapse } from "lucide-react";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EngagementSchema } from "@/lib/types";
 import EngagementTable from "@/components/data-table/engagement-table";
 import { EngagementNavbar } from "@/components/top-navbars/engagement-navbar";
+import { EngagementForm } from "@/components/forms/engagement-form";
+import { Button } from "@/components/ui/button";
+import { CirclePlus } from "lucide-react";
 
 type EngagementsValues = z.infer<typeof EngagementSchema>;
 
@@ -58,29 +60,27 @@ export default function EngagementPage() {
   return (
     <Tabs
       className="w-full dark:bg-background flex flex-col gap-[6px]"
-      defaultValue="dashboard">
+      defaultValue="engagements">
       <TabsList className="bg-blue-950 w-full rounded-none flex gap-1 justify-start py-5 pl-1">
         <section className="flex items-center justify-between w-full">
-          <section className="flex items-center justify-start w-fit gap-1">
-            <TabsTrigger
-              value="dashboard"
-              className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[120px]">
-              <CircleGauge size={16} strokeWidth={3} />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger
-              value="engagements"
-              className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex gap-1 w-[140px]">
-              <ListCollapse size={16} strokeWidth={3} />
-              Engagements
-            </TabsTrigger>
-          </section>
-          <section className="flex-1">
+          <section className="flex-1"></section>
+          <section className="flex items-center gap-2 justify-end">
+            <EngagementForm
+              endpoint="engagements"
+              title="Engagement"
+              mode="create"
+              id={searchParams.get("id") ?? undefined}>
+              <Button
+                variant="ghost"
+                className="bg-black text-white hover:text-white hover:bg-neutral-900  flex items-center gap-2 h-[30px] w-fit justify-start font-table">
+                <CirclePlus size={16} strokeWidth={3} />
+                Engagement
+              </Button>
+            </EngagementForm>
             <EngagementNavbar />
           </section>
         </section>
       </TabsList>
-      <TabsContent value="dashboard" className="mt-0"></TabsContent>
       <TabsContent value="engagements" className="mt-0">
         <EngagementTable data={engagements ?? []} />
       </TabsContent>

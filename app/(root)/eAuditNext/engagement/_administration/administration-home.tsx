@@ -4,15 +4,27 @@ import {
   Briefcase,
   Cog,
   Contact,
+  Menu,
   MonitorUp,
   Shield,
   Users,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Policies } from "./policies";
 import { Regulations } from "./regulations";
 import { EngagementProcesses } from "./engagement-processes";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { PolicyForm } from "@/components/forms/policy-form";
+import { RegulationForm } from "@/components/forms/regulation-form";
+import { EngagementProcessForm } from "./../../../../../components/forms/engagement-process-form";
+import { useSearchParams } from "next/navigation";
 
 export const Administration = () => {
   const [showSubmenu, setShowSubmenu] = useState(false);
@@ -33,8 +45,15 @@ export const Administration = () => {
     }, 200); // delay before hidin
   };
 
+  const handleTabChage = (tab: string) => {
+    console.log(tab);
+  };
+
   return (
-    <Tabs defaultValue="profile" className="flex-1 flex flex-col">
+    <Tabs
+      defaultValue="profile"
+      className="flex-1 flex flex-col"
+      onValueChange={handleTabChage}>
       <TabsList className="flex justify-between items-center dark:bg-background rounded-none">
         <section className="flex-1 flex items-center gap-1">
           <TabsTrigger
@@ -89,7 +108,16 @@ export const Administration = () => {
             Staffing
           </TabsTrigger>
         </section>
-        <section></section>
+        <section>
+          <ContexteActions>
+            <Button
+              variant="ghost"
+              className="w-[100px] h-[30px] flex justify-start items-center">
+              <Menu />
+              Menu
+            </Button>
+          </ContexteActions>
+        </section>
       </TabsList>
       <TabsContent value="profile" className="flex-1 w-full">
         Profile
@@ -113,5 +141,57 @@ export const Administration = () => {
         <EngagementProcesses />
       </TabsContent>
     </Tabs>
+  );
+};
+
+interface ContexteActionsProps {
+  children: ReactNode;
+}
+
+const ContexteActions = ({ children }: ContexteActionsProps) => {
+  const params = useSearchParams();
+  return (
+    <Popover>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent className="flex flex-col gap-1 dark:bg-black">
+        <Label className="font-hel-heading-bold">Context Actions</Label>
+        <Separator />
+        <section className="divede-y">
+          <PolicyForm
+            title="New Policy"
+            id={params.get("id")}
+            endpoint="engagements/context/policies">
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-start h-[30px]">
+              <Shield size={16} />
+              Policy
+            </Button>
+          </PolicyForm>
+          <RegulationForm
+            title="New Regulation"
+            id={params.get("id")}
+            endpoint="engagements/context/regulations">
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-start h-[30px]">
+              <Book size={16} />
+              Regulation
+            </Button>
+          </RegulationForm>
+          <EngagementProcessForm
+            title="Engagement Process"
+            id={params.get("id")}
+            endpoint="engagements/context/engagement_process">
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-start h-[30px]">
+              <MonitorUp size={16} />
+              Process
+            </Button>
+          </EngagementProcessForm>
+        </section>
+      </PopoverContent>
+    </Popover>
   );
 };

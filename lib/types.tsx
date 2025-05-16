@@ -163,6 +163,16 @@ export const PRCMSchema = z.object({
   summary_audit_program: z.string().optional(),
 });
 
+export const RiskControlSchema = z.object({
+  id: z.string().optional(),
+  risk: z.string().min(1, "Risk is required"),
+  risk_rating: z.string({ required_error: "Risk rating is required" }),
+  control: z.string().min(1, "Control is required"),
+  control_objective: z.string().min(1, "Control objective is required"),
+  control_type: z.string({ required_error: "Control type is required" }),
+  residue_risk: z.string().optional(),
+});
+
 export const SummaryAuditProgramSchema = z.object({
   id: z.string().optional(),
   process: z.string().optional(),
@@ -189,17 +199,9 @@ export const ControlTypeSchema = z.object({
   name: z.string().optional(),
 });
 
-export const EngagementProcessSchema = z.object({
-  id: z.string().optional(),
-  process: z.string({ required_error: "Process is required" }),
-  sub_process: z.string({ required_error: "Sub process is required" }),
-  description: z.string().min(1, "Description is required"),
-  business_unit: z.string().min(1, "Business unit is required"),
-});
-
 export const RegulationSchema = z.object({
   name: z.string().min(1, "Please provide policy name"),
-  version: z.string().min(1, "Please provide policy version"),
+  issue_date: z.date({ required_error: "Issue date is required" }),
   key_areas: z.string().min(1, "Provide keys areas"),
   attachment: z
     .instanceof(File)
@@ -323,4 +325,14 @@ export const EngagementRiskSchema = z.object({
   rating: z
     .string({ required_error: "Provide risk rating" })
     .min(1, "Provide risk rating"),
+});
+
+export const EngagementProcessSchema = z.object({
+  id: z.string().optional(),
+  process: z
+    .string({ required_error: "Process is required" })
+    .min(1, "Process is required"),
+  sub_process: z.array(z.string()).min(1, "At least one sub process required"),
+  description: z.string().min(1, "Description is required"),
+  business_unit: z.string().min(1, "Business unit is required"),
 });

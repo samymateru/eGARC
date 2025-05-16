@@ -8,7 +8,6 @@ import { Button } from "../ui/button";
 import {
   AlertCircle,
   ArrowRightFromLine,
-  Cog,
   Edit,
   Share,
   Trash,
@@ -16,9 +15,8 @@ import {
 } from "lucide-react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
-import { RiskForm } from "../forms/risk-form";
 import { useSearchParams } from "next/navigation";
-import { ControlForm } from "../forms/control-form";
+import { RiskControlForm } from "../forms/risk-control-form";
 
 interface ProcedureActionProps {
   children?: ReactNode;
@@ -40,26 +38,17 @@ export const ProcedureAction = ({ children, side }: ProcedureActionProps) => {
         </Label>
         <Separator />
         <section className="mt-1">
-          <RiskForm title="Add Risk" endpoint="risk" id={params.get("action")}>
+          <RiskControlForm
+            title="Risk & Control"
+            id={params.get("action")}
+            endpoint="engagements/sub_program/risk_control">
             <Button
               variant="ghost"
               className="w-full flex justify-start gap-2 items-center h-[30px]">
               <TriangleAlert size={16} strokeWidth={3} />
-              Add Risk
+              Risk & Control
             </Button>
-          </RiskForm>
-          <ControlForm
-            title="Add Control"
-            endpoint="control"
-            id={params.get("action")}>
-            <Button
-              variant="ghost"
-              className="w-full flex justify-start gap-2 items-center h-[30px]">
-              <Cog size={16} strokeWidth={3} />
-              Add Control
-            </Button>
-          </ControlForm>
-
+          </RiskControlForm>
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 items-center h-[30px]">

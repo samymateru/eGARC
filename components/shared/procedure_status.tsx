@@ -5,10 +5,7 @@ import {
   Mail,
   CalendarDays,
   LucideIcon,
-  User,
 } from "lucide-react";
-import { Label } from "../ui/label";
-import Link from "next/link";
 
 interface PersonInfo {
   name: string;
@@ -34,30 +31,23 @@ const UserDetail: React.FC<UserDetailProps> = ({
   date,
 }) => {
   return (
-    <div className="flex items-start space-x-4 rounded-md shadow-md p-5 w-full md:w-1/2">
-      <div className="text-blue-700 mt-1">
+    <div className="flex items-start space-x-4 bg-white rounded-md shadow-md p-5 w-full md:w-1/2">
+      <div className="text-blue-600 mt-1">
         <Icon size={24} />
       </div>
-      <div className="flex-1 flex flex-col mt-2">
-        <Label className="font-hel-heading-bold mb-1">{title}</Label>
-        <div className="flex items-center font-table mt-1">
-          <User className="mr-1.5" size={16} strokeWidth={3} />
-          <Label className="font-table">{name}</Label>
-        </div>
-        <div className="flex items-center font-table mt-1">
-          <Mail className="mr-1.5" size={16} strokeWidth={3} />
-          <Link href={`mailto:${email}`} className="hover:underline">
+      <div className="flex-1">
+        <div className="text-lg font-semibold text-gray-800 mb-1">{title}</div>
+        <div className="text-gray-900 font-medium">{name}</div>
+        <div className="flex items-center text-sm text-gray-600 mt-1">
+          <Mail className="mr-1.5" size={16} />
+          <a href={`mailto:${email}`} className="hover:underline">
             {email}
-          </Link>
+          </a>
         </div>
-        <Label className="flex items-center font-table mt-1">
+        <div className="flex items-center text-sm text-gray-500 mt-1">
           <CalendarDays className="mr-1.5" size={16} />
-          {new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }).format(new Date(date))}
-        </Label>
+          {new Date(date).toLocaleDateString()}
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,14 @@ import { Button } from "../ui/button";
 import { CircleAlert, Menu, PanelLeft, Save } from "lucide-react";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import TextEditor from "@/components/shared/tiptap-text-editor";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useId,
+  MouseEvent,
+} from "react";
 
 type SaveWorkProgramProcedure = {
   brief_description?: string;
@@ -35,26 +42,38 @@ const items = [
   },
   {
     id: "4",
-    title: "Sampling approach",
+    title: "Test Types",
   },
   {
     id: "5",
-    title: "Results of test",
+    title: "Sampling approach",
   },
   {
     id: "6",
-    title: "Observation",
+    title: "Results of test",
   },
   {
     id: "7",
-    title: "Extended procedure",
+    title: "Observation",
   },
   {
     id: "8",
-    title: "Extended results",
+    title: "Extended Testing",
   },
   {
     id: "9",
+    title: "Extended procedure",
+  },
+  {
+    id: "10",
+    title: "Extended results",
+  },
+  {
+    id: "11",
+    title: "Effectiveness",
+  },
+  {
+    id: "12",
     title: "Conclusion",
   },
 ];
@@ -75,12 +94,26 @@ import { useSearchParams } from "next/navigation";
 import { ProcedureAction } from "./procedure-action";
 import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
 import { showToast } from "./toast";
+import { ProcedureRiskControlMatrix } from "./procedure-risk-control-matrix";
+import PreparedReviewedBy from "./prepared_reviewed_by";
 
 type SubProgramValues = z.infer<typeof SubProgramSchema_>;
 
 interface WorkProgramProcedureProps {
   id?: string;
 }
+
+const prepared = {
+  name: "Alice Johnson",
+  email: "alice.johnson@example.com",
+  date: "2025-05-13",
+};
+
+const reviewed = {
+  name: "Robert Lee",
+  email: "robert.lee@example.com",
+  date: "2025-05-14",
+};
 
 export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
   const query_client = useQueryClient();
@@ -268,6 +301,8 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
           <Separator />
           <main className="flex-1 pt-3">
             <ScrollArea className="max-h-[500px] h-auto overflow-auto hide-scrollbar">
+              <ProcedureRiskControlMatrix />
+              <Separator />
               <TemplateWrapper
                 briefDescription={briefDescription}
                 setBriefDescription={setBriefDescription}
@@ -283,6 +318,8 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 setResults={setResults}
                 observation={observation}
                 setObservation={setObservation}
+                extendedTesting={extendedTesting}
+                setExtendedTesting={setExtendedTesting}
                 extendedProcedure={extendedProcedure}
                 setExtendedProcedure={setExtendedProcedure}
                 extendedResults={extendedResults}
@@ -292,6 +329,13 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 conclusion={conclusion}
                 setConclusion={setConclusion}
               />
+              <Separator />
+              <div className="px-2 pb-2">
+                <PreparedReviewedBy
+                  preparedBy={prepared}
+                  reviewedBy={reviewed}
+                />
+              </div>
             </ScrollArea>
           </main>
         </section>
@@ -307,6 +351,8 @@ interface TemplateWrapperProps {
   setObjective?: Dispatch<SetStateAction<string>>;
   testDescription?: string;
   setTestDescription?: Dispatch<SetStateAction<string>>;
+  extendedTesting?: boolean;
+  setExtendedTesting?: Dispatch<SetStateAction<boolean>>;
   testType?: string;
   setTestType?: Dispatch<SetStateAction<string>>;
   samplingApproach?: string;
@@ -331,6 +377,8 @@ const TemplateWrapper = ({
   setObjective,
   testDescription,
   setTestDescription,
+  extendedTesting,
+  setExtendedTesting,
   testType,
   setTestType,
   samplingApproach,
@@ -348,69 +396,233 @@ const TemplateWrapper = ({
   conclusion,
   setConclusion,
 }: TemplateWrapperProps) => {
+  const [control, setControl] = useState(false);
+  const [substantive, setSubstantive] = useState(false);
+
+  const id = useId();
+
+  useEffect(() => {
+    const types = [];
+    if (control) types.push("control");
+    if (substantive) types.push("substantive");
+    setTestType?.(types.join(", "));
+  }, [control, substantive, setTestType]);
+
+  useEffect(() => {
+    const types = testType
+      ?.toLowerCase()
+      .split(",")
+      .map((t) => t.trim());
+    setControl(types?.includes("control") ?? false);
+    setSubstantive(types?.includes("substantive") ?? false);
+  }, [testType]);
+
+  const handleToggle = (e: MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setExtendedTesting?.(!extendedTesting);
+  };
+
+  const handleControl = (e: MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setControl(!control);
+  };
+
+  const handleSubstansive = (e: MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setSubstantive(!substantive);
+  };
+
   return (
-    <Accordion type="multiple" className="w-full flex flex-col gap-1">
-      {items.map((item) => (
-        <AccordionItem
-          value={item.id}
-          key={item.id}
-          className="flex flex-col border-none w-full px-2">
-          <AccordionTrigger className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md font-hel-heading">
-            <span className="flex items-center gap-3">
-              <span>{item.title}</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="text-muted-foreground">
-            {item.id === "1" ? (
-              <TextEditor
-                initialContent={briefDescription}
-                onChange={setBriefDescription}
-              />
-            ) : item.id === "2" ? (
-              <TextEditor initialContent={objective} onChange={setObjective} />
-            ) : item.id === "3" ? (
-              <TextEditor
-                initialContent={testDescription}
-                onChange={setTestDescription}
-              />
-            ) : item.id === "4" ? (
-              <TextEditor initialContent={testType} onChange={setTestType} />
-            ) : item.id === "5" ? (
-              <TextEditor
-                initialContent={samplingApproach}
-                onChange={setSamplingApproach}
-              />
-            ) : item.id === "6" ? (
-              <TextEditor initialContent={results} onChange={setResults} />
-            ) : item.id === "7" ? (
-              <TextEditor
-                initialContent={observation}
-                onChange={setObservation}
-              />
-            ) : item.id === "8" ? (
-              <TextEditor
-                initialContent={extendedProcedure}
-                onChange={setExtendedProcedure}
-              />
-            ) : item.id === "9" ? (
-              <TextEditor
-                initialContent={extendedResults}
-                onChange={setExtendedResults}
-              />
-            ) : item.id === "10" ? (
-              <TextEditor
-                initialContent={effectiveness}
-                onChange={setEffectiveness}
-              />
-            ) : item.id === "11" ? (
-              <TextEditor
-                initialContent={conclusion}
-                onChange={setConclusion}
-              />
+    <section className="flex py-3 flex-col gap-2">
+      <Label className="font-hel-heading-bold pl-2">Procedure Details</Label>
+      <Accordion
+        suppressHydrationWarning
+        type="multiple"
+        className="w-full flex flex-col gap-1">
+        {items.map((item) => (
+          <AccordionItem
+            suppressHydrationWarning
+            value={item.id}
+            key={item.id}
+            className="flex flex-col border-none w-full px-2">
+            {!(item.id === "9" || item.id === "10") || extendedTesting ? (
+              <AccordionTrigger
+                suppressHydrationWarning
+                icon={item.id === "8" || item.id === "4" ? false : true}
+                className={`px-4 py-4 hover:no-underline h-9 rounded-md font-hel-heading ${
+                  item.id === "8" || item.id === "4"
+                    ? "bg-transparent cursor-none pointer-events-none h-fit py-2"
+                    : "dark:bg-neutral-800 dark:hover:bg-neutral-800"
+                }`}>
+                <span className="flex items-center gap-3">
+                  {item.id === "8" ? (
+                    <section
+                      onClick={(e) => console.log(e)}
+                      className="flex flex-col  gap-2">
+                      <Label>Perform Extended Testing?</Label>
+                      <div className="inline-flex items-center gap-2">
+                        <div
+                          tabIndex={0}
+                          id={id}
+                          role="switch"
+                          aria-checked={extendedTesting}
+                          onClick={handleToggle}
+                          aria-label="Toggle switch"
+                          className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors pointer-events-auto
+                          ${
+                            extendedTesting ? "bg-blue-500" : "bg-neutral-500"
+                          }`}>
+                          <div
+                            className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform
+                          ${
+                            extendedTesting ? "translate-x-6" : "translate-x-0"
+                          }`}
+                          />
+                        </div>
+                        <Label
+                          htmlFor={id}
+                          className="font-table hover:no-underline font-medium">
+                          {extendedTesting ? "Yes" : "No"}
+                        </Label>
+                      </div>
+                    </section>
+                  ) : item.id === "4" ? (
+                    <section className="flex flex-col gap-2 py-2">
+                      <Label className="font-table">Audit Test Type</Label>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center space-x-2">
+                          <div
+                            id={id}
+                            role="checkbox"
+                            aria-checked={control}
+                            aria-label="Checkbox"
+                            tabIndex={0}
+                            onClick={handleControl}
+                            onKeyDown={(e) => {
+                              if (e.key === " " || e.key === "Enter") {
+                                e.preventDefault();
+                                setControl(!control);
+                              }
+                            }}
+                            className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
+                              control ? "bg-blue-500" : "bg-white"
+                            }`}>
+                            {control && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <Label
+                            onClick={(e) => e.stopPropagation()}
+                            htmlFor="control"
+                            className="pointer-events-auto font-table">
+                            Control
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <div
+                            id={id}
+                            role="checkbox"
+                            aria-checked={substantive}
+                            aria-label="Checkbox"
+                            tabIndex={0}
+                            onClick={handleSubstansive}
+                            onKeyDown={(e) => {
+                              if (e.key === " " || e.key === "Enter") {
+                                e.preventDefault();
+                                setSubstantive(!substantive);
+                              }
+                            }}
+                            className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
+                              substantive ? "bg-blue-500" : "bg-white"
+                            }`}>
+                            {substantive && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <Label
+                            onClick={(e) => e.stopPropagation()}
+                            htmlFor="substansive"
+                            className="pointer-events-auto font-table">
+                            Substansive
+                          </Label>
+                        </div>
+                      </div>
+                    </section>
+                  ) : (
+                    <span>{item.title}</span>
+                  )}
+                </span>
+              </AccordionTrigger>
             ) : null}
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+
+            <AccordionContent className="text-muted-foreground">
+              {item.id === "1" ? (
+                <TextEditor
+                  initialContent={briefDescription}
+                  onChange={setBriefDescription}
+                />
+              ) : item.id === "2" ? (
+                <TextEditor
+                  initialContent={objective}
+                  onChange={setObjective}
+                />
+              ) : item.id === "3" ? (
+                <TextEditor
+                  initialContent={testDescription}
+                  onChange={setTestDescription}
+                />
+              ) : item.id === "5" ? (
+                <TextEditor
+                  initialContent={samplingApproach}
+                  onChange={setSamplingApproach}
+                />
+              ) : item.id === "6" ? (
+                <TextEditor initialContent={results} onChange={setResults} />
+              ) : item.id === "7" ? (
+                <TextEditor
+                  initialContent={observation}
+                  onChange={setObservation}
+                />
+              ) : item.id === "9" && extendedTesting ? (
+                <TextEditor
+                  initialContent={extendedProcedure}
+                  onChange={setExtendedProcedure}
+                />
+              ) : item.id === "10" && extendedTesting ? (
+                <TextEditor
+                  initialContent={extendedResults}
+                  onChange={setExtendedResults}
+                />
+              ) : item.id === "11" ? (
+                <TextEditor
+                  initialContent={effectiveness}
+                  onChange={setEffectiveness}
+                />
+              ) : item.id === "12" ? (
+                <TextEditor
+                  initialContent={conclusion}
+                  onChange={setConclusion}
+                />
+              ) : null}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </section>
   );
 };

@@ -103,14 +103,21 @@ const columns: ColumnDef<RegulationsValues>[] = [
     size: 250,
   },
   {
-    id: "version",
-    header: () => <Label className="font-table">Version</Label>,
-    cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.version}
-      </Label>
-    ),
-    accessorKey: "version",
+    id: "issue_date",
+    header: () => <Label className="font-table">Issue Date</Label>,
+    cell: ({ row }) => {
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(new Date(row.original.issue_date));
+      return (
+        <Label className="ml-2 font-table truncate overflow-hidden">
+          {formatted}
+        </Label>
+      );
+    },
+    accessorKey: "issue_date",
     size: 20,
   },
   {

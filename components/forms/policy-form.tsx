@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
@@ -18,40 +18,91 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { PolicySchema } from "@/lib/types";
+import { PolicySchema, Response } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { showToast } from "../shared/toast";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type PolicyValues = z.infer<typeof PolicySchema>;
 
 interface PolicyFormProps {
   children: React.ReactNode;
-  engagement_id?: string;
+  id: string | null;
+  endpoint: string;
   title: string;
   mode?: string;
 }
 
 export const PolicyForm = ({
   children,
-  engagement_id,
+  id,
+  endpoint,
   title,
-  mode,
 }: PolicyFormProps) => {
   const [open, setOpen] = useState(false);
+
+  const params = useSearchParams();
+
+  const query_client = useQueryClient();
+
   const methods = useForm<PolicyValues>({
     resolver: zodResolver(PolicySchema),
   });
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = methods;
 
+  const { mutate: createPolicy, isPending: createPolicyLoading } = useMutation({
+    mutationKey: ["_create_policy_"],
+    mutationFn: async (data: FormData): Promise<Response> => {
+      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: data,
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
+
   const onSubmit = (data: PolicyValues) => {
-    console.log(data);
-    console.log(engagement_id, mode);
-    reset();
-    setOpen(false);
+    const policyData = new FormData();
+    policyData.append("name", data.name);
+    policyData.append("version", data.version);
+    policyData.append("key_areas", data.key_areas);
+    policyData.append("attachment", data.attachment);
+
+    createPolicy(policyData, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["_policies_", params.get("id")],
+        });
+        showToast(data.detail, "success");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+      onSettled: () => {
+        reset();
+        setOpen(false);
+      },
+    });
   };
 
   return (
@@ -104,6 +155,41 @@ export const PolicyForm = ({
                 />
                 <FormError error={errors.key_areas} />
               </div>
+              <div className="*:not-first:mt-2">
+                <Label htmlFor="attachment" className="ml-[2px] font-table">
+                  Attachment
+                </Label>
+
+                <Controller
+                  control={control}
+                  name="attachment"
+                  rules={{
+                    required: "Attachment is required",
+                    validate: (file) =>
+                      file?.type === "application/pdf" ||
+                      file?.type === "application/msword" ||
+                      file?.type ===
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                      "Only PDF or Word documents are allowed",
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <Input
+                        id="attachment"
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.onChange(file);
+                        }}
+                        ref={field.ref}
+                      />
+                    </>
+                  )}
+                />
+
+                <FormError error={errors.attachment} />
+              </div>
             </main>
 
             <Separator />
@@ -117,6 +203,7 @@ export const PolicyForm = ({
                 Cancel
               </Button>
               <Button
+                disabled={createPolicyLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
