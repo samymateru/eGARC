@@ -19,6 +19,7 @@ type Users = {
   id?: string;
   name?: string;
   email?: string;
+  date_issued?: string;
 };
 
 interface MultiSelectorProps {
@@ -26,7 +27,7 @@ interface MultiSelectorProps {
   users?: Array<Users>;
   trigger?: string;
   children?: ReactNode;
-  value: { name: string; email: string }[];
+  value: { name?: string; email?: string; date_issued?: string }[];
   onChange: (value: Users[]) => void;
 }
 

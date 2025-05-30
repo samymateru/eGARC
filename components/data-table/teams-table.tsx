@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useEffect, useId, useMemo, useState } from "react";
+import { CSSProperties, useId, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -42,12 +42,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CirclePlus,
-  Edit,
   Ellipsis,
   GripVerticalIcon,
-  SendHorizonal,
-  Trash2,
+  Pencil,
+  Trash,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -68,108 +66,69 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { PlanSchema } from "@/lib/types";
-import Link from "next/link";
-import SearchInput from "../shared/search-input";
-import MultiStatusFilter from "../shared/multi-status-filter";
-import { PlanningForm } from "../forms/create-audit-plan-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { UserSchema } from "@/lib/types";
 
-type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
+type UsersValues = z.infer<typeof UserSchema>;
 
-const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
+const columns: ColumnDef<UsersValues>[] = [
   {
     id: "sn",
     header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "name",
+    accessorKey: "",
     cell: ({ row }) => (
       <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
-    size: 5,
+    size: 10,
   },
   {
     id: "name",
     header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-table truncate text-balance">
         {row.original.name}
       </Label>
     ),
-    size: 350,
+    size: 300,
   },
   {
-    id: "year",
-    header: () => <Label className="font-table">Year</Label>,
+    id: "email",
+    header: () => <Label className="font-table">Email</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.year}
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.email}
       </Label>
     ),
-    accessorKey: "year",
+    accessorKey: "email",
+    size: 250,
   },
   {
-    id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    id: "role",
+    header: () => <Label className="font-table">Role</Label>,
+    accessorKey: "role",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.status}
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.role}
       </Label>
     ),
-    accessorKey: "status",
+    size: 250,
   },
   {
-    id: "start",
-    header: () => <Label className="font-table">Start</Label>,
-    accessorKey: "start",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("start")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
-  {
-    id: "end",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("end")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
-  {
-    id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
-    accessorKey: "attachment",
+    id: "telephone",
+    header: () => <Label className="font-table">Telephone</Label>,
     cell: ({ row }) => (
-      <a
-        href={row.getValue("attachment")}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-table">
-        View Attachment
-      </a>
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.telephone}
+      </Label>
     ),
+    accessorKey: "telephone",
+    size: 50,
   },
+
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
-    cell: ({ row }) => (
+    header: () => <Label className="font-table">More</Label>,
+    cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -179,27 +138,18 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
+          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Link
-                href={{
-                  pathname: "/eAuditNext/engagements",
-                  query: { id: row.original.id },
-                }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <SendHorizonal size={16} strokeWidth={3} />
-                Engage
-              </Link>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                <Pencil size={16} strokeWidth={3} />
                 Edit
               </Button>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                <Trash size={16} strokeWidth={3} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -207,56 +157,28 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         </Popover>
       </div>
     ),
-    size: 20,
+    size: 10,
     minSize: 3,
   },
 ];
 
-interface AnnualAuditPlanningTableProps {
-  data: AnnualAuditPlanningValues[];
+interface TeamsTableProps {
+  data: UsersValues[];
 }
 
-export default function AnnualAuditPlanningTable({
-  data,
-}: AnnualAuditPlanningTableProps) {
-  const router = useRouter();
+export const TeamsTable = ({ data }: TeamsTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const params = useSearchParams();
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
 
-  const [searchName, setSearchName] = useState("");
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<AnnualAuditPlanningValues[]>([]);
-
-  const statusOptions = useMemo(() => {
-    return Array.from(new Set(data.map((item) => String(item.status))));
-  }, [data]);
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 9,
+    pageSize: 10,
   });
 
-  useEffect(() => {
-    const filtered = data.filter((row) => {
-      const matchesName = row.name
-        .toLowerCase()
-        .includes(searchName.toLowerCase());
-
-      const matchesStatus =
-        selectedStatuses.length === 0 ||
-        selectedStatuses.includes(row.status ?? "");
-
-      return matchesName && matchesStatus;
-    });
-    setTableData(filtered);
-  }, [data, searchName, selectedStatuses]);
-
   const table = useReactTable({
-    data: tableData,
+    data,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -305,33 +227,7 @@ export default function AnnualAuditPlanningTable({
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        <section className="flex items-center gap-3 pl-2">
-          <SearchInput
-            placeholder="Plan name"
-            value={searchName}
-            onChange={setSearchName}
-          />
-          <MultiStatusFilter
-            options={statusOptions}
-            value={selectedStatuses}
-            onChange={setSelectedStatuses}
-          />
-        </section>
-        <PlanningForm
-          endpoint="annual_plans"
-          title="Audit Plan"
-          mode="create"
-          company_module_id={params.get("id") ?? undefined}>
-          <Button
-            variant="ghost"
-            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
-            <CirclePlus size={16} strokeWidth={3} />
-            Plan
-          </Button>
-        </PlanningForm>
-      </div>
-      <Table className="w-[calc(100%-1rem)]">
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -349,10 +245,6 @@ export default function AnnualAuditPlanningTable({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onDoubleClick={() => {
-                  router.push(`/eAuditNext/engagements?id=${row.original.id}`);
-                }}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
@@ -438,12 +330,12 @@ export default function AnnualAuditPlanningTable({
       </div>
     </DndContext>
   );
-}
+};
 
 const DraggableTableHeader = ({
   header,
 }: {
-  header: Header<AnnualAuditPlanningValues, unknown>;
+  header: Header<UsersValues, unknown>;
 }) => {
   const {
     attributes,
@@ -545,11 +437,7 @@ const DraggableTableHeader = ({
   );
 };
 
-const DragAlongCell = ({
-  cell,
-}: {
-  cell: Cell<AnnualAuditPlanningValues, unknown>;
-}) => {
+const DragAlongCell = ({ cell }: { cell: Cell<UsersValues, unknown> }) => {
   const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: cell.column.id,
   });

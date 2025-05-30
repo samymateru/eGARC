@@ -7,7 +7,7 @@ import { FormProvider, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { EngagementSchema, Response } from "@/lib/types";
+import { EngagementSchema, Response, UserSchema } from "@/lib/types";
 import { UserMultiSelector } from "../shared/user-multiselector";
 import {
   Select,
@@ -35,6 +35,7 @@ import { showToast } from "../shared/toast";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type EngagementValues = z.infer<typeof EngagementSchema>;
+type UserValuses = z.infer<typeof UserSchema>;
 
 interface EngagementFormProps {
   children: React.ReactNode;
@@ -44,7 +45,7 @@ interface EngagementFormProps {
   mode?: string;
 }
 
-const fetchData = async (endpont: string, id?: string) => {
+const fetchData = async (endpont: string, id?: string | null) => {
   const response = await fetch(`${BASE_URL}/${endpont}/${id}`, {
     headers: {
       "Content-Type": "application/json",
@@ -82,11 +83,6 @@ type BusinessProcessResponse = {
   sub_process_name: Array<string>;
 };
 
-type UserResponse = {
-  id?: string;
-  name?: string;
-  email?: string;
-};
 export const EngagementForm = ({
   children,
   id,
@@ -111,6 +107,8 @@ export const EngagementForm = ({
       // other fields...
     },
   });
+
+  const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
 
   const query_client = useQueryClient();
   const [openSelect, setOpenSelect] = useState<null | "risk" | "dept" | "type">(
@@ -148,7 +146,8 @@ export const EngagementForm = ({
       },
       {
         queryKey: ["__leads__"],
-        queryFn: async (): Promise<UserResponse[]> => fetchData("users", ""),
+        queryFn: async (): Promise<UserValuses[]> =>
+          fetchData("users/module", localStorage.getItem("moduleId")),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
@@ -156,6 +155,13 @@ export const EngagementForm = ({
       },
     ],
   });
+
+  useEffect(() => {
+    if (results[3]?.data && Array.isArray(results[3]?.data)) {
+      setAuditUsers(results[3].data?.filter((user) => user.type === "audit"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results[3].data]);
 
   const { mutate: createMutation, isPending } = useMutation({
     mutationKey: ["_create_annual_plan_"],
@@ -196,7 +202,16 @@ export const EngagementForm = ({
   };
 
   const onSubmit = (data: EngagementValues) => {
-    createMutation(data, {
+    const engagementData: EngagementValues = {
+      ...data,
+      leads: data.leads.map((lead) => ({
+        name: lead.name,
+        email: lead.email,
+        role: "Lead",
+      })),
+    };
+
+    createMutation(engagementData, {
       onSuccess: (data) => {
         query_client.invalidateQueries({ queryKey: ["_engagements_", id] });
         showToast(data.detail, "success");
@@ -210,23 +225,6 @@ export const EngagementForm = ({
       },
     });
   };
-
-  if (
-    results[0].isLoading ||
-    results[1].isLoading ||
-    results[2].isLoading ||
-    results[3].isLoading
-  ) {
-    return <div>loading</div>;
-  }
-  if (
-    results[0].isError ||
-    results[1].isError ||
-    results[2].isError ||
-    results[3].isError
-  ) {
-    return <div>Error</div>;
-  }
 
   const selectedProcess = watch("department")?.name;
   const subProcesses =
@@ -266,7 +264,7 @@ export const EngagementForm = ({
                     />
                     <FormError error={errors.name} />
                   </div>
-                  <div>
+                  <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Leads
                     </Label>
@@ -276,7 +274,7 @@ export const EngagementForm = ({
                       render={({ field }) => (
                         <UserMultiSelector
                           trigger="Select Team leads"
-                          users={results[3].data}
+                          users={auditUsers}
                           title="Engagement leads"
                           value={field.value || []}
                           onChange={field.onChange}

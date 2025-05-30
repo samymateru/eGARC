@@ -18,6 +18,9 @@ type Content = {
   id?: string;
   name?: string;
   email?: string;
+  telephone?: string;
+  entity_email?: string;
+  entity_id?: string;
 };
 
 export type SignupResponse = {
@@ -76,6 +79,15 @@ export function LoginForm({
             localStorage.setItem("user_id", data?.content?.id ?? "");
             localStorage.setItem("user_name", data?.content?.name ?? "");
             localStorage.setItem("user_email", data?.content?.email ?? "");
+            localStorage.setItem(
+              "user_telephone",
+              data?.content?.telephone ?? ""
+            );
+            localStorage.setItem(
+              "entity_email",
+              data?.content?.entity_email ?? ""
+            );
+            localStorage.setItem("entity_id", data?.content?.entity_id ?? "");
           }
           reset();
           router.push("/");
@@ -165,7 +177,7 @@ export function LoginForm({
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <a href="/signup" className="underline underline-offset-4">
           Sign up
         </a>
       </div>

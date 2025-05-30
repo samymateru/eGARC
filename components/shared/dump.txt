@@ -1,0 +1,37 @@
+interface OrganizationsActionsProps {
+  children: ReactNode;
+  id?: string;
+}
+
+type ModuleResponse = {
+  id?: string;
+  name?: string;
+  status?: string;
+};
+
+const OrganizationsActions = ({ children }: OrganizationsActionsProps) => {
+  const router = useRouter();
+  const { data } = useQuery({
+    queryKey: ["_modules_"],
+    queryFn: async (): Promise<ModuleResponse[]> => {
+      const response = await fetch(`${BASE_URL}/modules/e77a2210c368`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+  });

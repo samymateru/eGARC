@@ -177,12 +177,6 @@ export const RiskControlForm = ({
     });
   };
 
-  if (results[0].isLoading || results[1].isLoading || results[2].isLoading) {
-    return <div>loading</div>;
-  }
-  if (results[0].isError || results[1].isError || results[2].isError) {
-    return <div>Error</div>;
-  }
   return (
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>

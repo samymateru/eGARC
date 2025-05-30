@@ -62,7 +62,7 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
             <Moon size={16} strokeWidth={3} />
             Theme
             {showSubmenu && (
-              <section className="p-1 absolute top-0 right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg">
+              <section className="p-1 absolute top-0 left-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg">
                 <Button
                   variant="ghost"
                   className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"

@@ -34,6 +34,8 @@ import { EngagementProcessForm } from "./../../../../../components/forms/engagem
 import { useSearchParams } from "next/navigation";
 import TextEditor from "@/components/shared/tiptap-text-editor";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { StaffForm } from "@/components/forms/staffing-form";
+import { Staff } from "./staff";
 
 const items = [
   {
@@ -171,7 +173,7 @@ export const Administration = () => {
         Contacts
       </TabsContent>
       <TabsContent value="staffing" className="flex-1 w-full">
-        Staffing
+        <Staff />
       </TabsContent>
       <TabsContent value="policies" className="flex-1 w-full">
         <Policies />
@@ -232,6 +234,17 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
               Process
             </Button>
           </EngagementProcessForm>
+          <StaffForm
+            title="Staffing"
+            id={params.get("id")}
+            endpoint="engagements/staff">
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-start h-[30px]">
+              <Users size={16} />
+              Staffing
+            </Button>
+          </StaffForm>
         </section>
       </PopoverContent>
     </Popover>

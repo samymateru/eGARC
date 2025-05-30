@@ -31,11 +31,6 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import {
   ChevronDownIcon,
@@ -43,11 +38,8 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CirclePlus,
-  Edit,
   Ellipsis,
   GripVerticalIcon,
-  SendHorizonal,
-  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -68,16 +60,15 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { PlanSchema } from "@/lib/types";
-import Link from "next/link";
+import { OrganizationSchema } from "@/lib/types";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
-import { PlanningForm } from "../forms/create-audit-plan-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { OrganizationForm } from "../forms/organization-form";
+import { ModuleSelect } from "../shared/module-select";
 
-type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
+type OrganizationValues = z.infer<typeof OrganizationSchema>;
 
-const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
+const columns: ColumnDef<OrganizationValues>[] = [
   {
     id: "sn",
     header: () => <Label className="font-table">S/N</Label>,
@@ -99,137 +90,104 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     size: 350,
   },
   {
-    id: "year",
-    header: () => <Label className="font-table">Year</Label>,
+    id: "email",
+    header: () => <Label className="font-table">Email</Label>,
     cell: ({ row }) => (
       <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.year}
+        {row.original.email}
       </Label>
     ),
-    accessorKey: "year",
+    accessorKey: "email",
+  },
+  {
+    id: "telephone",
+    header: () => <Label className="font-table">Phone</Label>,
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate overflow-hidden">
+        {row.original.telephone}
+      </Label>
+    ),
+    accessorKey: "telephone",
+    size: 50,
+  },
+  {
+    id: "default",
+    header: () => <Label className="font-table">Default</Label>,
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate overflow-hidden">
+        {row.original.default ? "Yes" : "No"}
+      </Label>
+    ),
+    accessorKey: "default",
+    size: 20,
+  },
+  {
+    id: "type",
+    header: () => <Label className="font-table">Type</Label>,
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate overflow-hidden">
+        {row.original.type}
+      </Label>
+    ),
+    accessorKey: "type",
+    size: 100,
+  },
+  {
+    id: "mode",
+    header: () => <Label className="font-table">Mode</Label>,
+    cell: () => (
+      <Label className="ml-2 font-table truncate overflow-hidden">
+        {typeof window === "undefined"
+          ? ""
+          : localStorage.getItem("user_email") ===
+            localStorage.getItem("entity_email")
+          ? "Own"
+          : "Invited"}
+      </Label>
+    ),
+    size: 50,
   },
   {
     id: "status",
     header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-table truncate overflow-hidden text-center w-full">
         {row.original.status}
       </Label>
     ),
     accessorKey: "status",
-  },
-  {
-    id: "start",
-    header: () => <Label className="font-table">Start</Label>,
-    accessorKey: "start",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("start")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
-  {
-    id: "end",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("end")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
-  {
-    id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
-    accessorKey: "attachment",
-    cell: ({ row }) => (
-      <a
-        href={row.getValue("attachment")}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-table">
-        View Attachment
-      </a>
-    ),
+    size: 50,
   },
   {
     id: "actions",
     header: () => <Label className="font-table">Actions</Label>,
     cell: ({ row }) => (
-      <div className="flex justify-center items-center w-full h-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
-            <div className="flex flex-col divide-y">
-              <Link
-                href={{
-                  pathname: "/eAuditNext/engagements",
-                  query: { id: row.original.id },
-                }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <SendHorizonal size={16} strokeWidth={3} />
-                Engage
-              </Link>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
+      <ModuleSelect id={row.original.id ?? ""}>
+        <Button
+          className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+          variant="ghost">
+          <Ellipsis />
+        </Button>
+      </ModuleSelect>
     ),
     size: 20,
     minSize: 3,
   },
 ];
 
-interface AnnualAuditPlanningTableProps {
-  data: AnnualAuditPlanningValues[];
+interface OrganizationTableProps {
+  data: OrganizationValues[];
 }
 
-export default function AnnualAuditPlanningTable({
-  data,
-}: AnnualAuditPlanningTableProps) {
-  const router = useRouter();
+export default function OrganizationTable({ data }: OrganizationTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const params = useSearchParams();
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
 
   const [searchName, setSearchName] = useState("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<AnnualAuditPlanningValues[]>([]);
+  const [tableData, setTableData] = useState<OrganizationValues[]>([]);
 
   const statusOptions = useMemo(() => {
     return Array.from(new Set(data.map((item) => String(item.status))));
@@ -239,6 +197,17 @@ export default function AnnualAuditPlanningTable({
     pageIndex: 0,
     pageSize: 9,
   });
+
+  const [shouldRender, setShouldRender] = useState(false);
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem("user_email");
+    const entityEmail = localStorage.getItem("entity_email");
+
+    if (userEmail && userEmail === entityEmail) {
+      setShouldRender(true);
+    }
+  }, []);
 
   useEffect(() => {
     const filtered = data.filter((row) => {
@@ -318,20 +287,22 @@ export default function AnnualAuditPlanningTable({
             onChange={setSelectedStatuses}
           />
         </section>
-        <PlanningForm
-          endpoint="annual_plans"
-          title="Audit Plan"
-          mode="create"
-          company_module_id={params.get("id") ?? undefined}>
-          <Button
-            variant="ghost"
-            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
-            <CirclePlus size={16} strokeWidth={3} />
-            Plan
-          </Button>
-        </PlanningForm>
+        {shouldRender && (
+          <OrganizationForm
+            endpoint="organization"
+            title="Organization"
+            mode="create"
+            id={localStorage.getItem("entity_id") ?? ""}>
+            <Button
+              variant="ghost"
+              className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[150px] justify-start font-serif tracking-wide scroll-m-0">
+              <CirclePlus size={16} strokeWidth={3} />
+              Organization
+            </Button>
+          </OrganizationForm>
+        )}
       </div>
-      <Table className="w-[calc(100%-1rem)]">
+      <Table className="w-full">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -350,9 +321,6 @@ export default function AnnualAuditPlanningTable({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onDoubleClick={() => {
-                  router.push(`/eAuditNext/engagements?id=${row.original.id}`);
-                }}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
@@ -443,7 +411,7 @@ export default function AnnualAuditPlanningTable({
 const DraggableTableHeader = ({
   header,
 }: {
-  header: Header<AnnualAuditPlanningValues, unknown>;
+  header: Header<OrganizationValues, unknown>;
 }) => {
   const {
     attributes,
@@ -548,7 +516,7 @@ const DraggableTableHeader = ({
 const DragAlongCell = ({
   cell,
 }: {
-  cell: Cell<AnnualAuditPlanningValues, unknown>;
+  cell: Cell<OrganizationValues, unknown>;
 }) => {
   const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: cell.column.id,
@@ -564,7 +532,24 @@ const DragAlongCell = ({
   };
 
   return (
-    <TableCell ref={setNodeRef} className="truncate" style={style}>
+    <TableCell
+      ref={setNodeRef}
+      className={`truncate ${
+        cell.column.id === "default"
+          ? "text-center"
+          : cell.column.id === "status"
+          ? "text-center"
+          : cell.column.id === "telephone"
+          ? "text-center"
+          : cell.column.id === "email"
+          ? "text-center"
+          : cell.column.id === "type"
+          ? "text-center"
+          : cell.column.id === "mode"
+          ? "text-center"
+          : ""
+      }`}
+      style={style}>
       {flexRender(cell.column.columnDef.cell, cell.getContext())}
     </TableCell>
   );

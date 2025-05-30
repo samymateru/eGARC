@@ -27,7 +27,7 @@ export const ModuleDropdown = ({ children }: ModuleDropdownProps) => {
   const { data, isLoading, isError, isSuccess, error } = useQuery({
     queryKey: ["_modules_"],
     queryFn: async (): Promise<ModuleResponse[]> => {
-      const response = await fetch(`${BASE_URL}/company_modules`, {
+      const response = await fetch(`${BASE_URL}/modules/e77a2210c368`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
@@ -54,7 +54,11 @@ export const ModuleDropdown = ({ children }: ModuleDropdownProps) => {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="px-2 py-2 h-fit w-[250px] dark:bg-black font-serif font-semibold tracking-wide scroll-m-0">
+      <DropdownMenuContent
+        side="left"
+        align="start"
+        sideOffset={12}
+        className="px-2 py-2 h-fit w-[250px] dark:bg-black font-serif font-semibold tracking-wide scroll-m-0">
         <Label className="font-[Helvetica] tracking-wide scroll-m-0 font-semibold text-[20px]">
           Modules
         </Label>

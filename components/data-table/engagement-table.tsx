@@ -71,6 +71,7 @@ import { EngagementSchema } from "@/lib/types";
 import Link from "next/link";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
+import { useRouter } from "next/navigation";
 
 type EngagementSchemaValues = z.infer<typeof EngagementSchema>;
 
@@ -212,6 +213,8 @@ export default function EngagementTable({ data }: EngagementTableProps) {
     pageSize: 10,
   });
 
+  const router = useRouter();
+
   const statusOptions = useMemo(() => {
     return Array.from(new Set(data.map((item) => String(item.status))));
   }, [data]);
@@ -313,6 +316,12 @@ export default function EngagementTable({ data }: EngagementTableProps) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onDoubleClick={() => {
+                  router.push(
+                    `/eAuditNext/engagement?id=${row.original.id}&action=administration&name=${row.original.name}`
+                  );
+                }}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (

@@ -19,7 +19,7 @@ export type UserResponse = {
 export const User = z.object({
   name: z.string().optional(),
   email: z.string().optional(),
-  date_issued: z.string(),
+  date_issued: z.string().optional(),
 });
 
 export const PlanSchema = z.object({
@@ -220,6 +220,7 @@ export const RoleSchema = z.object({
 export const LeadSchema = z.object({
   name: z.string().min(1, "Leader name is required"),
   email: z.string().min(1, "Leader email is required"),
+  role: z.string().default("Lead").optional(),
 });
 
 export const DepartmentSchema = z.object({
@@ -364,4 +365,82 @@ export const EngagementProfileSchema = z.object({
   estimated_dates: z.object({
     value: z.string(),
   }),
+});
+
+export const IssueSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  criteria: z.string(),
+  finding: z.string(),
+  risk_rating: z.string(),
+  process: z.string(),
+  source: z.string(),
+  sdi_name: z.string(),
+  sub_process: z.string(),
+  root_cause_description: z.string(),
+  root_cause: z.string(),
+  sub_root_cause: z.string(),
+  risk_category: z.string(),
+  sub_risk_category: z.string(),
+  impact_description: z.string(),
+  impact_category: z.string(),
+  impact_sub_category: z.string(),
+  recurring_status: z.boolean(),
+  recommendation: z.string(),
+  management_action_plan: z.string(),
+  regulatory: z.boolean(),
+  estimated_implementation_date: z.string().datetime(),
+  prepared_by: User,
+  reviewed_by: User,
+  status: z
+    .enum(["Not started", "In progress", "Completed", "Closed"])
+    .optional()
+    .default("Not started"),
+  reportable: z.boolean(),
+  lod1_implementer: z.array(User),
+  lod1_owner: z.array(User),
+  observers: z.array(User),
+  lod2_risk_manager: z.array(User),
+  lod2_compliance_officer: z.array(User),
+  lod3_audit_manager: z.array(User),
+});
+
+export const ModuleSchema = z.object({
+  id: z.string().optional(),
+  name: z.string({ required_error: "Provide module name" }),
+  purchase_date: z.date().optional(),
+  status: z.string().optional(),
+});
+
+export const OrganizationSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Organization name is required"),
+  email: z.string().email().optional(),
+  telephone: z.string().optional(),
+  default: z.boolean().optional(),
+  type: z
+    .string({ required_error: "Organization type is required" })
+    .min(1, "Organization type is required"),
+  status: z.enum(["Active", "Inactive"]).optional(),
+  website: z.string().url({ message: "Invalid website URL" }).optional(),
+  created_at: z.string().datetime().optional(),
+});
+
+export const UserSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Please provide member name"),
+  email: z.string().email({ message: "Provide valid email please" }),
+  telephone: z.string().optional(),
+  role: z.string({ required_error: "Provide user title" }),
+  module: z.string().optional(),
+  type: z.string().optional(),
+});
+
+export const StaffSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Please provide staff name"),
+  email: z.string().email().optional(),
+  start_date: z.date({ required_error: "Start date is required" }),
+  end_date: z.date({ required_error: "End date is required" }),
+  role: z.string().optional(),
 });
