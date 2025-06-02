@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useEffect, useId, useState } from "react";
+import { CSSProperties, useId, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -32,20 +32,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  Edit,
-  Ellipsis,
+  CircleCheck,
+  CircleX,
   GripVerticalIcon,
-  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -66,156 +59,118 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { StaffSchema } from "@/lib/types";
-import SearchInput from "../shared/search-input";
+import { IssueSchema } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
 
-type StaffValues = z.infer<typeof StaffSchema>;
+type IssueValues = z.infer<typeof IssueSchema>;
 
-const columns: ColumnDef<StaffValues>[] = [
+const columns: ColumnDef<IssueValues>[] = [
   {
-    id: "sn",
-    header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "name",
+    id: "ref",
+    header: () => <Label className="font-table">Reference</Label>,
+    accessorKey: "ref",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row.index + 1}</Label>
+      <Label className="ml-4 font-table">{row?.original?.ref}</Label>
     ),
-    size: 5,
+    size: 20,
   },
   {
-    id: "name",
-    header: () => <Label className="font-table">Name</Label>,
-    accessorKey: "name",
+    id: "title",
+    header: () => <Label className="font-table">Title</Label>,
+    accessorKey: "title",
     cell: ({ row }) => (
       <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.name}
+        {row.original.title}
       </Label>
     ),
-    size: 250,
+    size: 300,
   },
   {
-    id: "email",
-    header: () => <Label className="font-table">Email</Label>,
-    accessorKey: "email",
+    id: "status",
+    header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.email}
+      <Label className="ml-2 font-table truncate text-balance text-center">
+        {row.original.status}
       </Label>
     ),
+    accessorKey: "status",
     size: 200,
   },
   {
-    id: "role",
-    header: () => <Label className="font-table">Role</Label>,
+    id: "rating",
+    header: () => <Label className="font-table">Rating</Label>,
     cell: ({ row }) => (
       <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.role}
+        {row.original.risk_rating}
       </Label>
     ),
-    accessorKey: "role",
+    accessorKey: "rating",
+    size: 350,
   },
   {
-    id: "start_date",
-    header: () => <Label className="font-table">Start</Label>,
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row?.original?.start_date));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-    accessorKey: "start_date",
-  },
-  {
-    id: "end_date",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("end_date")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
-  {
-    id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
-    cell: () => (
-      <div className="flex justify-center items-center w-full h-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
-            <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+    id: "regulatory",
+    header: () => <Label className="font-table">Regulatory</Label>,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        {row.original.regulatory ? (
+          <CircleCheck size={20} strokeWidth={3} className="text-green-900" />
+        ) : (
+          <CircleX size={20} strokeWidth={3} className="text-red-900" />
+        )}
       </div>
     ),
+    accessorKey: "regulatory",
     size: 20,
-    minSize: 3,
+  },
+  {
+    id: "reportable",
+    header: () => <Label className="font-table">Reportable</Label>,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        {row.original.reportable ? (
+          <CircleCheck size={20} strokeWidth={3} className="text-green-900" />
+        ) : (
+          <CircleX size={20} strokeWidth={3} className="text-red-900" />
+        )}
+      </div>
+    ),
+    accessorKey: "reportable",
+    size: 20,
+  },
+  {
+    id: "recurring",
+    header: () => <Label className="font-table">Recurring</Label>,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center">
+        {row.original.recurring_status ? (
+          <CircleCheck size={20} strokeWidth={3} className="text-green-900" />
+        ) : (
+          <CircleX size={20} strokeWidth={3} className="text-red-900" />
+        )}
+      </div>
+    ),
+    accessorKey: "recurring_status",
+    size: 20,
   },
 ];
 
-interface StaffTableProps {
-  data: StaffValues[];
+interface IssueTableProps {
+  data: IssueValues[];
 }
 
-export default function StaffTable({ data }: StaffTableProps) {
+export const IssueTable = ({ data }: IssueTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
 
-  const [searchName, setSearchName] = useState("");
-  const [tableData, setTableData] = useState<StaffValues[]>([]);
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 9,
+    pageSize: 10,
   });
 
-  useEffect(() => {
-    const filtered = data.filter((row) => {
-      const matchesName = row.name
-        .toLowerCase()
-        .includes(searchName.toLowerCase());
-
-      return matchesName;
-    });
-    setTableData(filtered);
-  }, [data, searchName]);
-
   const table = useReactTable({
-    data: tableData,
+    data,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -264,16 +219,7 @@ export default function StaffTable({ data }: StaffTableProps) {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        <section className="flex items-center gap-3 pl-2">
-          <SearchInput
-            placeholder="Plan name"
-            value={searchName}
-            onChange={setSearchName}
-          />
-        </section>
-      </div>
-      <Table className="w-[calc(100%-1rem)]">
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -291,7 +237,6 @@ export default function StaffTable({ data }: StaffTableProps) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
@@ -377,12 +322,12 @@ export default function StaffTable({ data }: StaffTableProps) {
       </div>
     </DndContext>
   );
-}
+};
 
 const DraggableTableHeader = ({
   header,
 }: {
-  header: Header<StaffValues, unknown>;
+  header: Header<IssueValues, unknown>;
 }) => {
   const {
     attributes,
@@ -484,11 +429,33 @@ const DraggableTableHeader = ({
   );
 };
 
-const DragAlongCell = ({ cell }: { cell: Cell<StaffValues, unknown> }) => {
+const DragAlongCell = ({ cell }: { cell: Cell<IssueValues, unknown> }) => {
+  const params = useSearchParams();
+  const router = useRouter();
+
   const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: cell.column.id,
   });
 
+  const setAction = (action: string, stage?: string) => {
+    const param = new URLSearchParams(params.toString());
+    param.set("action", action);
+    if (stage) {
+      param.set("stage", stage);
+    }
+    router.replace(`?${param.toString()}`, { scroll: false });
+  };
+
+  const cellValue = cell.getValue();
+
+  // Add onClick only for "Issued_id" column
+  const handleClick = () => {
+    if (cell.column.id === "ref" && cellValue) {
+      const data = cell.row.original?.id;
+      setAction(data ?? "");
+      localStorage.setItem("issue_id", params.get("action") ?? "");
+    }
+  };
   const style: CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     position: "relative",
@@ -499,7 +466,7 @@ const DragAlongCell = ({ cell }: { cell: Cell<StaffValues, unknown> }) => {
   };
 
   return (
-    <TableCell ref={setNodeRef} className="truncate" style={style}>
+    <TableCell ref={setNodeRef} onClick={handleClick} style={style}>
       {flexRender(cell.column.columnDef.cell, cell.getContext())}
     </TableCell>
   );

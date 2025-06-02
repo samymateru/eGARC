@@ -75,7 +75,6 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
       <PopoverContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         className="w-auto p-2 flex flex-col dark:bg-black"
-        side="right"
         align="center">
         <div className="flex items-center gap-2 mb-2">
           {/* Month Selector */}

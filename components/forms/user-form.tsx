@@ -35,12 +35,19 @@ type UsersValues = z.infer<typeof UserSchema>;
 
 const titles = [
   "Chief Audit Executive",
-  "Head of Audit",
   "Senior Auditor",
   "Audit Specialist",
   "System Auditor",
   "Auditor",
   "Audit Associate",
+];
+
+const auditRoles = ["Head of Audit", "Administrator", "Member"];
+
+const businessRoles = [
+  "Business Management",
+  "Risk Oversight Role",
+  "Compliance Oversight Role",
 ];
 
 const business = [
@@ -121,6 +128,7 @@ export const UsersForm = ({
       email: data.email,
       telephone: data.telephone,
       role: data.role,
+      title: data.title,
       module: params.get("moduleId") ?? "",
       type: member,
     };
@@ -198,7 +206,45 @@ export const UsersForm = ({
               </div>
               <div className="*:not-first:mt-2 flex-1">
                 <Label
-                  htmlFor="type"
+                  htmlFor="title"
+                  className="font-serif tracking-wide scroll-m-1 font-semibold">
+                  Title <span className="text-destructive">*</span>
+                </Label>
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Member Title" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {member === "audit"
+                          ? titles.map((item, index) => (
+                              <SelectItem
+                                key={index}
+                                value={item}
+                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                {item}
+                              </SelectItem>
+                            ))
+                          : business.map((item, index) => (
+                              <SelectItem
+                                key={index}
+                                value={item}
+                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                {item}
+                              </SelectItem>
+                            ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <FormError error={errors.title} />
+              </div>
+              <div className="*:not-first:mt-2 flex-1">
+                <Label
+                  htmlFor="role"
                   className="font-serif tracking-wide scroll-m-1 font-semibold">
                   Role <span className="text-destructive">*</span>
                 </Label>
@@ -212,7 +258,7 @@ export const UsersForm = ({
                       </SelectTrigger>
                       <SelectContent>
                         {member === "audit"
-                          ? titles.map((item, index) => (
+                          ? auditRoles.map((item, index) => (
                               <SelectItem
                                 key={index}
                                 value={item}
@@ -220,7 +266,7 @@ export const UsersForm = ({
                                 {item}
                               </SelectItem>
                             ))
-                          : business.map((item, index) => (
+                          : businessRoles.map((item, index) => (
                               <SelectItem
                                 key={index}
                                 value={item}

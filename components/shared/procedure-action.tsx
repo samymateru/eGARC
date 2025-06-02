@@ -50,7 +50,10 @@ export const ProcedureAction = ({ children, side }: ProcedureActionProps) => {
               Risk & Control
             </Button>
           </RiskControlForm>
-          <IssueForm title="Add Issue">
+          <IssueForm
+            title="Add Issue"
+            endpoint="issue"
+            id={params.get("action")}>
             <Button
               variant="ghost"
               className="w-full flex justify-start gap-2 items-center h-[30px]">

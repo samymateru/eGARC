@@ -32,7 +32,7 @@ type ModuleResponse = {
   status?: string;
 };
 
-export const SystemOptions = ({ children }: SystemOptionsProps) => {
+export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
   const [showSubmenu, setShowSubmenu] = useState(false);
   const [showModules, setShowModules] = useState(false);
   const leaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -116,7 +116,7 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
             Modules
             {showModules && (
               <section
-                className={`p-1 absolute top-[-30px] left-[calc(100%+12px)] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
+                className={`p-1 absolute top-[0px] right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
                 {data?.map((module) => (
                   <Link
                     onClick={() => setShowModules(false)}
@@ -168,7 +168,7 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
             Theme
             {showSubmenu && (
               <section
-                className={`p-1 absolute top-[-35px] left-[calc(100%+12px)] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
+                className={`p-1 absolute top-[0px] right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
                 <Button
                   variant="ghost"
                   className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"

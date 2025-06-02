@@ -32,6 +32,9 @@ import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { Textarea } from "../ui/textarea";
 import { UserMultiSelector } from "../shared/user-multiselector";
+import { Checkbox } from "../ui/checkbox";
+import { DatePicker } from "../shared/date-picker";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type IssueValues = z.infer<typeof IssueSchema>;
@@ -39,8 +42,8 @@ type UserValuses = z.infer<typeof UserSchema>;
 
 interface IssueFormProps {
   children: React.ReactNode;
-  id?: string;
-  endpoint?: string;
+  id: string | null;
+  endpoint: string;
   title: string;
   mode?: string;
 }
@@ -69,7 +72,7 @@ type IssueSourceResponse = {
 };
 
 type RiskRatingResponse = {
-  values?: Array<Rating>;
+  values?: Array<string>;
 };
 
 type BusinessProcessResponse = {
@@ -93,11 +96,6 @@ type ImpactCategoryResponse = {
   impact_sub_category: Array<string>;
 };
 
-type Rating = {
-  name?: string;
-  magnitude?: number;
-};
-
 export const IssueForm = ({
   children,
   id,
@@ -105,10 +103,14 @@ export const IssueForm = ({
   title,
 }: IssueFormProps) => {
   const [open, setOpen] = useState(false);
+  const [regulatory, setRegulatory] = useState<boolean>(false);
+  const [recurring, setRecurring] = useState<boolean>(false);
 
   const methods = useForm<IssueValues>({
     resolver: zodResolver(IssueSchema),
   });
+
+  const params = useSearchParams();
 
   const query_client = useQueryClient();
 
@@ -139,9 +141,9 @@ export const IssueForm = ({
         refetchOnReconnect: true,
       },
       {
-        queryKey: ["__risk_rating__"],
+        queryKey: ["__control_weakness__"],
         queryFn: async (): Promise<RiskRatingResponse> =>
-          fetchData("profile/risk_rating", ""),
+          fetchData("profile/control_weakness_rating", ""),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
@@ -193,16 +195,19 @@ export const IssueForm = ({
   const { mutate: createIssue, isPending: issueLoading } = useMutation({
     mutationKey: ["_create_annual_plan_"],
     mutationFn: async (data: IssueValues): Promise<Response> => {
-      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${BASE_URL}/${endpoint}/${id}?engagement_id=${params.get("id")}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw {
@@ -256,9 +261,57 @@ export const IssueForm = ({
   };
 
   const onSubmit = (data: IssueValues) => {
-    createIssue(data, {
+    const IssueData: IssueValues = {
+      ...data,
+      lod1_implementer: data.lod1_implementer.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      lod1_owner: data.lod1_owner.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      lod2_risk_manager: data.lod2_risk_manager.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      lod2_compliance_officer: data.lod2_compliance_officer.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      lod3_audit_manager: data.lod3_audit_manager.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      observers: data.observers.map((user) => {
+        return {
+          ...user,
+          date_issued: new Date().toISOString(),
+        };
+      }),
+      regulatory: regulatory,
+      recurring_status: recurring,
+    };
+
+    createIssue(IssueData, {
       onSuccess: (data) => {
-        query_client.invalidateQueries({ queryKey: ["_engagements_", id] });
+        const allQueries = query_client.getQueryCache().findAll();
+        allQueries.forEach((query) => {
+          console.log("Key:", query.queryKey);
+        });
+        query_client.invalidateQueries({
+          queryKey: ["_summary_findinds_", "d6e7ebf227da"],
+        });
         showToast(data.detail, "success");
       },
       onError: (error) => {
@@ -309,9 +362,9 @@ export const IssueForm = ({
 
             <Separator className="" />
 
-            <main className="px-4 py-3 flex flex-col flex-1 overflow-auto">
+            <main className="px-4 py-3 flex flex-col flex-1 overflow-auto gap-2">
               <ScrollArea className="max-h-[430px] h-auto overflow-auto">
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="title"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -326,7 +379,7 @@ export const IssueForm = ({
                     <FormError error={errors.title} />
                   </div>
                 </div>
-                <section className="flex items-center gap-2 px-1">
+                <section className="flex items-center gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Issue Source
@@ -339,10 +392,7 @@ export const IssueForm = ({
                           open={openSelect === "source"}
                           onOpenChange={() => handleToggle("source")}
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -366,7 +416,7 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <div className="h-[6]">
+                    <div className="h-4">
                       <FormError error={errors.source} />
                     </div>
                   </div>
@@ -382,10 +432,7 @@ export const IssueForm = ({
                           open={openSelect === "risk_rating"}
                           onOpenChange={() => handleToggle("risk_rating")}
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -399,8 +446,8 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={rating.name ?? ""}>
-                                    {rating.name}
+                                    value={rating ?? ""}>
+                                    {rating}
                                   </SelectItem>
                                 )
                               )}
@@ -409,12 +456,12 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <div className="h-[6]">
-                      <FormError error={errors.source} />
+                    <div className="h-4">
+                      <FormError error={errors.risk_rating} />
                     </div>
                   </div>
                 </section>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="criteria"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -428,7 +475,7 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.criteria} />
                 </div>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="finding"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -442,7 +489,7 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.finding} />
                 </div>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label
                       htmlFor="_process_"
@@ -458,9 +505,7 @@ export const IssueForm = ({
                           onOpenChange={() => handleToggle("dept")}
                           onValueChange={(value) => {
                             field.onChange(value);
-                            setValue("sub_process", "", {
-                              shouldValidate: true,
-                            });
+                            setValue("sub_process", "");
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -473,7 +518,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={process.process_name ?? ""}>
+                                    value={process.process_name ?? "0"}>
                                     {process.process_name}
                                   </SelectItem>
                                 )
@@ -497,10 +542,7 @@ export const IssueForm = ({
                           open={openSelect === "sub_process"}
                           onOpenChange={() => handleToggle("sub_process")}
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -514,7 +556,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={sub_process ?? ""}>
+                                    value={sub_process ?? "0"}>
                                     {sub_process}
                                   </SelectItem>
                                 )
@@ -527,7 +569,7 @@ export const IssueForm = ({
                     <FormError error={errors.sub_process} />
                   </div>
                 </section>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="root_cause_description"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -541,7 +583,7 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.root_cause_description} />
                 </div>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Root Cause<span className="text-destructive">*</span>
@@ -555,9 +597,7 @@ export const IssueForm = ({
                           onOpenChange={() => handleToggle("root_cause")}
                           onValueChange={(value) => {
                             field.onChange(value);
-                            setValue("sub_root_cause", "", {
-                              shouldValidate: true,
-                            });
+                            setValue("sub_root_cause", "");
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -570,7 +610,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={root_cause.root_cause ?? ""}>
+                                    value={root_cause.root_cause ?? "0"}>
                                     {root_cause.root_cause}
                                   </SelectItem>
                                 )
@@ -580,7 +620,9 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors?.root_cause} />
+                    <div className="h-4">
+                      <FormError error={errors?.root_cause} />
+                    </div>
                   </div>
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -594,10 +636,7 @@ export const IssueForm = ({
                           open={openSelect === "sub_root_cause"}
                           onOpenChange={() => handleToggle("sub_root_cause")}
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -611,7 +650,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={sub_root_cause ?? ""}>
+                                    value={sub_root_cause ?? "0"}>
                                     {sub_root_cause}
                                   </SelectItem>
                                 )
@@ -621,10 +660,12 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors.sub_root_cause} />
+                    <div className="h-4">
+                      <FormError error={errors.sub_root_cause} />
+                    </div>
                   </div>
                 </section>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Risk Category<span className="text-destructive">*</span>
@@ -638,9 +679,7 @@ export const IssueForm = ({
                           onOpenChange={() => handleToggle("risk_category")}
                           onValueChange={(value) => {
                             field.onChange(value);
-                            setValue("sub_risk_category", "", {
-                              shouldValidate: true,
-                            });
+                            setValue("sub_risk_category", "");
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -653,7 +692,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={risk_category.risk_category ?? ""}>
+                                    value={risk_category.risk_category ?? "0"}>
                                     {risk_category.risk_category}
                                   </SelectItem>
                                 )
@@ -663,7 +702,9 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors?.root_cause} />
+                    <div className="h-4">
+                      <FormError error={errors?.root_cause} />
+                    </div>
                   </div>
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -674,13 +715,10 @@ export const IssueForm = ({
                       control={control}
                       render={({ field }) => (
                         <Select
-                          open={openSelect === "sub_root_cause"}
-                          onOpenChange={() => handleToggle("sub_root_cause")}
+                          open={openSelect === "sub_risk_category"}
+                          onOpenChange={() => handleToggle("sub_risk_category")}
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -694,7 +732,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={sub_risk_category ?? ""}>
+                                    value={sub_risk_category ?? "0"}>
                                     {sub_risk_category}
                                   </SelectItem>
                                 )
@@ -704,10 +742,12 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors.sub_risk_category} />
+                    <div className="h-4">
+                      <FormError error={errors.sub_risk_category} />
+                    </div>
                   </div>
                 </section>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="impact_description"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -721,7 +761,7 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.impact_description} />
                 </div>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Impact Category<span className="text-destructive">*</span>
@@ -735,9 +775,7 @@ export const IssueForm = ({
                           onOpenChange={() => handleToggle("impact_category")}
                           onValueChange={(value) => {
                             field.onChange(value);
-                            setValue("impact_sub_category", "", {
-                              shouldValidate: true,
-                            });
+                            setValue("impact_sub_category", "");
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -751,7 +789,7 @@ export const IssueForm = ({
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
                                     value={
-                                      impact_category.impact_category ?? ""
+                                      impact_category.impact_category ?? "0"
                                     }>
                                     {impact_category.impact_category}
                                   </SelectItem>
@@ -762,7 +800,9 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors?.root_cause} />
+                    <div className="h-4">
+                      <FormError error={errors?.impact_category} />
+                    </div>
                   </div>
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -779,10 +819,7 @@ export const IssueForm = ({
                             handleToggle("impact_sub_category")
                           }
                           onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
+                            field.onChange(value);
                           }}
                           value={field.value}>
                           <SelectTrigger>
@@ -796,7 +833,7 @@ export const IssueForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={sub_impact_category ?? ""}>
+                                    value={sub_impact_category ?? "0"}>
                                     {sub_impact_category}
                                   </SelectItem>
                                 )
@@ -806,10 +843,12 @@ export const IssueForm = ({
                         </Select>
                       )}
                     />
-                    <FormError error={errors.impact_sub_category} />
+                    <div className="h-4">
+                      <FormError error={errors.impact_sub_category} />
+                    </div>
                   </div>
                 </section>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="recommendation"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -823,7 +862,7 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.recommendation} />
                 </div>
-                <div className="*:not-first:mt-2 px-1">
+                <div className="*:not-first:mt-2 px-1 mb-2">
                   <Label
                     htmlFor="management_action_plan"
                     className="font-serif tracking-wide scroll-m-0 font-medium">
@@ -837,7 +876,47 @@ export const IssueForm = ({
                   />
                   <FormError error={errors.management_action_plan} />
                 </div>
-                <section className="flex gap-2 px-1">
+                <div className="*:not-first:mt-2 flex-1 flex flex-col">
+                  <Label className="ml-[2px] font-table pb-[3px]">
+                    Estimated Implementation Date
+                  </Label>
+                  <Controller
+                    name="estimated_implementation_date"
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(date) => {
+                          field.onChange(date);
+                        }}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.estimated_implementation_date} />
+                </div>
+                <section className="flex items-center h-[30px] justify-center mb-2 py-5 gap-1">
+                  <section className="border-r border-r-neutral-600 justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
+                    <Checkbox
+                      id="recurring"
+                      checked={recurring}
+                      onCheckedChange={(value) => setRecurring(value === true)}
+                    />
+                    <Label id="recurring" htmlFor="recurring">
+                      Recurring
+                    </Label>
+                  </section>
+                  <section className="justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
+                    <Checkbox
+                      id="compliance"
+                      checked={regulatory}
+                      onCheckedChange={(value) => setRegulatory(value === true)}
+                    />
+                    <Label id="compliance" htmlFor="compliance">
+                      Compliance
+                    </Label>
+                  </section>
+                </section>
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       LOD1 Owner
@@ -874,10 +953,10 @@ export const IssueForm = ({
                         />
                       )}
                     />
-                    <FormError error={errors.lod1_owner} />
+                    <FormError error={errors.lod1_implementer} />
                   </div>
                 </section>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-2">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Risk Officer
@@ -917,7 +996,7 @@ export const IssueForm = ({
                     <FormError error={errors.lod2_compliance_officer} />
                   </div>
                 </section>
-                <section className="flex gap-2 px-1">
+                <section className="flex gap-2 px-1 mb-3">
                   <div className="*:not-first:mt-2 flex-1">
                     <Label className="font-serif tracking-wide scroll-m-0 font-medium">
                       Audit Manager

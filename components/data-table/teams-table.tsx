@@ -103,6 +103,17 @@ const columns: ColumnDef<UsersValues>[] = [
     size: 250,
   },
   {
+    id: "title",
+    header: () => <Label className="font-table">Title</Label>,
+    accessorKey: "title",
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.title}
+      </Label>
+    ),
+    size: 250,
+  },
+  {
     id: "role",
     header: () => <Label className="font-table">Role</Label>,
     accessorKey: "role",

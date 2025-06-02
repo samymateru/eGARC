@@ -38,7 +38,7 @@ export const OptionsMenu = ({ children }: HoverSubmenuPopoverProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-[250px] dark:bg-black p-2 pop-bg">
+      <PopoverContent className="w-[250px] dark:bg-black p-2 py-2 pop-bg">
         <ul className="text-sm divide-y">
           <Button
             onClick={() => router.push("/preferences")}

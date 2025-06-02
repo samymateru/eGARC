@@ -3,7 +3,7 @@ import { useQueries } from "@tanstack/react-query";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import z from "zod";
-import { StandardTemplateSchema } from "@/lib/types";
+import { IssueSchema, StandardTemplateSchema } from "@/lib/types";
 import { Administration } from "./_administration/administration-home";
 import { StandardTemplateProcedure } from "@/components/shared/standard-template-procedure";
 import { SummaryProcedure } from "./_fieldwork/summary-procedures";
@@ -12,6 +12,11 @@ import { SummaryReviewComments } from "./_fieldwork/summary-review-comments";
 import { Tasks } from "./_fieldwork/summary-tasks";
 import { WorkProgramProcedure } from "@/components/shared/work_program_procedure";
 import { Loader } from "@/components/shared/loader";
+import { SummaryFindings } from "./reporting/summary-findings";
+import { IssueDetails } from "@/components/shared/issue-details";
+import { EngagementDashboard } from "@/components/dashboards/engagement-dashboard";
+
+type IssueValues = z.infer<typeof IssueSchema>;
 
 type Procedure = {
   procedure_id?: string;
@@ -78,6 +83,15 @@ export default function EngagementPage() {
         refetchOnReconnect: true,
         enabled: !!params.get("id"),
       },
+      {
+        queryKey: ["findings", params.get("id")],
+        queryFn: async (): Promise<IssueValues[]> =>
+          fetchData("summary_findings", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
     ],
   });
 
@@ -102,6 +116,11 @@ export default function EngagementPage() {
     <Tabs
       value={params.get("action") ?? "administation"}
       className="w-full flex-1 flex flex-col">
+      <TabsContent
+        value="dashboard"
+        className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden">
+        <EngagementDashboard />
+      </TabsContent>
       <TabsContent
         value="administration"
         className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden">
@@ -130,6 +149,28 @@ export default function EngagementPage() {
         </TabsContent>
       ))}
 
+      {results[2].data?.map((item, index) => {
+        if (item.type === "finding") {
+          return (
+            <TabsContent
+              value={item.id}
+              key={index}
+              className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <SummaryFindings />
+            </TabsContent>
+          );
+        }
+
+        return (
+          <TabsContent
+            value={item.id}
+            key={index}
+            className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
+            <StandardTemplateProcedure data={item} />
+          </TabsContent>
+        );
+      })}
+
       {results[1].data?.map((item, index) => (
         <TabsContent
           value={item.id}
@@ -139,14 +180,6 @@ export default function EngagementPage() {
         </TabsContent>
       ))}
 
-      {results[2].data?.map((item, index) => (
-        <TabsContent
-          value={item.id}
-          key={index}
-          className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
-          <StandardTemplateProcedure data={item} />
-        </TabsContent>
-      ))}
       {results[3].data?.map((item) =>
         item.procedures
           ?.filter(
@@ -161,6 +194,14 @@ export default function EngagementPage() {
             </TabsContent>
           ))
       )}
+      {results[4].data?.map((item, index) => (
+        <TabsContent
+          value={item.id ?? ""}
+          key={index}
+          className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
+          <IssueDetails data={item} />
+        </TabsContent>
+      ))}
     </Tabs>
   );
 }

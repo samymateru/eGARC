@@ -323,7 +323,7 @@ export const EngagementForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={department.process_name ?? ""}>
+                                    value={department.process_name ?? "0"}>
                                     {department.process_name}
                                   </SelectItem>
                                 )
@@ -439,7 +439,7 @@ export const EngagementForm = ({
                                   <SelectItem
                                     className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                                     key={index}
-                                    value={type ?? ""}>
+                                    value={type ?? "type"}>
                                     {type}
                                   </SelectItem>
                                 )

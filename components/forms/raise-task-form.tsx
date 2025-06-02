@@ -7,7 +7,7 @@ import { FormProvider, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -18,13 +18,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { RaiseTaskSchema, Response } from "@/lib/types";
+import { RaiseTaskSchema, Response, UserSchema } from "@/lib/types";
 import { Textarea } from "@/components/ui/textarea";
 import { UserMultiSelector } from "../shared/user-multiselector";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
+import { DatePicker } from "../shared/date-picker";
+import { useRouter } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 type RaiseTaskValues = z.infer<typeof RaiseTaskSchema>;
+type UserValuses = z.infer<typeof UserSchema>;
 
 interface RaiseTaskProps {
   children: React.ReactNode;
@@ -33,12 +37,6 @@ interface RaiseTaskProps {
   title: string;
   mode?: string;
 }
-
-type UserResponse = {
-  id?: string;
-  name?: string;
-  email?: string;
-};
 
 export const RaiseTask = ({
   children,
@@ -52,12 +50,17 @@ export const RaiseTask = ({
     resolver: zodResolver(RaiseTaskSchema),
   });
 
+  const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
+  const [moduleId, setModuleId] = useState<string | null>();
+  const router = useRouter();
+  const [fullUrl, setFullUrl] = useState("");
+
   const query_client = useQueryClient();
 
-  const { data: userData, isLoading: userLoading } = useQuery({
-    queryKey: ["__users_"],
-    queryFn: async (): Promise<UserResponse[]> => {
-      const response = await fetch(`${BASE_URL}/users`, {
+  const { data, isLoading: userLoading } = useQuery({
+    queryKey: ["__users_", moduleId],
+    queryFn: async (): Promise<UserValuses[]> => {
+      const response = await fetch(`${BASE_URL}/users/module/${moduleId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
@@ -78,6 +81,23 @@ export const RaiseTask = ({
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
+
+  useEffect(() => {
+    const storedModuleID = localStorage.getItem("moduleId");
+    setModuleId(storedModuleID);
+  }, []);
+
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      setAuditUsers(data?.filter((user) => user.type === "audit"));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFullUrl(window.location.href);
+    }
+  }, [router]);
 
   const { mutate: raiseTask, isPending: raiseTaskPending } = useMutation({
     mutationKey: ["_raise_task_"],
@@ -112,8 +132,10 @@ export const RaiseTask = ({
   } = methods;
 
   const onSubmit = (data: RaiseTaskValues) => {
+    console.log();
     const raiseData = {
       ...data,
+      href: fullUrl,
       raised_by: {
         name: localStorage.getItem("user_name") || "",
         email: localStorage.getItem("user_email") || "",
@@ -176,7 +198,7 @@ export const RaiseTask = ({
                   control={control}
                   render={({ field }) => (
                     <UserMultiSelector
-                      users={userData ?? []}
+                      users={auditUsers ?? []}
                       trigger="Select action owners"
                       title="Action owner"
                       value={field.value || []}
@@ -200,6 +222,24 @@ export const RaiseTask = ({
                   {...register("description")}
                 />
                 <FormError error={errors.description} />
+              </div>
+              <div className="*:not-first:mt-2 flex-1 flex flex-col">
+                <Label htmlFor="year" className="ml-[2px] font-table pb-[3px]">
+                  Due Date
+                </Label>
+                <Controller
+                  name="due_date"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      value={field.value ? new Date(field.value) : undefined}
+                      onChange={(date) => {
+                        field.onChange(date);
+                      }}
+                    />
+                  )}
+                />
+                <FormError error={errors.due_date} />
               </div>
             </main>
 

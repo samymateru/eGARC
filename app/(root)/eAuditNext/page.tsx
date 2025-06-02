@@ -23,9 +23,9 @@ export default function AuditNextPage() {
   const pathname = usePathname();
   return (
     <Tabs defaultValue="dashboard" className="w-full flex-1 flex justify-start">
-      <TabsList className="bg-blue-950 flex flex-col gap-1 rounded-none justify-start min-w-[300px] h-full">
+      <TabsList className="bg-neutral-300 flex flex-col gap-1 rounded-none justify-start min-w-[300px] h-full">
         <section className="w-full px-2">
-          <Label className="font-[helvetica] font-bold tracking-normal text-xl text-white">
+          <Label className="font-[helvetica] font-bold tracking-normal text-xl text-black">
             {pathname.slice(1)}
           </Label>
         </section>
@@ -33,32 +33,34 @@ export default function AuditNextPage() {
         <section className="mt-2 flex flex-col w-full gap-[2px] flex-1">
           <TabsTrigger
             value="dashboard"
-            className=" data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex justify-start items-center gap-2 w-full h-[33px] font-bold">
+            className="h-[33px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
             <CircleGauge size={16} strokeWidth={3} />
             Dashboard
           </TabsTrigger>
           <TabsTrigger
             value="audit_plan"
-            className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200  hover:dark:bg-neutral-800 font-table flex justify-start items-center  gap-2 w-full h-[33px] font-bold">
+            className="h-[33px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
             <Notebook size={16} strokeWidth={3} />
             Audit plans
           </TabsTrigger>
           <TabsTrigger
             value="follow_up"
-            className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex justify-start items-center  gap-2 w-full h-[33px] font-bold">
+            className="h-[33px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
             <ListCollapse size={16} strokeWidth={3} />
             Follow up
           </TabsTrigger>
           <TabsTrigger
             value="report"
-            className="data-[state=active]:bg-black data-[state=active]:text-neutral-200 text-neutral-200 hover:dark:bg-neutral-800 font-table flex justify-start items-center  gap-2 w-full h-[33px] font-bold">
+            className="h-[33px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
             <Folder size={16} strokeWidth={3} />
             Reports
           </TabsTrigger>
         </section>
         <section className="w-full mb-1">
           <SystemOptions>
-            <Button className="w-full h-[33px]">click</Button>
+            <Button className="w-full h-[33px] bg-black" variant="ghost">
+              click
+            </Button>
           </SystemOptions>
         </section>
       </TabsList>

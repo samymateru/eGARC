@@ -78,6 +78,8 @@ export const RaiseTaskSchema = z.object({
       date_issued: z.date({ required_error: "Date issued is required" }),
     })
     .optional(),
+  due_date: z.date({ required_error: "Due date required" }),
+  href: z.string().optional(),
   action_owner: z
     .array(
       z.object({
@@ -98,6 +100,8 @@ export const RaiseReviewCommentSchema = z.object({
       date_issued: z.date({ required_error: "Date issued is required" }),
     })
     .optional(),
+  due_date: z.date({ required_error: "Due date required" }),
+  href: z.string().optional(),
   action_owner: z
     .array(
       z.object({
@@ -271,6 +275,7 @@ export const ReviewCommentsSchema = z.object({
   title: z.string(),
   description: z.string(),
   raised_by: User,
+  due_date: z.date().optional(),
   action_owner: z.array(User),
   resolution_summary: z.string(),
   resolution_details: z.string(),
@@ -285,6 +290,7 @@ export const TasksSchema = z.object({
   title: z.string(),
   description: z.string(),
   raised_by: User,
+  due_date: z.date().optional(),
   action_owner: z.array(User),
   resolution_summary: z.string(),
   resolution_details: z.string(),
@@ -368,35 +374,56 @@ export const EngagementProfileSchema = z.object({
 });
 
 export const IssueSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  criteria: z.string(),
-  finding: z.string(),
-  risk_rating: z.string(),
-  process: z.string(),
-  source: z.string(),
-  sdi_name: z.string(),
-  sub_process: z.string(),
-  root_cause_description: z.string(),
-  root_cause: z.string(),
-  sub_root_cause: z.string(),
-  risk_category: z.string(),
-  sub_risk_category: z.string(),
-  impact_description: z.string(),
-  impact_category: z.string(),
-  impact_sub_category: z.string(),
-  recurring_status: z.boolean(),
-  recommendation: z.string(),
-  management_action_plan: z.string(),
-  regulatory: z.boolean(),
-  estimated_implementation_date: z.string().datetime(),
-  prepared_by: User,
-  reviewed_by: User,
+  id: z.string().optional(),
+  title: z.string().min(1, "Provide issue title"),
+  ref: z.string().optional(),
+  criteria: z.string().min(1, "Criteria is required"),
+  finding: z.string().min(1, "Povide finding weakness"),
+  risk_rating: z
+    .string({ required_error: "Providee risk rating" })
+    .min(1, "Providee risk rating"),
+  process: z
+    .string({ required_error: "Provide process" })
+    .min(1, "Provide process"),
+  source: z
+    .string({ required_error: "Provide issue source" })
+    .min(1, "Provide issue source"),
+  sdi_name: z.string().optional(),
+  sub_process: z
+    .string({ required_error: "Provide sub process" })
+    .min(1, "Provide sub process"),
+  root_cause_description: z.string().min(1, "Provide root cause description"),
+  root_cause: z
+    .string({ required_error: "Root cause required" })
+    .min(1, "Root cause required"),
+  sub_root_cause: z
+    .string({ required_error: "Sub root cause is required" })
+    .min(1, "Sub root cause is required"),
+  risk_category: z
+    .string({ required_error: "Provide risk category" })
+    .min(1, "Provide risk category"),
+  sub_risk_category: z
+    .string({ required_error: "Provide sub risk category" })
+    .min(1, "Provide sub risk category"),
+  impact_description: z.string().min(1, "Impact description required"),
+  impact_category: z
+    .string({ required_error: "Provide impact category" })
+    .min(1, "Provide impact category"),
+  impact_sub_category: z
+    .string({ required_error: "Provide sub category" })
+    .min(1, "Provide sub category"),
+  recurring_status: z.boolean().optional(),
+  reportable: z.boolean().optional(),
+  recommendation: z.string().min(1, "Provide recommendation"),
+  management_action_plan: z.string().min(1, "Action plan needed"),
+  regulatory: z.boolean().optional(),
+  estimated_implementation_date: z.date({
+    required_error: "Estimated date required",
+  }),
   status: z
     .enum(["Not started", "In progress", "Completed", "Closed"])
     .optional()
     .default("Not started"),
-  reportable: z.boolean(),
   lod1_implementer: z.array(User),
   lod1_owner: z.array(User),
   observers: z.array(User),
@@ -431,7 +458,8 @@ export const UserSchema = z.object({
   name: z.string().min(1, "Please provide member name"),
   email: z.string().email({ message: "Provide valid email please" }),
   telephone: z.string().optional(),
-  role: z.string({ required_error: "Provide user title" }),
+  role: z.string({ required_error: "Provide user role" }),
+  title: z.string({ required_error: "Provide user title" }),
   module: z.string().optional(),
   type: z.string().optional(),
 });

@@ -24,7 +24,7 @@ export default function PreferencesPage() {
           Preferences
         </Label>
         <TabsTrigger
-          value="account"
+          value="account "
           className="h-[30px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
           <User size={16} strokeWidth={3} />
           Account
