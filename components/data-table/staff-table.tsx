@@ -273,7 +273,10 @@ export default function StaffTable({ data }: StaffTableProps) {
           />
         </section>
       </div>
-      <Table className="w-[calc(100%-1rem)]">
+      <Table
+        style={{
+          width: table.getTotalSize(),
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

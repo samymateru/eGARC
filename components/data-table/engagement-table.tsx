@@ -298,7 +298,10 @@ export default function EngagementTable({ data }: EngagementTableProps) {
           />
         </section>
       </div>
-      <Table>
+      <Table
+        style={{
+          width: table.getTotalSize() + 10,
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

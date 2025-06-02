@@ -61,10 +61,23 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { IssueSchema } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Checkbox } from "../ui/checkbox";
 
 type IssueValues = z.infer<typeof IssueSchema>;
 
 const columns: ColumnDef<IssueValues>[] = [
+  {
+    id: "select",
+    cell: ({ row }) =>
+      row.original.status === "Not started" ? (
+        <Checkbox
+          disabled={row.original.status !== "Not started"}
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ) : null,
+  },
   {
     id: "ref",
     header: () => <Label className="font-table">Reference</Label>,
@@ -79,11 +92,8 @@ const columns: ColumnDef<IssueValues>[] = [
     header: () => <Label className="font-table">Title</Label>,
     accessorKey: "title",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.title}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.title}</Label>
     ),
-    size: 300,
   },
   {
     id: "status",
@@ -159,6 +169,7 @@ interface IssueTableProps {
 }
 
 export const IssueTable = ({ data }: IssueTableProps) => {
+  const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
@@ -178,13 +189,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
+    enableRowSelection: true,
     state: {
       sorting,
       pagination,
       columnOrder,
+      rowSelection,
     },
     onColumnOrderChange: setColumnOrder,
     enableSortingRemoval: false,
+    onRowSelectionChange: setRowSelection,
   });
 
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
@@ -211,7 +225,6 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
-
   return (
     <DndContext
       id={useId()}
@@ -219,7 +232,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <Table>
+      <div className="flex items-center justify-between pr-2 pb-1 ">
+        {table.getSelectedRowModel().rows.map((row) => row.original.id).length >
+        0 ? (
+          <Button>Log Selected Rows</Button>
+        ) : null}
+      </div>
+      <Table
+        style={{
+          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -233,6 +255,7 @@ export const IssueTable = ({ data }: IssueTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
+
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (

@@ -36,5 +36,9 @@ export const SummaryProcedure = () => {
     enabled: !!params.get("id"),
   });
 
-  return <SummaryProceduresTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <SummaryProceduresTable data={data ?? []} />
+    </div>
+  );
 };

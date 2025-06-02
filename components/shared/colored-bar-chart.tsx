@@ -9,32 +9,46 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { formatLabel } from "@/lib/utils";
 
 interface ChartProps {
   title: string;
   description: string;
-  data: Record<string, number>;
-  colors: Record<string, string>;
+  data?: Record<string, number>;
+  colors?: Record<string, string>;
+  labels?: Record<string, string>;
 }
 
 function buildChartDataAndConfig(
-  data: Record<string, number>,
-  colors: Record<string, string>
-) {
-  const chartData = Object.entries(data).map(([cause, count]) => ({
-    cause,
-    count,
-    fill: cause in colors ? colors[cause as keyof typeof colors] : "#cccccc",
-  }));
+  data?: Record<string, number>,
+  colors?: Record<string, string>
+): {
+  chartData: Array<{
+    key: string;
+    count: number;
+    fill: string;
+  }>;
+  chartConfig: Record<string, { label: string }>;
+} {
+  const keys = Object.keys(colors ?? {});
+
+  const chartData = keys
+    .map((key) => ({
+      key,
+      count: data?.[key] ?? 0,
+      fill: colors?.[key] ?? "#999999",
+    }))
+    .sort((a, b) => b.count - a.count);
 
   const chartConfig = Object.fromEntries(
-    Object.keys(data).map((cause) => [
+    Object.keys(data ?? {}).map((cause) => [
       cause,
       {
         label: cause,
@@ -45,11 +59,15 @@ function buildChartDataAndConfig(
   chartConfig["count"] = {
     label: "Count",
   };
-
   return { chartData, chartConfig };
 }
 
-export function Chart({ title, description, data, colors }: ChartProps) {
+export function ColoredBarChart({
+  title,
+  description,
+  data,
+  colors,
+}: ChartProps) {
   const { chartData, chartConfig } = buildChartDataAndConfig(data, colors);
 
   return (
@@ -65,16 +83,16 @@ export function Chart({ title, description, data, colors }: ChartProps) {
           <BarChart
             data={chartData}
             layout="vertical"
-            margin={{ left: 100, right: 50 }}>
+            margin={{ left: 0, right: 50 }}>
             <YAxis
-              dataKey="cause"
+              dataKey="key"
               type="category"
+              className="text-nowrap text-white"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) =>
-                chartConfig[value as keyof typeof chartConfig]?.label
-              }
+              width={250}
+              tickFormatter={formatLabel}
             />
             <XAxis dataKey="count" type="number" hide />
             <ChartTooltip
@@ -85,7 +103,7 @@ export function Chart({ title, description, data, colors }: ChartProps) {
               <LabelList
                 dataKey="count"
                 position="right"
-                className="text-white"
+                className="text-white font-semibold text-[14px]"
               />
             </Bar>
           </BarChart>

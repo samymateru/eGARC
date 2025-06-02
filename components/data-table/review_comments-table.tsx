@@ -262,6 +262,7 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
+  console.log(table.getTotalSize());
 
   return (
     <DndContext
@@ -270,7 +271,10 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <Table>
+      <Table
+        style={{
+          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

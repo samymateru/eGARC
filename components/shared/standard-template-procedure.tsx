@@ -191,7 +191,7 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             observation={observation}
             conclusion={conclusion}
           />
-          <section className="px-2 pt-2">
+          <section className="pt-2">
             {data?.type === "risk" ? <PRCM /> : null}
             {data?.type === "program" ? <SummaryAuditProgram /> : null}
           </section>

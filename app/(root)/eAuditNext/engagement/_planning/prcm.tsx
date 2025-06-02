@@ -41,7 +41,7 @@ export const PRCM = () => {
     return <div>loading...</div>;
   }
   return (
-    <section>
+    <section className="w-[calc(100vw-320px)]">
       <PRCMTable data={data ?? []} />
     </section>
   );

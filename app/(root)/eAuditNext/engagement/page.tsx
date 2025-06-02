@@ -198,7 +198,7 @@ export default function EngagementPage() {
         <TabsContent
           value={item.id ?? ""}
           key={index}
-          className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex">
+          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex overflow-auto">
           <IssueDetails data={item} />
         </TabsContent>
       ))}

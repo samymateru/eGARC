@@ -47,5 +47,9 @@ export const SummaryFindings = () => {
     setFindings(sorted);
   }, [data]);
 
-  return <IssueTable data={findings ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)] flex flex-col">
+      <IssueTable data={findings ?? []} />
+    </div>
+  );
 };

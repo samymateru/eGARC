@@ -252,7 +252,11 @@ export const PRCMTable = ({ data }: PRCMTableProps) => {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <Table>
+      <Table
+        className=""
+        style={{
+          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

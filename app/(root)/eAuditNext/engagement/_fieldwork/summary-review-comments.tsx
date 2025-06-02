@@ -36,5 +36,9 @@ export const SummaryReviewComments = () => {
     enabled: !!params.get("id"),
   });
 
-  return <ReviewCommentsTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <ReviewCommentsTable data={data ?? []} />
+    </div>
+  );
 };

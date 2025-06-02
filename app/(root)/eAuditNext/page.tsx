@@ -65,12 +65,12 @@ export default function AuditNextPage() {
         </section>
       </TabsList>
       <section className="pl-3 flex-1">
-        <TabsContent value="dashboard" className="flex-1">
+        <TabsContent value="dashboard" className="flex-1 w-[100vw]">
           <EauditDashboard />
         </TabsContent>
         <TabsContent
           value="audit_plan"
-          className=" flex flex-col flex-1 overflow-auto pt-2">
+          className=" flex flex-col flex-1 w-[100vw] pt-2">
           <AnnualAuditPlan />
         </TabsContent>
         <TabsContent value="follow_up" className="flex-1"></TabsContent>
@@ -132,6 +132,10 @@ const AnnualAuditPlan = () => {
   }
 
   if (isSuccess) {
-    return <AnnualAuditPlanningTable data={auditplans ?? []} />;
+    return (
+      <div>
+        <AnnualAuditPlanningTable data={auditplans ?? []} />
+      </div>
+    );
   }
 };

@@ -111,6 +111,7 @@ const columns: ColumnDef<TasksValues>[] = [
       </Label>
     ),
     accessorKey: "title",
+    size: 300,
   },
   {
     id: "raised_by",
@@ -270,7 +271,10 @@ export const TasksTable = ({ data }: TasksTableProps) => {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <Table>
+      <Table
+        style={{
+          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
+        }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

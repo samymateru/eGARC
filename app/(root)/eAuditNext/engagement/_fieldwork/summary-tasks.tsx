@@ -34,5 +34,9 @@ export const Tasks = () => {
     enabled: !!params.get("id"),
   });
 
-  return <TasksTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <TasksTable data={data ?? []} />
+    </div>
+  );
 };
