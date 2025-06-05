@@ -39,13 +39,11 @@ function buildChartDataAndConfig(
 } {
   const keys = Object.keys(colors ?? {});
 
-  const chartData = keys
-    .map((key) => ({
-      key,
-      count: data?.[key] ?? 0,
-      fill: colors?.[key] ?? "#999999",
-    }))
-    .sort((a, b) => b.count - a.count);
+  const chartData = keys.map((key) => ({
+    key,
+    count: data?.[key] ?? 0,
+    fill: colors?.[key] ?? "#999999",
+  }));
 
   const chartConfig = Object.fromEntries(
     Object.keys(data ?? {}).map((cause) => [
@@ -71,29 +69,23 @@ export function ColoredBarChart({
   const { chartData, chartConfig } = buildChartDataAndConfig(data, colors);
 
   return (
-    <Card>
+    <Card className="flex-1 border-none">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide">
+          {title}
+        </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="py-1">
         <ChartContainer
           config={chartConfig}
           className="mx-auto max-h-[250px]  w-full">
           <BarChart
             data={chartData}
             layout="vertical"
-            margin={{ left: 0, right: 50 }}>
-            <YAxis
-              dataKey="key"
-              type="category"
-              className="text-nowrap text-white"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              width={250}
-              tickFormatter={formatLabel}
-            />
+            barSize={40}
+            margin={{ left: 50, right: 50 }}>
+            <YAxis dataKey="key" type="category" hide />
             <XAxis dataKey="count" type="number" hide />
             <ChartTooltip
               cursor={false}
@@ -102,8 +94,40 @@ export function ColoredBarChart({
             <Bar dataKey="count" radius={5} isAnimationActive={true}>
               <LabelList
                 dataKey="count"
-                position="right"
-                className="text-white font-semibold text-[14px]"
+                position="left"
+                content={({ x, y, value, height }) => {
+                  const dy = typeof height === "number" ? height / 2 + 4 : 0;
+                  return (
+                    <text
+                      x={x != null ? Number(x) + -40 : 0}
+                      y={y}
+                      dy={dy}
+                      fill="white"
+                      fontWeight="bold"
+                      fontSize={12}>
+                      {value}
+                    </text>
+                  );
+                }}
+              />
+              <LabelList
+                dataKey="key"
+                position="insideLeft"
+                content={({ x, y, value, height }) => {
+                  const dy = typeof height === "number" ? height / 2 + 4 : 0;
+                  return (
+                    <text
+                      x={x != null ? Number(x) + 10 : 0}
+                      y={y}
+                      dy={dy}
+                      fill="white"
+                      strokeWidth={200}
+                      fontWeight={900}
+                      fontSize={12}>
+                      {formatLabel(String(value))}
+                    </text>
+                  );
+                }}
               />
             </Bar>
           </BarChart>

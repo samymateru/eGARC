@@ -163,7 +163,7 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
                   pathname: "/eAuditNext/engagement",
                   query: {
                     id: row.original.id,
-                    action: "administration",
+                    action: "dashboard",
                     name: row.original.name,
                   },
                 }}
@@ -298,10 +298,7 @@ export default function EngagementTable({ data }: EngagementTableProps) {
           />
         </section>
       </div>
-      <Table
-        style={{
-          width: table.getTotalSize() + 10,
-        }}>
+      <Table style={{ width: "100vw" }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -322,7 +319,7 @@ export default function EngagementTable({ data }: EngagementTableProps) {
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onDoubleClick={() => {
                   router.push(
-                    `/eAuditNext/engagement?id=${row.original.id}&action=administration&name=${row.original.name}`
+                    `/eAuditNext/engagement?id=${row.original.id}&action=dashboard&name=${row.original.name}`
                   );
                 }}
                 key={row.id}

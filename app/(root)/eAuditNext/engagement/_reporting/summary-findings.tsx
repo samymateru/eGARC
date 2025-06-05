@@ -1,17 +1,21 @@
-import { EngagementProcessesTable } from "@/components/data-table/engagement-procesess-table";
+import { IssueTable } from "@/components/data-table/issue-table";
+import { IssueSchema } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const EngagementProcesses = () => {
+type IssueValues = z.infer<typeof IssueSchema>;
+
+export const SummaryFindings = () => {
   const params = useSearchParams();
+  const [findings, setFindings] = useState<IssueValues[]>([]);
   const { data } = useQuery({
-    queryKey: ["_engagement_processes_", params.get("id")],
+    queryKey: ["_summary_findinds_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/engagements/context/engagement_process/${params.get(
-          "id"
-        )}`,
+        `${BASE_URL}/engagements/summary_findings/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -36,9 +40,16 @@ export const EngagementProcesses = () => {
     enabled: !!params.get("id"),
   });
 
+  useEffect(() => {
+    if (!data) return;
+
+    const sorted = [...data].sort((a, b) => a.ref.localeCompare(b.ref));
+    setFindings(sorted);
+  }, [data]);
+
   return (
     <div className="w-[calc(100vw-320px)]">
-      <EngagementProcessesTable data={data ?? []} />
+      <IssueTable data={findings ?? []} />
     </div>
   );
 };

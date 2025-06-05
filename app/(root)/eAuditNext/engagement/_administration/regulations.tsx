@@ -34,5 +34,9 @@ export const Regulations = () => {
     enabled: !!params.get("id"),
   });
 
-  return <RegulationsTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <RegulationsTable data={data ?? []} />
+    </div>
+  );
 };

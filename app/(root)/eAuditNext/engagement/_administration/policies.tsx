@@ -34,5 +34,9 @@ export const Policies = () => {
     enabled: !!params.get("id"),
   });
 
-  return <PoliciesTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <PoliciesTable data={data ?? []} />
+    </div>
+  );
 };

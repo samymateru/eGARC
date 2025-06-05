@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useId, useState } from "react";
+import { CSSProperties, useEffect, useId, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -39,6 +39,7 @@ import {
   CircleCheck,
   CircleX,
   GripVerticalIcon,
+  SendHorizontal,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,11 @@ import { z } from "zod";
 import { IssueSchema } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
+import SearchInput from "../shared/search-input";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { showToast } from "../shared/toast";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type IssueValues = z.infer<typeof IssueSchema>;
 
@@ -168,6 +174,10 @@ interface IssueTableProps {
   data: IssueValues[];
 }
 
+type SendIssue = {
+  id?: Array<string>;
+};
+
 export const IssueTable = ({ data }: IssueTableProps) => {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -175,13 +185,19 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     columns.map((column) => column.id as string)
   );
 
+  const query_client = useQueryClient();
+  const params = useSearchParams();
+
+  const [searchName, setSearchName] = useState("");
+  const [tableData, setTableData] = useState<IssueValues[]>([]);
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -200,6 +216,17 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     enableSortingRemoval: false,
     onRowSelectionChange: setRowSelection,
   });
+
+  useEffect(() => {
+    const filtered = data.filter((row) => {
+      const matchesName = row.title
+        .toLowerCase()
+        .includes(searchName.toLowerCase());
+
+      return matchesName;
+    });
+    setTableData(filtered);
+  }, [data, searchName]);
 
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage: table.getState().pagination.pageIndex + 1,
@@ -220,6 +247,51 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     }
   }
 
+  const { mutate: sendIssue, isPending: sendIssueLoading } = useMutation({
+    mutationKey: ["send_implementor"],
+    mutationFn: async (data: SendIssue) => {
+      const response = await fetch(`${BASE_URL}/issue/send_implementor/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+  });
+
+  const onSubmit = () => {
+    const data: SendIssue = {
+      id: table
+        .getSelectedRowModel()
+        .rows.map((row) => row.original.id)
+        .filter((id): id is string => typeof id === "string"),
+    };
+
+    sendIssue(data, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["sub_program_procedure", params.get("action")],
+        });
+        showToast(data.detail, "success");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+  };
+
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
@@ -232,11 +304,26 @@ export const IssueTable = ({ data }: IssueTableProps) => {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        {table.getSelectedRowModel().rows.map((row) => row.original.id).length >
-        0 ? (
-          <Button>Log Selected Rows</Button>
-        ) : null}
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-320px)] py-2 px-2">
+        <section className="">
+          <SearchInput
+            placeholder="Plan name"
+            value={searchName}
+            onChange={setSearchName}
+          />
+        </section>
+        <section>
+          {table.getSelectedRowModel().rows.length > 0 ? (
+            <Button
+              onClick={onSubmit}
+              disabled={sendIssueLoading}
+              variant="ghost"
+              className="flex items-center w-[120px] justify-start h-[30px] border border-neutral-700">
+              <SendHorizontal size={16} strokeWidth={3} />
+              Send
+            </Button>
+          ) : null}
+        </section>
       </div>
       <Table
         style={{

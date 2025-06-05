@@ -11,12 +11,15 @@ import { EngagementNavbar } from "@/components/top-navbars/engagement-navbar";
 import { EngagementForm } from "@/components/forms/engagement-form";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
+import { AnnuaPlanDashboard } from "@/components/dashboards/annual-plan-dashboard";
+import { Label } from "@/components/ui/label";
 
 type EngagementsValues = z.infer<typeof EngagementSchema>;
 
 export default function EngagementPage() {
   const searchParams = useSearchParams();
   const [engagements, setEngagements] = useState<EngagementsValues[]>([]);
+  const params = useSearchParams();
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["_engagements_", searchParams.get("id")],
     queryFn: async () => {
@@ -61,9 +64,13 @@ export default function EngagementPage() {
     <Tabs
       className="w-full dark:bg-background flex flex-col gap-[6px]"
       defaultValue="engagements">
-      <TabsList className="bg-blue-950 w-full rounded-none flex gap-1 justify-start py-5 pl-1">
+      <TabsList className="bg-neutral-300 w-full rounded-none flex gap-1 justify-start py-5 pl-1">
         <section className="flex items-center justify-between w-full">
-          <section className="flex-1"></section>
+          <section className="flex-1">
+            <Label className="text-black font-bold text-[25px] pl-2">
+              {params.get("plan")}
+            </Label>
+          </section>
           <section className="flex items-center gap-2 justify-end">
             <EngagementForm
               endpoint="engagements"
@@ -81,7 +88,10 @@ export default function EngagementPage() {
           </section>
         </section>
       </TabsList>
-      <TabsContent value="engagements" className="mt-0">
+      <TabsContent
+        value="engagements"
+        className="w-[100vw] px-2 flex flex-col gap-2">
+        <AnnuaPlanDashboard value={100} />
         <EngagementTable data={engagements ?? []} />
       </TabsContent>
     </Tabs>

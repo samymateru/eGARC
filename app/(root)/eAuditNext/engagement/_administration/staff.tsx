@@ -34,5 +34,9 @@ export const Staff = () => {
     enabled: !!params.get("id"),
   });
 
-  return <StaffTable data={data ?? []} />;
+  return (
+    <div className="w-[calc(100vw-320px)]">
+      <StaffTable data={data ?? []} />
+    </div>
+  );
 };

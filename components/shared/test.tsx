@@ -8,7 +8,7 @@ import {
   Folder,
   ZapIcon,
 } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 import {
   Accordion,
@@ -71,10 +71,24 @@ const items = [
   },
 ];
 
+const fetchData = async (endpont: string, id: string | null) => {
+  const response = await fetch(`${BASE_URL}/engagements/${endpont}/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${
+        typeof window === "undefined" ? "" : localStorage.getItem("token")
+      }`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch modules");
+  }
+  return await response.json();
+};
+
 export default function Component() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateMenu, setUpdateMenu] = useState<boolean>(false);
-  const queryClient = useQueryClient();
   const params = useSearchParams();
   const router = useRouter();
 
@@ -107,6 +121,47 @@ export default function Component() {
     enabled: !!params.get("id"),
   });
 
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["planning", params.get("id")],
+        queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
+          fetchData("planning_procedures", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
+      {
+        queryKey: ["finalization", params.get("id")],
+        queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
+          fetchData("finalization_procedures", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
+      {
+        queryKey: ["reporting", params.get("id")],
+        queryFn: async (): Promise<z.infer<typeof StandardTemplateSchema>[]> =>
+          fetchData("reporting_procedures", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
+      {
+        queryKey: ["work_program", params.get("id")],
+        queryFn: async (): Promise<WorkProgramResponse[]> =>
+          fetchData("work_program", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("id"),
+      },
+    ],
+  });
+
   const setAction = (action: string, stage?: string) => {
     const param = new URLSearchParams(params.toString());
     param.set("action", action);
@@ -115,27 +170,6 @@ export default function Component() {
     }
     router.replace(`?${param.toString()}`, { scroll: false });
   };
-
-  const planningProcedures = queryClient
-    .getQueryCache()
-    .findAll({ queryKey: ["planning"] });
-  const planning = planningProcedures[0]?.state.data as
-    | z.infer<typeof StandardTemplateSchema>[]
-    | undefined;
-
-  const finalizationProcedures = queryClient
-    .getQueryCache()
-    .findAll({ queryKey: ["finalization"] });
-  const finalization = finalizationProcedures[0]?.state.data as
-    | z.infer<typeof StandardTemplateSchema>[]
-    | undefined;
-
-  const reportingProcedures = queryClient
-    .getQueryCache()
-    .findAll({ queryKey: ["reporting"] });
-  const reporting = reportingProcedures[0]?.state.data as
-    | z.infer<typeof StandardTemplateSchema>[]
-    | undefined;
 
   return (
     <div className="flex flex-col gap-2">
@@ -180,14 +214,12 @@ export default function Component() {
                   </Button>
                 </section>
               ) : null}
-              {planningProcedures.length > 0 &&
-              item.title === "Planning" &&
-              planningProcedures[0]?.state?.data ? (
+              {item.title === "Planning" && results[0].data ? (
                 <>
                   <ScrollArea
                     className="max-h-[400px] h-auto overflow-y-auto"
                     key={item.id}>
-                    {planning
+                    {results[0].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button
@@ -202,14 +234,12 @@ export default function Component() {
                   </ScrollArea>
                 </>
               ) : null}
-              {finalizationProcedures.length > 0 &&
-              item.title === "Finalization" &&
-              finalizationProcedures[0]?.state?.data ? (
+              {item.title === "Finalization" && results[1].data ? (
                 <>
                   <ScrollArea
                     className="max-h-[400px] h-auto overflow-y-auto"
                     key={item.id}>
-                    {finalization
+                    {results[1].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button
@@ -224,14 +254,12 @@ export default function Component() {
                   </ScrollArea>
                 </>
               ) : null}
-              {reportingProcedures.length > 0 &&
-              item.title === "Reporting" &&
-              reportingProcedures[0]?.state?.data ? (
+              {item.title === "Reporting" && results[2].data ? (
                 <>
                   <ScrollArea
                     className="max-h-[400px] h-auto overflow-y-auto"
                     key={item.id}>
-                    {reporting
+                    {results[2].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button

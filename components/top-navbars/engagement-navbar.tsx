@@ -11,7 +11,7 @@ export const EngagementNavbar = () => {
     <section className="flex flex-1 justify-between">
       <section>
         {params.get("name") && (
-          <Label className="font-[helvetica] text-[20px] font-medium ml-4">
+          <Label className="font-[helvetica] text-[24px] font-semibold ml-4">
             {params.get("name")}
           </Label>
         )}

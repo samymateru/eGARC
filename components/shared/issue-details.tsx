@@ -7,6 +7,7 @@ import {
   CommandIcon,
   Dot,
   EclipseIcon,
+  Menu,
   ZapIcon,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +19,11 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { Label } from "../ui/label";
+import { IssueDetailsActions } from "./issue-details-actions";
+import { useQuery } from "@tanstack/react-query";
 type IssueValues = z.infer<typeof IssueSchema>;
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface IssueDetailsProps {
   data: IssueValues;
@@ -52,6 +57,34 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
   const router = useRouter();
   const [issueId, setIssueId] = useState<string | null>();
 
+  const { data: responses } = useQuery({
+    queryKey: ["_issue_responses_", data.id],
+    queryFn: async () => {
+      const response = await fetch(`${BASE_URL}/issue/updates/${data.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!params.get("id"),
+  });
+
+  console.log(responses);
+
   useEffect(() => {
     const storedId = localStorage.getItem("issue_id");
     if (storedId) {
@@ -80,9 +113,18 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
             <ArrowLeft />
           </Button>
         </section>
-        <section className="flex-1 flex justify-end">hello</section>
+        <section className="flex-1 flex justify-end">
+          <IssueDetailsActions>
+            <Button
+              className="w-[120px] h-[30px] flex items-center justify-start"
+              variant="ghost">
+              <Menu size={16} strokeWidth={3} />
+              Menu
+            </Button>
+          </IssueDetailsActions>
+        </section>
       </header>
-      <main className="flex-1 w-full">
+      <main className=" w-full h-[calc(100vh-84px)] overflow-auto hide-scrollbar">
         <section className="h-full w-full px-4">
           <Accordion
             type="single"
@@ -103,7 +145,7 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
                     <span>{item.title}</span>
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground py-2">
                   {item.id === "1" ? (
                     <div>
                       <Details
@@ -123,7 +165,9 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
                   ) : item.id === "2" ? (
                     <div>classification</div>
                   ) : item.id === "3" ? (
-                    <div>Contacts</div>
+                    <div>
+                      <Contacts data={data} />
+                    </div>
                   ) : item.id === "4" ? (
                     <div>response</div>
                   ) : null}
@@ -166,7 +210,7 @@ const Details = ({
     day: "numeric",
   }).format(new Date(estimated_implementation_date));
   return (
-    <section className="pt-3 px-2 text-white flex flex-col gap-4 overflow-auto h-[400px]">
+    <section className="pt-3 px-2 text-white flex flex-col gap-4 h-[400px] overflow-auto">
       <section className="flex flex-col">
         <Label className="font-[helvetica] font-[600] tracking-wide text-[16px] flex item-center">
           <Dot size={25} strokeWidth={3} />
@@ -247,6 +291,71 @@ const Details = ({
         <Label className="font-[helvetica] font-light tracking-wide scroll-m-0 text-balance px-5 text-neutral-300">
           {date}
         </Label>
+      </section>
+    </section>
+  );
+};
+
+interface ContactsProps {
+  data: IssueValues;
+}
+
+const Contacts = ({ data }: ContactsProps) => {
+  return (
+    <section className="h-[400px] overflow-auto flex flex-col gap-2">
+      <section className="flex items-center gap-2 w-full px-2 flex-1">
+        <section className="bg-white flex-1 h-full">
+          <Label>LOD1 Owner</Label>
+          <ul className="flex flex-col">
+            {data.lod1_owner.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
+        <section className="bg-white flex-1 h-full">
+          <Label>LOD1 Implementor</Label>
+          <ul className="flex flex-col">
+            {data.lod1_implementer.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
+      </section>
+      <section className="flex items-center gap-2 w-full px-2 flex-1">
+        <section className="bg-white flex-1 h-full">
+          <Label>LOD2 Risk Manager</Label>
+          <ul className="flex flex-col">
+            {data.lod2_risk_manager.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
+        <section className="bg-white flex-1 h-full">
+          <Label>LOD2 Compliance Officer</Label>
+          <ul className="flex flex-col">
+            {data.lod2_compliance_officer.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
+      </section>
+      <section className="flex items-center gap-2 w-full px-2 flex-1">
+        <section className="bg-white flex-1 h-full">
+          <Label>LOD3 Audit Manager</Label>
+          <ul className="flex flex-col">
+            {data.lod3_audit_manager.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
+        <section className="bg-white flex-1 h-full">
+          <Label>Observers</Label>
+          <ul className="flex flex-col">
+            {data.observers.map((user) => {
+              return <Label key={user.email}>{user.name}</Label>;
+            })}
+          </ul>
+        </section>
       </section>
     </section>
   );

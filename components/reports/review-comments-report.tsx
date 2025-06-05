@@ -1,21 +1,18 @@
-import { IssueTable } from "@/components/data-table/issue-table";
-import { IssueSchema } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import { Separator } from "../ui/separator";
+import ReviewCommentsReportTable from "../data-table/review-comments-report-table";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-type IssueValues = z.infer<typeof IssueSchema>;
-
-export const SummaryFindings = () => {
+export const ReviewCommentReport = () => {
   const params = useSearchParams();
-  const [findings, setFindings] = useState<IssueValues[]>([]);
+
   const { data } = useQuery({
-    queryKey: ["_summary_findinds_", params.get("id")],
+    queryKey: ["_review_comment_report_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/engagements/summary_findings/${params.get("id")}`,
+        `${BASE_URL}/reports/review_comments/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -40,16 +37,10 @@ export const SummaryFindings = () => {
     enabled: !!params.get("id"),
   });
 
-  useEffect(() => {
-    if (!data) return;
-
-    const sorted = [...data].sort((a, b) => a.ref.localeCompare(b.ref));
-    setFindings(sorted);
-  }, [data]);
-
   return (
-    <div className="w-[calc(100vw-320px)] flex flex-col">
-      <IssueTable data={findings ?? []} />
-    </div>
+    <section className="w-full">
+      <Separator className="my-2" />
+      <ReviewCommentsReportTable data={data ?? []} />
+    </section>
   );
 };

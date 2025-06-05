@@ -3,7 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanSchema } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { Folder, ListCollapse, Notebook, CircleGauge } from "lucide-react";
+import {
+  Folder,
+  ListCollapse,
+  Notebook,
+  CircleGauge,
+  TriangleAlert,
+  MessageCircle,
+  Reply,
+  CheckCircle,
+} from "lucide-react";
 import "../../globals.css";
 import { z } from "zod";
 import { EauditDashboard } from "@/components/dashboards/eadit-next-dashboard";
@@ -14,6 +23,14 @@ import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { SystemOptions } from "@/components/menus/system-options";
+import { IssueDetailedReport } from "@/components/reports/issue-detailed-report";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ReviewCommentReport } from "@/components/reports/review-comments-report";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -64,17 +81,17 @@ export default function AuditNextPage() {
           </SystemOptions>
         </section>
       </TabsList>
-      <section className="pl-3 flex-1">
-        <TabsContent value="dashboard" className="flex-1 w-[100vw]">
+      <section className="flex-1">
+        <TabsContent value="dashboard" className="flex-1">
           <EauditDashboard />
         </TabsContent>
-        <TabsContent
-          value="audit_plan"
-          className=" flex flex-col flex-1 w-[100vw] pt-2">
+        <TabsContent value="audit_plan" className="pt-2 flex-1">
           <AnnualAuditPlan />
         </TabsContent>
         <TabsContent value="follow_up" className="flex-1"></TabsContent>
-        <TabsContent value="report" className="flex-1"></TabsContent>
+        <TabsContent value="report" className="flex-1">
+          <Reporting />
+        </TabsContent>
       </section>
     </Tabs>
   );
@@ -138,4 +155,74 @@ const AnnualAuditPlan = () => {
       </div>
     );
   }
+};
+
+const Reporting = () => {
+  const [tabValue, setTabValue] = useState("issue");
+
+  const menuItems = [
+    {
+      value: "issue",
+      label: "Issue",
+      icon: <TriangleAlert size={16} strokeWidth={3} />,
+    },
+    {
+      value: "comments",
+      label: "Comments",
+      icon: <MessageCircle size={16} strokeWidth={3} />,
+    },
+    {
+      value: "responses",
+      label: "Responses",
+      icon: <Reply size={16} strokeWidth={3} />,
+    },
+    {
+      value: "audits",
+      label: "Audits",
+      icon: <CheckCircle size={16} strokeWidth={3} />,
+    },
+  ];
+  return (
+    <Tabs
+      defaultValue="issue"
+      value={tabValue}
+      onValueChange={setTabValue}
+      className="flex-1">
+      <div className="flex items-center justify-between px-2">
+        <Label>hello</Label>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="w-[180px] justify-start flex items-center h-[30px] border border-neutral-800">
+              {menuItems.find((item) => item.value === tabValue)?.icon}
+              {menuItems.find((item) => item.value === tabValue)?.label}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[250px]">
+            {menuItems.map((item) => (
+              <DropdownMenuItem
+                key={item.value}
+                onSelect={() => setTabValue(item.value)}
+                className="flex items-center gap-2 w-full h-[30px] justify-start hover:bg-neutral-800 cursor-pointer rounded-md pl-2">
+                {item.icon}
+                {item.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <TabsContent value="issue" className="flex-1">
+        <IssueDetailedReport />
+      </TabsContent>
+      <TabsContent value="comments" className="flex-1">
+        <ReviewCommentReport />
+      </TabsContent>
+      <TabsContent value="responses">
+        {/* Replace with your Responses component */}
+        Responses section
+      </TabsContent>
+    </Tabs>
+  );
 };

@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/chart";
 import { formatLabel } from "@/lib/utils";
 
+//import { formatLabel } from "@/lib/utils";
+
 interface ChartProps {
   title: string;
   description: string;
@@ -28,15 +30,9 @@ function buildChartDataAndConfig(
   data?: Record<string, number>,
   color?: string
 ) {
-  const maxCount = Math.max(...Object.values(data ?? 0));
-  const minCount = Math.min(...Object.values(data ?? 0));
   const chartData = Object.entries(data ?? 0)
     .map(([cause, count]) => {
-      // Normalize count between 0 and 1
-      const normalized = (count - minCount) / (maxCount - minCount || 1);
-
-      // Generate color: light to dark blue based on count
-      const fill = `hsl(${color}, 100%, ${80 - normalized * 40}%)`; // 80% to 40% lightness
+      const fill = color;
 
       return { cause, count, fill };
     })
@@ -67,38 +63,68 @@ export function GradientBarChart({
   const { chartData, chartConfig } = buildChartDataAndConfig(data, color);
 
   return (
-    <Card>
+    <Card className="flex-1 border-none">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide">
+          {title}
+        </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="py-1">
         <ChartContainer
           config={chartConfig}
           className="mx-auto max-h-[250px]  w-full">
           <BarChart
             data={chartData}
             layout="vertical"
-            margin={{ left: 0, right: 50 }}>
-            <YAxis
-              dataKey="cause"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              width={200}
-              tickFormatter={formatLabel}
-            />
+            margin={{ left: 50, right: 0 }}>
+            <YAxis dataKey="count" type="category" hide />
             <XAxis dataKey="count" type="number" hide />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="count" radius={5} isAnimationActive={true}>
+            <Bar
+              dataKey="count"
+              radius={5}
+              isAnimationActive={true}
+              barSize={70}>
               <LabelList
                 dataKey="count"
-                position="right"
-                className="text-white"
+                position="left"
+                content={({ x, y, value, height }) => {
+                  const dy = typeof height === "number" ? height / 2 + 4 : 0;
+                  return (
+                    <text
+                      x={x != null ? Number(x) + -40 : 0}
+                      y={y}
+                      dy={dy}
+                      fill="white"
+                      fontWeight="bold"
+                      fontSize={12}>
+                      {value}
+                    </text>
+                  );
+                }}
+              />
+              <LabelList
+                dataKey="cause"
+                position="insideLeft"
+                content={({ x, y, value, height }) => {
+                  const dy = typeof height === "number" ? height / 2 + 4 : 0;
+                  return (
+                    <text
+                      x={x != null ? Number(x) + 10 : 0}
+                      y={y}
+                      dy={dy}
+                      fill="white"
+                      strokeWidth={200}
+                      fontWeight={900}
+                      fontSize={12}>
+                      {formatLabel(String(value))}
+                    </text>
+                  );
+                }}
               />
             </Bar>
           </BarChart>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useEffect, useId, useState } from "react";
+import { CSSProperties, useId, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -42,10 +42,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  Edit,
   Ellipsis,
   GripVerticalIcon,
-  Trash2,
+  Pencil,
+  Trash,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -66,90 +66,49 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { StaffSchema } from "@/lib/types";
-import SearchInput from "../shared/search-input";
+import { IssueResponsesSchema } from "@/lib/types";
 
-type StaffValues = z.infer<typeof StaffSchema>;
+type IssueResponsesValues = z.infer<typeof IssueResponsesSchema>;
 
-const columns: ColumnDef<StaffValues>[] = [
+const columns: ColumnDef<IssueResponsesValues>[] = [
   {
     id: "sn",
     header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "name",
+    accessorKey: "",
     cell: ({ row }) => (
       <Label className="ml-4 font-table">{row.index + 1}</Label>
     ),
-    size: 5,
+    size: 10,
   },
   {
-    id: "name",
-    header: () => <Label className="font-table">Name</Label>,
-    accessorKey: "name",
+    id: "notes",
+    header: () => <Label className="font-table">Notes</Label>,
+    accessorKey: "notes",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.name}
+      <Label className="ml-2 font-table truncate text-balance">
+        {row.original.notes}
       </Label>
     ),
-    size: 250,
+    size: 300,
   },
   {
-    id: "email",
-    header: () => <Label className="font-table">Email</Label>,
-    accessorKey: "email",
+    id: "attachment",
+    header: () => <Label className="font-table">Attachment</Label>,
+    accessorKey: "attachment",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.email}
-      </Label>
+      <a
+        href={row.getValue("attachment")}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 hover:underline font-table">
+        View Attachment
+      </a>
     ),
-    size: 200,
   },
-  {
-    id: "role",
-    header: () => <Label className="font-table">Role</Label>,
-    cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.role}
-      </Label>
-    ),
-    accessorKey: "role",
-  },
-  {
-    id: "start_date",
-    header: () => <Label className="font-table">Start</Label>,
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row?.original?.start_date));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-    accessorKey: "start_date",
-  },
-  {
-    id: "end_date",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.getValue("end_date")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
-    },
-  },
+
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
+    header: () => <Label className="font-table">More</Label>,
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -160,18 +119,18 @@ const columns: ColumnDef<StaffValues>[] = [
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
+          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                <Pencil size={16} strokeWidth={3} />
                 Edit
               </Button>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
+                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                <Trash size={16} strokeWidth={3} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -179,43 +138,28 @@ const columns: ColumnDef<StaffValues>[] = [
         </Popover>
       </div>
     ),
-    size: 20,
+    size: 10,
     minSize: 3,
   },
 ];
 
-interface StaffTableProps {
-  data: StaffValues[];
+interface IssueResponsesTableProps {
+  data: IssueResponsesValues[];
 }
 
-export default function StaffTable({ data }: StaffTableProps) {
+export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
-
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
 
-  const [searchName, setSearchName] = useState("");
-  const [tableData, setTableData] = useState<StaffValues[]>([]);
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 9,
+    pageSize: 10,
   });
 
-  useEffect(() => {
-    const filtered = data.filter((row) => {
-      const matchesName = row.name
-        .toLowerCase()
-        .includes(searchName.toLowerCase());
-
-      return matchesName;
-    });
-    setTableData(filtered);
-  }, [data, searchName]);
-
   const table = useReactTable({
-    data: tableData,
+    data,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -264,15 +208,6 @@ export default function StaffTable({ data }: StaffTableProps) {
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        <section className="flex items-center gap-3 pl-2">
-          <SearchInput
-            placeholder="Plan name"
-            value={searchName}
-            onChange={setSearchName}
-          />
-        </section>
-      </div>
       <Table
         style={{
           width: Math.max(table.getTotalSize(), window.innerWidth - 320),
@@ -294,7 +229,6 @@ export default function StaffTable({ data }: StaffTableProps) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
@@ -380,12 +314,12 @@ export default function StaffTable({ data }: StaffTableProps) {
       </div>
     </DndContext>
   );
-}
+};
 
 const DraggableTableHeader = ({
   header,
 }: {
-  header: Header<StaffValues, unknown>;
+  header: Header<IssueResponsesValues, unknown>;
 }) => {
   const {
     attributes,
@@ -487,7 +421,11 @@ const DraggableTableHeader = ({
   );
 };
 
-const DragAlongCell = ({ cell }: { cell: Cell<StaffValues, unknown> }) => {
+const DragAlongCell = ({
+  cell,
+}: {
+  cell: Cell<IssueResponsesValues, unknown>;
+}) => {
   const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: cell.column.id,
   });

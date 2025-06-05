@@ -14,14 +14,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full h-svh bg-white dark:bg-background">
+      <body className="w-[100vw] h-[100vh] bg-white dark:bg-background">
         <TanstackProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-            <main className="flex w-full h-full">{children}</main>
+            <main className="flex w-[100vw] h-[100vh]">{children}</main>
           </ThemeProvider>
         </TanstackProvider>
         <Toaster />

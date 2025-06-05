@@ -12,9 +12,13 @@ import { SummaryReviewComments } from "./_fieldwork/summary-review-comments";
 import { Tasks } from "./_fieldwork/summary-tasks";
 import { WorkProgramProcedure } from "@/components/shared/work_program_procedure";
 import { Loader } from "@/components/shared/loader";
-import { SummaryFindings } from "./reporting/summary-findings";
+import { SummaryFindings } from "./_reporting/summary-findings";
 import { IssueDetails } from "@/components/shared/issue-details";
 import { EngagementDashboard } from "@/components/dashboards/engagement-dashboard";
+import "@/app/globals.css";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { SummaryProcess } from "./_reporting/summary-process";
 
 type IssueValues = z.infer<typeof IssueSchema>;
 
@@ -43,6 +47,7 @@ const fetchData = async (endpont: string, id: string | null) => {
   }
   return await response.json();
 };
+
 export default function EngagementPage() {
   const params = useSearchParams();
   const results = useQueries({
@@ -114,7 +119,7 @@ export default function EngagementPage() {
 
   return (
     <Tabs
-      value={params.get("action") ?? "administation"}
+      value={params.get("action") ?? "dashboard"}
       className="w-full flex-1 flex flex-col">
       <TabsContent
         value="dashboard"
@@ -128,15 +133,31 @@ export default function EngagementPage() {
       </TabsContent>
       <TabsContent
         value="summary_procedures"
-        className="flex-1 text-white mt-0">
+        className="flex-1 text-white mt-0 ">
+        <section className="pt-1 pl-4">
+          <Label className="text-[20px] font-semibold">
+            Summary of Procedures
+          </Label>
+        </section>
+        <Separator className="my-2" />
         <SummaryProcedure />
       </TabsContent>
       <TabsContent
         value="summary_review_comments"
         className="flex-1 text-white mt-0">
+        <section className="pt-1 pl-4">
+          <Label className="text-[20px] font-semibold">
+            Summary of Review Comments
+          </Label>
+        </section>
+        <Separator className="my-2" />
         <SummaryReviewComments />
       </TabsContent>
       <TabsContent value="summary_tasks" className="flex-1 text-white mt-0">
+        <section className="pt-1 pl-4">
+          <Label className="text-[20px] font-semibold">Summary of Tasks</Label>
+        </section>
+        <Separator className="my-2" />
         <Tasks />
       </TabsContent>
 
@@ -161,6 +182,16 @@ export default function EngagementPage() {
           );
         }
 
+        if (item.type === "audit_process") {
+          return (
+            <TabsContent
+              value={item.id}
+              key={index}
+              className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <SummaryProcess />
+            </TabsContent>
+          );
+        }
         return (
           <TabsContent
             value={item.id}

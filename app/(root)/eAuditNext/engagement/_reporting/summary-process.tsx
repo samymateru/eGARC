@@ -1,17 +1,14 @@
-import { EngagementProcessesTable } from "@/components/data-table/engagement-procesess-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const EngagementProcesses = () => {
+export const SummaryProcess = () => {
   const params = useSearchParams();
   const { data } = useQuery({
-    queryKey: ["_engagement_processes_", params.get("id")],
+    queryKey: ["_summary_procedures_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/engagements/context/engagement_process/${params.get(
-          "id"
-        )}`,
+        `${BASE_URL}/engagements/summary_audit_process/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -36,9 +33,6 @@ export const EngagementProcesses = () => {
     enabled: !!params.get("id"),
   });
 
-  return (
-    <div className="w-[calc(100vw-320px)]">
-      <EngagementProcessesTable data={data ?? []} />
-    </div>
-  );
+  console.log(data);
+  return <div className="w-[calc(100vw-320px)]"></div>;
 };

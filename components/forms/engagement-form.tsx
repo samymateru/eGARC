@@ -299,9 +299,7 @@ export const EngagementForm = ({
                           open={openSelect === "dept"}
                           onOpenChange={() => handleToggle("dept")}
                           onValueChange={(value) => {
-                            setValue("sub_departments", [], {
-                              shouldValidate: true,
-                            });
+                            setValue("sub_departments", []);
                             const selected = results[2]?.data?.find(
                               (r) => r.process_name === value
                             );

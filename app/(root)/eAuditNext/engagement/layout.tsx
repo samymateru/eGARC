@@ -14,7 +14,7 @@ export default function EngagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col w-full">
+    <div className="flex flex-col w-full">
       <header className="py-2 pl-1">
         <EngagementNavbar />
       </header>
@@ -26,6 +26,6 @@ export default function EngagementLayout({
         <Separator orientation="vertical" />
         <section className="flex-1 flex">{children}</section>
       </main>
-    </section>
+    </div>
   );
 }

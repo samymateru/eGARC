@@ -184,7 +184,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
               <Link
                 href={{
                   pathname: "/eAuditNext/engagements",
-                  query: { id: row.original.id },
+                  query: { id: row.original.id, plan: row.original.name },
                 }}
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
                 <SendHorizonal size={16} strokeWidth={3} />
@@ -305,8 +305,8 @@ export default function AnnualAuditPlanningTable({
       modifiers={[restrictToHorizontalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}>
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        <section className="flex items-center gap-3 pl-2">
+      <div className="flex justify-between items-center  pb-1">
+        <section className="flex items-center gap-3">
           <SearchInput
             placeholder="Plan name"
             value={searchName}
@@ -318,20 +318,22 @@ export default function AnnualAuditPlanningTable({
             onChange={setSelectedStatuses}
           />
         </section>
-        <PlanningForm
-          endpoint="annual_plans"
-          title="Audit Plan"
-          mode="create"
-          company_module_id={params.get("id") ?? undefined}>
-          <Button
-            variant="ghost"
-            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
-            <CirclePlus size={16} strokeWidth={3} />
-            Plan
-          </Button>
-        </PlanningForm>
+        <section className="flex-1 flex items-center justify-end pr-2">
+          <PlanningForm
+            endpoint="annual_plans"
+            title="Audit Plan"
+            mode="create"
+            company_module_id={params.get("id") ?? undefined}>
+            <Button
+              variant="ghost"
+              className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
+              <CirclePlus size={16} strokeWidth={3} />
+              Plan
+            </Button>
+          </PlanningForm>
+        </section>
       </div>
-      <Table className="w-[calc(100%-1rem)]">
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
@@ -351,7 +353,9 @@ export default function AnnualAuditPlanningTable({
               <TableRow
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onDoubleClick={() => {
-                  router.push(`/eAuditNext/engagements?id=${row.original.id}`);
+                  router.push(
+                    `/eAuditNext/engagements?id=${row.original.id}&plan=${row.original.name}`
+                  );
                 }}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>

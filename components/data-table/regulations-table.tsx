@@ -239,7 +239,7 @@ export const RegulationsTable = ({ data }: RegulationsTableProps) => {
       sensors={sensors}>
       <Table
         style={{
-          width: table.getTotalSize(),
+          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
         }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

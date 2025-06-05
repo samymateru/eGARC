@@ -37,7 +37,7 @@ export const ProcedureRiskControlMatrix = () => {
     enabled: !!params.get("action"),
   });
   return (
-    <div className="px-2 flex flex-col gap-2 pt-2 pb-3">
+    <div className="flex flex-col gap-2 pt-2 pb-3 w-[calc(100vw-320px)]">
       <Label className="font-hel-heading-bold">Risk & Control Details</Label>
       <RiskControlTable data={data ?? []} />
     </div>

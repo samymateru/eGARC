@@ -300,22 +300,26 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
           </div>
         </div>
       ) : (
-        <section className="flex flex-col w-full">
-          <header className="flex justify-between px-1">
-            <section className="flex items-center justify-end gap-1 py-1 pl-1">
+        <section className="flex flex-col w-[calc(100vw-320px)]">
+          <header className="flex justify-between w-full px-2">
+            <section className="flex items-center justify-end gap-1 py-2">
               <Button
                 variant={"ghost"}
-                className="mr-4 dark:bg-neutral-800 w-[30px] flex justify-center items-center font-table h-[30px]">
+                className=" dark:bg-neutral-800 w-[30px] flex justify-center items-center font-table h-[30px] mr-2">
                 <PanelLeft size={16} strokeWidth={3} />
               </Button>
               <Separator orientation="vertical" />
               <section className="flex items-center gap-1 font-table font-medium h-full">
-                <Label>{data?.title}</Label>
+                <Label className="font-semibold font-[helvetica] text-[15px] scroll-m-0 px-2 truncate">
+                  {data?.title}
+                </Label>
                 <Separator orientation="vertical" />
-                <Label>{data?.reference}</Label>
+                <Label className="font-semibold font-[helvetica] text-xs scroll-m-0 truncate">
+                  {data?.reference}
+                </Label>
               </section>
             </section>
-            <section className="flex-1 flex items-center justify-end gap-2 pr-1">
+            <section className="flex-1 flex items-center justify-end gap-2 ">
               <div className="px-2">
                 <ToggleProcedureVisibility />
               </div>
@@ -342,7 +346,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
             </section>
           </header>
           <Separator />
-          <main className="flex-1 pt-3">
+          <main className="flex-1 pt-3 w-[calc(100vw-320px)]">
             <ScrollArea className="max-h-[500px] h-auto overflow-auto hide-scrollbar">
               <ProcedureRiskControlMatrix />
               <Separator />
@@ -373,7 +377,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 setConclusion={setConclusion}
               />
               <Separator />
-              <section className="flex items-center gap-2 pt-3 pb-2 pl-2">
+              <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-320px)] px-2">
                 {!preparedBy ? (
                   <Button
                     disabled={prepareLoading}
@@ -395,7 +399,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                   </Button>
                 ) : null}
               </section>
-              <div className="px-2 pb-2">
+              <div className=" pb-2 w-[calc(100vw-320px)] px-2">
                 <PreparedReviewedBy
                   preparedBy={preparedBy}
                   reviewedBy={reviewedBy}
@@ -498,14 +502,14 @@ const TemplateWrapper = ({
   };
 
   return (
-    <section className="flex py-3 flex-col gap-2">
+    <section className="flex py-3 flex-col gap-2 w-[calc(100vw-320px)] px-2">
       <Label className="font-hel-heading-bold pl-2">Procedure Details</Label>
-      <Accordion type="multiple" className="w-full flex flex-col gap-1">
+      <Accordion type="multiple" className=" flex  flex-col gap-1">
         {items.map((item) => (
           <AccordionItem
             value={item.id}
             key={item.id}
-            className="flex flex-col border-none w-full px-2">
+            className="flex flex-col border-none">
             {!(item.id === "9" || item.id === "10") || extendedTesting ? (
               <AccordionTrigger
                 suppressHydrationWarning

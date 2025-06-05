@@ -149,9 +149,13 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           </Button>
           <Separator orientation="vertical" />
           <section className="flex items-center gap-1 font-table font-medium h-full">
-            <Label>{data?.title}</Label>
+            <Label className="font-semibold font-[helvetica] text-[15px] scroll-m-0 px-2 truncate">
+              {data?.title}
+            </Label>
             <Separator orientation="vertical" />
-            <Label>{data?.reference}</Label>
+            <Label className="font-semibold font-[helvetica] text-xs scroll-m-0 truncate">
+              {data?.reference}
+            </Label>
           </section>
         </section>
         <section className="flex-1 flex items-center justify-end gap-2 pr-1">
@@ -191,7 +195,7 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             observation={observation}
             conclusion={conclusion}
           />
-          <section className="pt-2">
+          <section className="pt-2 w-[calc(100vw-320px)]">
             {data?.type === "risk" ? <PRCM /> : null}
             {data?.type === "program" ? <SummaryAuditProgram /> : null}
           </section>

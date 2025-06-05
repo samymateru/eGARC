@@ -31,7 +31,6 @@ export const EngagementSidebarMenu = () => {
           <Briefcase size={16} strokeWidth={3} />
           Adminstation
         </Button>
-
         <Component />
       </ScrollArea>
     </>

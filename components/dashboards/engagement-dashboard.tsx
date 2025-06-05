@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { ReviewCommentsStatusPieChart } from "../shared/review-comments-status-pie-chart";
 import { ProcedureStatusPieChart } from "../shared/procedure-status-pie-chart";
 import { ColoredBarChart } from "../shared/colored-bar-chart";
+import { Label } from "../ui/label";
+import { Separator } from "../ui/separator";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allRootCauses = [
@@ -26,10 +28,10 @@ const labelMap: Record<string, string> = {
 const allFindings = Object.keys(labelMap);
 
 const findingColors = {
-  Acceptable: "green",
-  ImprovementRequired: "blue",
-  SignificantImprovementRequired: "yellow",
-  Unacceptable: "red",
+  Acceptable: "#15803d",
+  ImprovementRequired: "rgb(234, 179, 8)",
+  SignificantImprovementRequired: "#b45309",
+  Unacceptable: "#dc2626",
 };
 
 export const EngagementDashboard = () => {
@@ -73,13 +75,20 @@ export const EngagementDashboard = () => {
   useEffect(() => {
     if (isSuccess) {
       const root = allRootCauses.reduce((acc, cause) => {
-        acc[cause] = data.issue_details.root_cause_summary[cause] || 0;
+        if (typeof cause === "string" || typeof cause === "number") {
+          acc[cause] =
+            (data?.issue_details?.root_cause_summary || {})[cause] || 0;
+        }
         return acc;
       }, {} as Record<string, number>);
 
       const finding = allFindings.reduce((acc, cause) => {
-        acc[cause] =
-          data.issue_details.risk_rating_summary[labelMap[cause]] || 0;
+        if (typeof cause === "string" || typeof cause === "number") {
+          acc[cause] =
+            (data?.issue_details?.risk_rating_summary || {})[labelMap[cause]] ||
+            0;
+        }
+
         return acc;
       }, {} as Record<string, number>);
 
@@ -94,31 +103,41 @@ export const EngagementDashboard = () => {
       setReviewComment(reviewCommentsStatus);
     }
   }, [data, isSuccess]);
-  console.log(findingRating);
 
   if (isSuccess) {
     return (
-      <div className="w-full h-[calc(100vh-50px)] overflow-auto flex flex-col gap-2">
-        <GradientBarChart
-          color="150"
-          data={rootCause}
-          title="Root Cause Summary"
-          description="cause"
-        />
+      <div className="w-full h-[calc(100vh-50px)] overflow-auto flex flex-col gap-2 pt-2">
+        <section>
+          <Label className="text-[25px] font-semibold font-[helvetica] tracking-wide scroll-m-0 mx-2">
+            Engagement Dashboard
+          </Label>
+        </section>
+        <Separator />
         <section className="flex items-center gap-1">
+          <GradientBarChart
+            color="blue"
+            data={rootCause}
+            title="Root Cause Summary"
+            description="cause"
+          />
+          <Separator orientation="vertical" />
+          <ColoredBarChart
+            colors={findingColors}
+            data={findingRating}
+            title="Audit Findings Rating"
+            description="cause"
+          />
+        </section>
+
+        <section className="flex items-center gap-1 mb-2">
           <section className="flex-1">
             <ReviewCommentsStatusPieChart data={reviewComment} />
           </section>
+          <Separator orientation="vertical" />
           <section className="flex-1">
             <ProcedureStatusPieChart data={procedure} />
           </section>
         </section>
-        <ColoredBarChart
-          colors={findingColors}
-          data={findingRating}
-          title="Audit Findings Rating"
-          description="cause"
-        />
       </div>
     );
   }

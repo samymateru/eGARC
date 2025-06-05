@@ -302,10 +302,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
           </OrganizationForm>
         )}
       </div>
-      <Table
-        style={{
-          width: table.getTotalSize(),
-        }}>
+      <Table style={{ width: "100vw" }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">

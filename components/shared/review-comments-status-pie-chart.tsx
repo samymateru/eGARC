@@ -66,9 +66,11 @@ export function ReviewCommentsStatusPieChart({
     seTotal(totalValue);
   }, [data]);
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Tasks Summary</CardTitle>
+    <Card className="flex flex-col border-none">
+      <CardHeader className="">
+        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide text-left">
+          Review Comments Summary
+        </CardTitle>
         <CardDescription className="flex gap-1 items-center">
           <Label className="text-white text-[16px] font-[helvetica] font-semibold">
             Total

@@ -472,3 +472,79 @@ export const StaffSchema = z.object({
   end_date: z.date({ required_error: "End date is required" }),
   role: z.string().optional(),
 });
+
+export const IssueResponder = z.object({
+  name: z.string().optional(),
+  email: z.string().optional(),
+  date_issued: z.date().optional(),
+});
+
+export const IssueResponsesSchema = z.object({
+  id: z.string().optional(),
+  notes: z.string(),
+  attachements: z.array(z.string()),
+  issued_by: IssueResponder,
+  type: z.string(),
+});
+
+export const IssueDetailedSchema = z.object({
+  id: z.string().optional(),
+  reference: z.string().optional(),
+  engagement_name: z.string().optional(),
+  engagement_code: z.string().optional(),
+  financial_year: z.date().optional(),
+  overall_opinion_rating: z.string().optional(),
+  issue_name: z.string().optional(),
+  issue_rating: z.string(), // Could be narrowed to enum: z.enum(["Improvement Required", ...])
+  issue_source: z.string(), // e.g., z.enum(["Internal Audit", ...])
+  issue_criteria: z.string(),
+  root_cause_description: z.string(),
+  impact_description: z.string(),
+  issue_recommendation: z.string(),
+  issue_management_action_plan: z.string(),
+  issue_reportable: z.boolean(),
+  is_issue_sent_to_owner: z.string(), // e.g., z.enum(["Yes", "No"])
+  date_issue_sent_to_client: z.nullable(z.string().datetime()), // ISO date format
+  estimated_implementation_date: z.string().datetime(), // Can validate ISO 8601 date
+  is_issue_revised: z.string(), // e.g., z.enum(["Yes", "No"])
+  latest_revised_date: z.string().datetime(),
+  actual_implementation_date: z.nullable(z.string().datetime()),
+  issue_revised_count: z.number().int(),
+  is_issue_pass_due: z.string(), // e.g., z.enum(["Yes", "No"])
+  days_remaining_to_implementation: z.number().int(),
+  issue_due_more_than_90_days: z.string(), // e.g., z.enum(["Yes", "No"])
+  issue_due_more_than_365_days: z.string(), // e.g., z.enum(["Yes", "No"])
+  issue_overall_status: z.string(), // e.g., z.enum(["Open", "Closed", ...])
+  lod1_owner: z.string(), // Format: "Name <email>"
+  lod1_implementer: z.string(),
+  lod2_risk_manager: z.string(),
+  lod2_compliance_officer: z.string(),
+  lod3_audit_manager: z.string(), // Multiple entries separated by commas
+  observers: z.string(), // Multiple entries separated by commas
+  latest_response: z.nullable(z.any()),
+});
+
+export const RevieCommentReportSchema = z.object({
+  title: z.string().optional(),
+  reference: z.string().optional(),
+  description: z.string().optional(),
+  raised_by: IssueResponder,
+  resolution_summary: z.string().optional(),
+  resolution_details: z.string().optional(),
+  resolved_by: IssueResponder,
+  decision: z.string().optional(),
+  status: z.string().optional(),
+  href: z.string().optional(),
+});
+
+export const SummaryProceduresSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().optional(),
+  process_rating: z.string().optional(),
+  issue_count: z.number().int(),
+  acceptable: z.number().int(),
+  improvement_required: z.number().int(),
+  significant_improvement_required: z.number().int(),
+  unacceptable: z.number().int(),
+  recurring_issues: z.number().int(),
+});
