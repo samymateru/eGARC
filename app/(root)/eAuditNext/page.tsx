@@ -39,7 +39,7 @@ type AuditPlanType = z.infer<typeof PlanSchema>;
 export default function AuditNextPage() {
   const pathname = usePathname();
   return (
-    <Tabs defaultValue="dashboard" className="w-full flex-1 flex justify-start">
+    <Tabs defaultValue="dashboard" className="flex-1 flex">
       <TabsList className="bg-neutral-300 flex flex-col gap-1 rounded-none justify-start min-w-[300px] h-full">
         <section className="w-full px-2">
           <Label className="font-[helvetica] font-bold tracking-normal text-xl text-black">
@@ -81,15 +81,15 @@ export default function AuditNextPage() {
           </SystemOptions>
         </section>
       </TabsList>
-      <section className="flex-1">
-        <TabsContent value="dashboard" className="flex-1">
+      <section className="w-[calc(100vw-300px)] h-[100vh] flex">
+        <TabsContent value="dashboard" className="flex-1 mt-0">
           <EauditDashboard />
         </TabsContent>
-        <TabsContent value="audit_plan" className="pt-2 flex-1">
+        <TabsContent value="audit_plan" className="flex-1 mt-0">
           <AnnualAuditPlan />
         </TabsContent>
-        <TabsContent value="follow_up" className="flex-1"></TabsContent>
-        <TabsContent value="report" className="flex-1">
+        <TabsContent value="follow_up" className="flex-1 mt-0"></TabsContent>
+        <TabsContent value="report" className="flex-1 mt-0">
           <Reporting />
         </TabsContent>
       </section>
