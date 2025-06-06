@@ -51,8 +51,14 @@ export const PlanningProcedureActions = ({
             </Button>
           </RaiseTask>
           <RaiseReviewComment
+            data={{
+              title: "",
+              description: "",
+              action_owner: [],
+            }}
             title="Raise Review Note"
             endpoint="review_comment/raise"
+            mode="create"
             id={params.get("id")}>
             <Button
               variant={"ghost"}
@@ -63,6 +69,14 @@ export const PlanningProcedureActions = ({
           </RaiseReviewComment>
           {data?.type === "risk" ? (
             <PRCMForm
+              data={{
+                process: "",
+                risk: "",
+                risk_rating: "",
+                control: "",
+                control_objective: "",
+                control_type: "",
+              }}
               title="Add PRCM"
               endpoint="engagements/PRCM"
               id={params.get("id")}>

@@ -67,6 +67,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PolicySchema } from "@/lib/types";
+import { PolicyForm } from "../forms/policy-form";
 
 type PoliciesValues = z.infer<typeof PolicySchema>;
 
@@ -131,7 +132,7 @@ const columns: ColumnDef<PoliciesValues>[] = [
   {
     id: "actions",
     header: () => <Label className="font-table">More</Label>,
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -143,12 +144,23 @@ const columns: ColumnDef<PoliciesValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <PolicyForm
+                data={{
+                  name: row.original.name,
+                  version: row.original.version,
+                  key_areas: row.original.key_areas,
+                }}
+                mode="update"
+                title="Edit Policy"
+                id={row.original.id ?? ""}
+                endpoint="engagements/context/policies">
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                  <Pencil size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </PolicyForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">

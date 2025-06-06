@@ -59,7 +59,8 @@ interface OrganizationFormProps {
   title: string;
   id: string | null;
   endpoint: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data: OrganizationValues;
 }
 
 export const OrganizationForm = ({
@@ -67,6 +68,7 @@ export const OrganizationForm = ({
   title,
   id,
   endpoint,
+  data,
 }: OrganizationFormProps) => {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -99,6 +101,7 @@ export const OrganizationForm = ({
 
   const methods = useForm<OrganizationValues>({
     resolver: zodResolver(OrganizationSchema),
+    defaultValues: data,
   });
 
   const {

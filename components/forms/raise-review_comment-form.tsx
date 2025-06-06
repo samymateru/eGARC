@@ -30,12 +30,25 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type RaiseReviewCommentValues = z.infer<typeof RaiseReviewCommentSchema>;
 type UserValuses = z.infer<typeof UserSchema>;
 
+type ActionOwner = {
+  name?: string;
+  email?: string;
+};
+
+type DefaultRaiseCommentValues = {
+  title?: string;
+  description?: string;
+  action_owner: ActionOwner[];
+  due_date?: Date;
+};
+
 interface RaiseTaskProps {
   children: React.ReactNode;
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data: DefaultRaiseCommentValues;
 }
 
 export const RaiseReviewComment = ({
@@ -43,11 +56,13 @@ export const RaiseReviewComment = ({
   id,
   endpoint,
   title,
+  data,
 }: RaiseTaskProps) => {
   const [open, setOpen] = useState(false);
 
   const methods = useForm<RaiseReviewCommentValues>({
     resolver: zodResolver(RaiseReviewCommentSchema),
+    defaultValues: data,
   });
 
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
@@ -57,7 +72,7 @@ export const RaiseReviewComment = ({
 
   const query_client = useQueryClient();
 
-  const { data } = useQuery({
+  const { data: users } = useQuery({
     queryKey: ["__users_", moduleId],
     queryFn: async (): Promise<UserValuses[]> => {
       const response = await fetch(`${BASE_URL}/users/module/${moduleId}`, {
@@ -88,10 +103,10 @@ export const RaiseReviewComment = ({
   }, []);
 
   useEffect(() => {
-    if (data && Array.isArray(data)) {
-      setAuditUsers(data?.filter((user) => user.type === "audit"));
+    if (users && Array.isArray(users)) {
+      setAuditUsers(users?.filter((user) => user.type === "audit"));
     }
-  }, [data]);
+  }, [users]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

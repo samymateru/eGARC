@@ -190,12 +190,24 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
                 <SendHorizonal size={16} strokeWidth={3} />
                 Engage
               </Link>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <PlanningForm
+                data={{
+                  name: row.original.name,
+                  year: row.original.year,
+                  start: new Date(row.original.start),
+                  end: new Date(row.original.end),
+                }}
+                endpoint="annual_plans"
+                title="Edit Plan"
+                mode="update"
+                company_module_id={row.original.id}>
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
+                  <Edit size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </PlanningForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
@@ -320,6 +332,10 @@ export default function AnnualAuditPlanningTable({
         </section>
         <section className="flex-1 flex items-center justify-end pr-2">
           <PlanningForm
+            data={{
+              name: "",
+              year: "",
+            }}
             endpoint="annual_plans"
             title="Audit Plan"
             mode="create"

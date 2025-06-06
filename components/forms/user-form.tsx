@@ -70,8 +70,9 @@ interface UsersProps {
   id: string | null;
   endpoint?: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
   member: string;
+  data: UsersValues;
 }
 
 export const UsersForm = ({
@@ -80,11 +81,13 @@ export const UsersForm = ({
   endpoint,
   title,
   member,
+  data,
 }: UsersProps) => {
   const [open, setOpen] = useState(false);
 
   const methods = useForm<UsersValues>({
     resolver: zodResolver(UserSchema),
+    defaultValues: data,
   });
 
   const query_client = useQueryClient();

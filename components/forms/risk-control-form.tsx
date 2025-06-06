@@ -30,6 +30,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 type RiskControlFormValues = z.infer<typeof RiskControlSchema>;
 
 interface RiskControlPros {
@@ -37,7 +38,8 @@ interface RiskControlPros {
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: RiskControlFormValues;
 }
 
 type ControlTypeResponse = {
@@ -83,6 +85,7 @@ export const RiskControlForm = ({
   id,
   endpoint,
   title,
+  data,
 }: RiskControlPros) => {
   const [open, setOpen] = useState(false);
 
@@ -92,6 +95,7 @@ export const RiskControlForm = ({
 
   const methods = useForm<RiskControlFormValues>({
     resolver: zodResolver(RiskControlSchema),
+    defaultValues: data,
   });
 
   const results = useQueries({

@@ -30,6 +30,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 type PRCMFormValues = z.infer<typeof PRCMSchema>;
 
 interface PRCMFormPros {
@@ -38,6 +39,7 @@ interface PRCMFormPros {
   endpoint: string;
   title: string;
   mode?: string;
+  data?: PRCMFormValues;
 }
 
 type ControlTypeResponse = {
@@ -78,7 +80,13 @@ const fetchData = async (endpont: string, id?: string) => {
   return await response.json();
 };
 
-export const PRCMForm = ({ children, id, endpoint, title }: PRCMFormPros) => {
+export const PRCMForm = ({
+  children,
+  id,
+  endpoint,
+  title,
+  data,
+}: PRCMFormPros) => {
   const [open, setOpen] = useState(false);
 
   const query_client = useQueryClient();
@@ -87,6 +95,7 @@ export const PRCMForm = ({ children, id, endpoint, title }: PRCMFormPros) => {
 
   const methods = useForm<PRCMFormValues>({
     resolver: zodResolver(PRCMSchema),
+    defaultValues: data,
   });
 
   const results = useQueries({

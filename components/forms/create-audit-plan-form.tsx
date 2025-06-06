@@ -21,17 +21,26 @@ import {
 } from "../ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type PlanFormValues = z.infer<typeof PlanSchema>;
 
+type DefaultsPlanValues = {
+  name: string;
+  year: string;
+  start?: Date;
+  end?: Date;
+};
+
 interface PlanDialogProps {
   title?: string;
-  mode?: string;
+  mode?: "create" | "update";
   endpoint?: string;
   company_module_id?: string;
   audit_plan_id?: string;
   children: React.ReactNode;
+  data: DefaultsPlanValues;
 }
 
 export const PlanningForm = ({
@@ -39,11 +48,19 @@ export const PlanningForm = ({
   title,
   company_module_id,
   endpoint,
+  data,
+  mode,
 }: PlanDialogProps) => {
   const [open, setOpen] = useState(false);
   const query_client = useQueryClient();
   const methods = useForm<PlanFormValues>({
     resolver: zodResolver(PlanSchema),
+    defaultValues: {
+      name: data.name,
+      year: data.year,
+      start: data.start,
+      end: data.end,
+    },
   });
 
   const { mutate: createMutation, isPending } = useMutation({
@@ -72,6 +89,34 @@ export const PlanningForm = ({
     },
   });
 
+  const { mutate: updatePlan, isPending: updatePlanPending } = useMutation({
+    mutationKey: ["_create_annual_plan_"],
+    mutationFn: async (data: FormData): Promise<Response> => {
+      const response = await fetch(
+        `${BASE_URL}/${endpoint}/${company_module_id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: data,
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
+
+  const params = useSearchParams();
+
   const {
     register,
     handleSubmit,
@@ -81,25 +126,54 @@ export const PlanningForm = ({
   } = methods;
 
   const onSubmit = (data: PlanFormValues) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("year", data.year);
-    formData.append("start", data.start.toISOString());
-    formData.append("end", data.end.toISOString());
-    formData.append("attachment", data.attachment);
-    createMutation(formData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({ queryKey: ["_annual_plan_"] });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("year", data.year);
+      formData.append("start", data.start.toISOString());
+      formData.append("end", data.end.toISOString());
+      if (data.attachment) {
+        formData.append("attachment", data.attachment);
+      }
+      createMutation(formData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_annual_plan_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
+    if (mode === "update") {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("year", data.year);
+      formData.append("start", data.start.toISOString());
+      formData.append("end", data.end.toISOString());
+      if (data.attachment) {
+        formData.append("attachment", data.attachment);
+      }
+      updatePlan(formData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({ queryKey: ["_annual_plan_"] });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -235,7 +309,7 @@ export const PlanningForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={isPending}
+                disabled={isPending || updatePlanPending}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-table">

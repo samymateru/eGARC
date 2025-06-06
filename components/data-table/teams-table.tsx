@@ -67,6 +67,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { UserSchema } from "@/lib/types";
+import { UsersForm } from "../forms/user-form";
 
 type UsersValues = z.infer<typeof UserSchema>;
 
@@ -139,7 +140,7 @@ const columns: ColumnDef<UsersValues>[] = [
   {
     id: "actions",
     header: () => <Label className="font-table">More</Label>,
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -151,12 +152,29 @@ const columns: ColumnDef<UsersValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <UsersForm
+                data={{
+                  title: row.original.title,
+                  name: row.original.name,
+                  email: row.original.email,
+                  role: row.original.role,
+                }}
+                mode="update"
+                member={row.original.type ?? "audit"}
+                title={
+                  row.original.type === "audit"
+                    ? "Edit Audit Member"
+                    : "Edit Business Member"
+                }
+                endpoint="users"
+                id={""}>
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                  <Pencil size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </UsersForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
@@ -240,7 +258,7 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
       sensors={sensors}>
       <Table
         style={{
-          width: table.getTotalSize(),
+          width: Math.max(table.getTotalSize(), window.innerWidth - 300),
         }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

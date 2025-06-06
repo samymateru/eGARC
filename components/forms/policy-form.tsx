@@ -26,12 +26,19 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type PolicyValues = z.infer<typeof PolicySchema>;
 
+type DefaultPoliciesValues = {
+  name?: string;
+  version?: string;
+  key_areas: string;
+};
+
 interface PolicyFormProps {
   children: React.ReactNode;
   id: string | null;
   endpoint: string;
   title: string;
   mode?: string;
+  data?: DefaultPoliciesValues;
 }
 
 export const PolicyForm = ({
@@ -39,6 +46,7 @@ export const PolicyForm = ({
   id,
   endpoint,
   title,
+  data,
 }: PolicyFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -48,6 +56,7 @@ export const PolicyForm = ({
 
   const methods = useForm<PolicyValues>({
     resolver: zodResolver(PolicySchema),
+    defaultValues: data,
   });
 
   const {

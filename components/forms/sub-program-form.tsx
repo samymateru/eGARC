@@ -30,7 +30,8 @@ interface SubProgramFormPros {
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: SubProgramValues;
   setOnSuccess?: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -39,12 +40,14 @@ export const SubProgramForm = ({
   id,
   endpoint,
   title,
+  data,
   setOnSuccess,
 }: SubProgramFormPros) => {
   const [open, setOpen] = useState(false);
 
   const methods = useForm<SubProgramValues>({
     resolver: zodResolver(SubProgramSchema),
+    defaultValues: data,
   });
 
   const query_client = useQueryClient();

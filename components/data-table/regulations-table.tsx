@@ -67,6 +67,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { RegulationSchema } from "@/lib/types";
+import { RegulationForm } from "../forms/regulation-form";
 
 type RegulationsValues = z.infer<typeof RegulationSchema>;
 
@@ -138,7 +139,7 @@ const columns: ColumnDef<RegulationsValues>[] = [
   {
     id: "actions",
     header: () => <Label className="font-table">More</Label>,
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -150,12 +151,23 @@ const columns: ColumnDef<RegulationsValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <RegulationForm
+                data={{
+                  name: row.original.name,
+                  key_areas: row.original.key_areas,
+                  issue_date: new Date(row.original.issue_date),
+                }}
+                mode="update"
+                title="Edit Regulation"
+                id={row.original.id ?? ""}
+                endpoint="engagements/context/regulations">
+                <Button
+                  variant="ghost"
+                  className="w-full flex items-center justify-start h-[30px]">
+                  <Pencil size={16} />
+                  Edit
+                </Button>
+              </RegulationForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">

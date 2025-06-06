@@ -162,7 +162,10 @@ const columns: ColumnDef<OrganizationValues>[] = [
     id: "actions",
     header: () => <Label className="font-table">Actions</Label>,
     cell: ({ row }) => (
-      <ModuleSelect id={row.original.id ?? ""}>
+      <ModuleSelect
+        id={row.original.id ?? ""}
+        organizationName={row.original.name}
+        organizationType={row.original.type}>
         <Button
           className="flex justify-center items-center p-1 w-[30px] h-[30px]"
           variant="ghost">
@@ -289,6 +292,10 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
         </section>
         {shouldRender && (
           <OrganizationForm
+            data={{
+              name: "",
+              type: "",
+            }}
             endpoint="organization"
             title="Organization"
             mode="create"

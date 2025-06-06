@@ -35,12 +35,19 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type StaffValues = z.infer<typeof StaffSchema>;
 type UserValuses = z.infer<typeof UserSchema>;
 
+type DefaultUsersValues = {
+  role?: string;
+  start_date?: Date;
+  end_date?: Date;
+};
+
 interface StaffFormProps {
   children: React.ReactNode;
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  defaultValue?: DefaultUsersValues;
 }
 
 const engagementRole = ["Reviewer", "Lead", "Member"];
@@ -49,6 +56,7 @@ export const StaffForm = ({
   id,
   endpoint,
   title,
+  defaultValue,
 }: StaffFormProps) => {
   const [open, setOpen] = useState(false);
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
@@ -59,6 +67,7 @@ export const StaffForm = ({
 
   const methods = useForm<StaffValues>({
     resolver: zodResolver(StaffSchema),
+    defaultValues: defaultValue,
   });
 
   const [moduleId, setModuleId] = useState<string | null>(null);

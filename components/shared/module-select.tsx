@@ -22,6 +22,7 @@ import { ReactNode, useState } from "react";
 import { Button } from "../ui/button";
 import { ModuleForm } from "../forms/modules-form";
 import { Separator } from "../ui/separator";
+import { OrganizationForm } from "../forms/organization-form";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -33,10 +34,17 @@ type ModuleResponse = {
 
 interface ModuleSelectProps {
   children: ReactNode;
+  organizationName: string;
+  organizationType: string;
   id: string;
 }
 
-export const ModuleSelect = ({ children, id }: ModuleSelectProps) => {
+export const ModuleSelect = ({
+  children,
+  id,
+  organizationName,
+  organizationType,
+}: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const { data } = useQuery({
     queryKey: ["_modules_", id],
@@ -81,9 +89,19 @@ export const ModuleSelect = ({ children, id }: ModuleSelectProps) => {
           <DialogDescription className="absolute" />
         </DialogHeader>
         <section className="flex items-center justify-end gap-1 my-1">
-          <Button className="w-[30px] h-[30px]" variant="ghost">
-            <Edit size={16} />
-          </Button>
+          <OrganizationForm
+            data={{
+              name: organizationName,
+              type: organizationType,
+            }}
+            endpoint="organization"
+            title="Organization"
+            mode="create"
+            id={id}>
+            <Button className="w-[30px] h-[30px]" variant="ghost">
+              <Edit size={16} />
+            </Button>
+          </OrganizationForm>
           <Button className="w-[30px] h-[30px]" variant="ghost">
             <Trash size={16} />
           </Button>

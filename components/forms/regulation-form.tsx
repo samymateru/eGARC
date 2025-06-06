@@ -27,12 +27,19 @@ import { DatePicker } from "../shared/date-picker";
 
 type RegulationValues = z.infer<typeof RegulationSchema>;
 
+type DefaultRegulationValues = {
+  name?: string;
+  issue_date?: Date;
+  key_areas?: string;
+};
+
 interface RegulationFormProps {
   children: React.ReactNode;
   id: string | null;
   endpoint: string;
   title: string;
   mode?: string;
+  data?: DefaultRegulationValues;
 }
 
 export const RegulationForm = ({
@@ -40,6 +47,7 @@ export const RegulationForm = ({
   id,
   endpoint,
   title,
+  data,
 }: RegulationFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -48,6 +56,7 @@ export const RegulationForm = ({
   const query_client = useQueryClient();
   const methods = useForm<RegulationValues>({
     resolver: zodResolver(RegulationSchema),
+    defaultValues: data,
   });
 
   const { mutate: createRegulation, isPending: createRegulationLoading } =

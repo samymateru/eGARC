@@ -44,6 +44,7 @@ import {
   ChevronUpIcon,
   Ellipsis,
   GripVerticalIcon,
+  Pencil,
   Trash,
 } from "lucide-react";
 
@@ -66,6 +67,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { RiskControlSchema } from "@/lib/types";
+import { RiskControlForm } from "../forms/risk-control-form";
 
 type PRCMValues = z.infer<typeof RiskControlSchema>;
 
@@ -137,7 +139,7 @@ const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "actions",
     header: () => <Label className="font-table">More</Label>,
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <div className="flex justify-center items-center w-full h-full">
           <Popover>
@@ -150,6 +152,25 @@ const columns: ColumnDef<PRCMValues>[] = [
             </PopoverTrigger>
             <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
               <div className="flex flex-col divide-y">
+                <RiskControlForm
+                  data={{
+                    risk: row.original.risk,
+                    risk_rating: row.original.risk_rating,
+                    control: row.original.control,
+                    control_objective: row.original.control_objective,
+                    control_type: row.original.control_type,
+                  }}
+                  mode="update"
+                  title="Edit Risk Control"
+                  id={row.original.id ?? null}
+                  endpoint="engagements/sub_program/risk_control">
+                  <Button
+                    variant="ghost"
+                    className="w-full flex justify-start gap-2 items-center h-[30px]">
+                    <Pencil size={16} strokeWidth={3} />
+                    Edit
+                  </Button>
+                </RiskControlForm>
                 <Button
                   variant="ghost"
                   className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">

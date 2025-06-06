@@ -334,7 +334,9 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 <Save size={16} />
                 Save
               </Button>
-              <ProcedureAction side="bottom">
+              <ProcedureAction
+                side="bottom"
+                subProgramTitle={data?.title ?? ""}>
                 <Button
                   variant="ghost"
                   onClick={(e) => e.stopPropagation()}

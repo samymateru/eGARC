@@ -10,6 +10,7 @@ import { CirclePlus, Edit, Import, Share, Trash } from "lucide-react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { SubProgramForm } from "../forms/sub-program-form";
+import { MainProgramForm } from "../forms/main-program-form";
 
 interface MainProgramActionProps {
   children?: ReactNode;
@@ -32,6 +33,10 @@ export const MainProgramAction = ({ children, id }: MainProgramActionProps) => {
         <Separator />
         <section className="mt-1">
           <SubProgramForm
+            data={{
+              title: "",
+            }}
+            mode="create"
             title="Sub Program"
             endpoint="engagements/sub_program"
             setOnSuccess={setOnSuccess}
@@ -44,12 +49,21 @@ export const MainProgramAction = ({ children, id }: MainProgramActionProps) => {
             </Button>
           </SubProgramForm>
 
-          <Button
-            variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <Edit size={16} strokeWidth={3} />
-            Edit
-          </Button>
+          <MainProgramForm
+            title="Edit Main Program"
+            endpoint="engagements/main_program"
+            id={""}
+            data={{
+              name: "",
+            }}>
+            <Button
+              variant="ghost"
+              className="w-full flex justify-start gap-2 items-center h-[30px]">
+              <Edit size={16} strokeWidth={3} />
+              Edit
+            </Button>
+          </MainProgramForm>
+
           <Button
             variant="ghost"
             className="w-full flex justify-start gap-2 items-center h-[30px]">

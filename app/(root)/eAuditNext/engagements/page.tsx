@@ -76,6 +76,20 @@ export default function EngagementPage() {
               endpoint="engagements"
               title="Engagement"
               mode="create"
+              data={{
+                name: "",
+                type: "",
+                leads: [],
+                department: {
+                  name: "",
+                  code: "",
+                },
+                sub_departments: [],
+                risk: {
+                  name: "",
+                  magnitude: 0,
+                },
+              }}
               id={searchParams.get("id") ?? undefined}>
               <Button
                 variant="ghost"

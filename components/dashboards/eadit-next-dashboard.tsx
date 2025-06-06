@@ -20,17 +20,18 @@ const allRootCauses = [
 ];
 
 const allImpactCategory = [
-  "Reputational",
-  "Financial",
-  "Complianc&Regulatory",
-  "Stategic&Governance",
-  "Operational",
+  "Reputational Impact",
+  "Financial Impact",
+  "Compliance & Regulatory Impact",
+  "Strategic & Governance Impact",
+  "Operational Impact",
 ];
 
 export const EauditDashboard = () => {
   const params = useSearchParams();
   const [rootCause, setRootCause] = useState<Record<string, number>>();
   const [recurring, setRecurring] = useState<Record<string, number>>();
+  const [process, setProcess] = useState<Record<string, number>>();
   const [issueStatus, setIssueStatus] = useState<Record<string, number>>();
   const [impactCategory, setImpactCategory] =
     useState<Record<string, number>>();
@@ -75,6 +76,7 @@ export const EauditDashboard = () => {
         }
         return acc;
       }, {} as Record<string, number>);
+
       const impact = allImpactCategory.reduce((acc, cause) => {
         if (typeof cause === "string" || typeof cause === "number") {
           acc[cause] = (data?.issues_data?.impact_summary || {})[cause] || 0;
@@ -86,15 +88,18 @@ export const EauditDashboard = () => {
       const engagementSummary = data?.engagements_summary;
       const issueRecurring = data?.issues_data.recurring_summary;
       const issueStatus = data?.issues_data.status_summary;
+      const topRatedProcess = data.issues_data.process_summary;
       setRootCause(root);
       setImpactCategory(impact);
       setAuditSummary(auditSummary);
       setEngagementSummary(engagementSummary);
       setRecurring(issueRecurring);
       setIssueStatus(issueStatus);
+      setProcess(topRatedProcess);
     }
   }, [data, isLoading, isSuccess]);
-  console.log(data);
+
+  console.log(data?.issues_data?.impact_summary);
   if (isSuccess && data) {
     return (
       <section className="w-full flex flex-col h-[100vh]">
@@ -126,6 +131,14 @@ export const EauditDashboard = () => {
                 description=""
                 color="#1e40af"
                 data={impactCategory}
+              />
+            </section>
+            <section className="flex items-center gap-1">
+              <GradientBarChart
+                title="Top Rated Processes"
+                description=""
+                color="#1e40af"
+                data={process}
               />
             </section>
           </section>

@@ -37,12 +37,37 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type EngagementValues = z.infer<typeof EngagementSchema>;
 type UserValuses = z.infer<typeof UserSchema>;
 
+type Risk = {
+  name?: string;
+  magnitude?: number;
+};
+
+type Lead = {
+  name?: string;
+  email?: string;
+};
+
+type Department = {
+  name?: string;
+  code?: string;
+};
+
+type DefaultsEngagementValues = {
+  name: string;
+  type: string;
+  risk?: Risk;
+  leads?: Lead[];
+  department: Department;
+  sub_departments: string[];
+};
+
 interface EngagementFormProps {
   children: React.ReactNode;
   id?: string;
   endpoint?: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: DefaultsEngagementValues;
 }
 
 const fetchData = async (endpont: string, id?: string | null) => {
@@ -88,23 +113,25 @@ export const EngagementForm = ({
   id,
   endpoint,
   title,
+  data,
 }: EngagementFormProps) => {
   const [open, setOpen] = useState(false);
 
   const methods = useForm<EngagementValues>({
     resolver: zodResolver(EngagementSchema),
     defaultValues: {
+      name: data?.name,
+      type: data?.type,
       department: {
-        name: "",
-        code: "",
+        name: data?.department.name,
+        code: data?.department.code,
       },
       risk: {
-        name: "",
-        magnitude: 0,
+        name: data?.risk?.name,
+        magnitude: data?.risk?.magnitude,
       },
-      sub_departments: [],
-      leads: [],
-      // other fields...
+      sub_departments: data?.sub_departments,
+      leads: data?.leads,
     },
   });
 
@@ -460,7 +487,9 @@ export const EngagementForm = ({
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                }}
                 className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel

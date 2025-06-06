@@ -30,7 +30,8 @@ interface MainProgramFormPros {
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: MainProgramValues;
 }
 
 export const MainProgramForm = ({
@@ -38,10 +39,12 @@ export const MainProgramForm = ({
   id,
   endpoint,
   title,
+  data,
 }: MainProgramFormPros) => {
   const [open, setOpen] = useState(false);
   const methods = useForm<MainProgramValues>({
     resolver: zodResolver(MainProgramSchema),
+    defaultValues: data,
   });
 
   const query_client = useQueryClient();

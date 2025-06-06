@@ -24,6 +24,7 @@ export const User = z.object({
 
 export const PlanSchema = z.object({
   id: z.string().optional(),
+  module: z.string().optional(),
   name: z.string().min(1, "Plan name is equired"),
   year: z.string().regex(/^\d{4}$/, "Year must be a 4-digit string"),
   status: z.enum(["Not Started", "In Progress", "Completed"]).optional(),
@@ -122,6 +123,7 @@ export const SubProgramSchema = z.object({
 });
 
 export const PolicySchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, "Please provide policy name"),
   version: z.string().min(1, "Please provide policy version"),
   key_areas: z.string().min(1, "Provide keys areas"),
@@ -157,12 +159,18 @@ export const RiskSchema = z
 
 export const PRCMSchema = z.object({
   id: z.string().optional(),
-  process: z.string({ required_error: "Business process is required" }),
+  process: z
+    .string({ required_error: "Business process is required" })
+    .min(1, "Business process is required"),
   risk: z.string().min(1, "Risk is required"),
-  risk_rating: z.string({ required_error: "Risk rating is required" }),
+  risk_rating: z
+    .string({ required_error: "Risk rating is required" })
+    .min(1, "Risk rating is required"),
   control: z.string().min(1, "Control is required"),
   control_objective: z.string().min(1, "Control objective is required"),
-  control_type: z.string({ required_error: "Control type is required" }),
+  control_type: z
+    .string({ required_error: "Control type is required" })
+    .min(1, "Control type is required"),
   residue_risk: z.string().optional(),
   summary_audit_program: z.string().optional(),
 });
@@ -204,6 +212,7 @@ export const ControlTypeSchema = z.object({
 });
 
 export const RegulationSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, "Please provide policy name"),
   issue_date: z.date({ required_error: "Issue date is required" }),
   key_areas: z.string().min(1, "Provide keys areas"),

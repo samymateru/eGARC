@@ -72,6 +72,7 @@ import Link from "next/link";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { useRouter } from "next/navigation";
+import { EngagementForm } from "../forms/engagement-form";
 
 type EngagementSchemaValues = z.infer<typeof EngagementSchema>;
 
@@ -171,12 +172,33 @@ const columns: ColumnDef<EngagementSchemaValues>[] = [
                 <SendHorizonal size={16} strokeWidth={3} />
                 Engage
               </Link>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
-              </Button>
+
+              <EngagementForm
+                endpoint="engagements"
+                title="Engagement"
+                mode="update"
+                data={{
+                  name: row.original.name,
+                  type: row.original.type,
+                  leads: row.original.leads,
+                  department: {
+                    name: row.original.department.name,
+                    code: row.original.department.code,
+                  },
+                  sub_departments: row.original.sub_departments,
+                  risk: {
+                    name: row.original.risk.name,
+                    magnitude: row.original.risk.magnitude,
+                  },
+                }}
+                id={row.original.id}>
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                  <Edit size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </EngagementForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">

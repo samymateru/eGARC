@@ -18,7 +18,7 @@ type UserValuses = z.infer<typeof UserSchema>;
 export default function PreferencesPage() {
   return (
     <Tabs defaultValue="account" className="flex-1 flex h-full">
-      <TabsList className="bg-neutral-300 flex flex-col gap-[3px] justify-start w-[290px] pb-2 h-full rounded-none">
+      <TabsList className="bg-neutral-300 flex flex-col gap-[3px] justify-start min-w-[300px] pb-2 h-[100vh] rounded-none">
         <Label className="flex items-center gap-1 text-xl text-black font-bold tracking-tight scroll-m-0 self-start pt-1 pb-2">
           <Settings size={20} />
           Preferences
@@ -43,13 +43,13 @@ export default function PreferencesPage() {
         </TabsTrigger>
       </TabsList>
       <Separator orientation="vertical" className="" />
-      <TabsContent value="account" className="mt-0 flex-1">
+      <TabsContent value="account" className="mt-0 flex-1 flex">
         Account
       </TabsContent>
-      <TabsContent value="teams" className="mt-0 flex-1">
+      <TabsContent value="teams" className="mt-0 flex-1 flex">
         <Teams />
       </TabsContent>
-      <TabsContent value="roles" className="mt-0 flex-1">
+      <TabsContent value="roles" className="mt-0 flex-1 flex">
         Roles
       </TabsContent>
     </Tabs>
@@ -103,7 +103,7 @@ const Teams = () => {
       className="flex-1 flex flex-col h-full"
       value={tab}
       onValueChange={(tab) => setTab(tab)}>
-      <TabsList className="flex justify-between items-center gap-2 w-full dark:bg-background rounded-none px-2">
+      <TabsList className="flex justify-between items-center gap-2 w-full dark:bg-background rounded-none">
         <section>
           <Label className="text-[16px] font-[helvetica] font-bold">
             {tab === "audit" ? "Audit Members" : "Business Members"}
@@ -126,6 +126,13 @@ const Teams = () => {
           </section>
           <section className="border-l border-l-neutral-700 pl-2">
             <UsersForm
+              data={{
+                title: "",
+                name: "",
+                email: "",
+                role: "",
+              }}
+              mode="create"
               member={tab}
               title={tab === "audit" ? "Audit Member" : "Business Member"}
               endpoint="users"
@@ -141,10 +148,10 @@ const Teams = () => {
         </section>
       </TabsList>
       <Separator />
-      <TabsContent value="business" className="flex-1 mx-1 mb-1">
+      <TabsContent value="business" className="mt-0  w-[calc(100vw-300px)]">
         <TeamsTable data={businessUsers ?? []} />
       </TabsContent>
-      <TabsContent value="audit" className="flex-1 mx-1 mb-1">
+      <TabsContent value="audit" className="mt-0 w-[calc(100vw-300px)]">
         <TeamsTable data={auditUsers ?? []} />
       </TabsContent>
     </Tabs>

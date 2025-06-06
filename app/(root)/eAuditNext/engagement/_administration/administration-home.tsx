@@ -202,6 +202,12 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
         <Separator />
         <section className="divede-y">
           <PolicyForm
+            data={{
+              name: "",
+              version: "",
+              key_areas: "",
+            }}
+            mode="create"
             title="New Policy"
             id={params.get("id")}
             endpoint="engagements/context/policies">
@@ -213,7 +219,12 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
             </Button>
           </PolicyForm>
           <RegulationForm
+            data={{
+              name: "",
+              key_areas: "",
+            }}
             title="New Regulation"
+            mode="create"
             id={params.get("id")}
             endpoint="engagements/context/regulations">
             <Button
@@ -224,6 +235,13 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
             </Button>
           </RegulationForm>
           <EngagementProcessForm
+            data={{
+              process: "",
+              sub_process: [],
+              description: "",
+              business_unit: "",
+            }}
+            mode="create"
             title="Engagement Process"
             id={params.get("id")}
             endpoint="engagements/context/engagement_process">
@@ -235,6 +253,9 @@ const ContexteActions = ({ children }: ContexteActionsProps) => {
             </Button>
           </EngagementProcessForm>
           <StaffForm
+            defaultValue={{
+              role: "",
+            }}
             title="Staffing"
             id={params.get("id")}
             endpoint="engagements/staff">

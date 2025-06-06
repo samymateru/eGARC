@@ -42,6 +42,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  Edit,
   Ellipsis,
   GripVerticalIcon,
   Pencil,
@@ -68,6 +69,7 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PRCMSchema } from "@/lib/types";
 import { SummaryAuditProgramForm } from "../forms/summary-audit-program-form";
+import { PRCMForm } from "../forms/prcm-form";
 
 type PRCMValues = z.infer<typeof PRCMSchema>;
 
@@ -169,6 +171,25 @@ const columns: ColumnDef<PRCMValues>[] = [
                     Work Program
                   </Button>
                 </SummaryAuditProgramForm>
+                <PRCMForm
+                  data={{
+                    process: row.original.process,
+                    risk: row.original.risk,
+                    risk_rating: row.original.risk_rating,
+                    control: row.original.control,
+                    control_objective: row.original.control_objective,
+                    control_type: row.original.control_type,
+                  }}
+                  title="Add PRCM"
+                  endpoint="engagements/PRCM"
+                  id={row?.original?.id ?? null}>
+                  <Button
+                    variant={"ghost"}
+                    className="w-full flex justify-start items-center h-[30px]">
+                    <Edit size={16} strokeWidth={3} />
+                    Edit
+                  </Button>
+                </PRCMForm>
 
                 <Button
                   variant="ghost"

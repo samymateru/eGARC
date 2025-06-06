@@ -98,13 +98,13 @@ export default function AuditNextPage() {
 }
 
 const AnnualAuditPlan = () => {
-  const searchParams = useSearchParams();
+  const params = useSearchParams();
   const [auditplans, setAuditPlans] = useState<AuditPlanType[]>([]);
   const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ["_annual_plan_", searchParams.get("id")],
+    queryKey: ["_annual_plan_", params.get("id")],
     queryFn: async (): Promise<AuditPlanType[]> => {
       const response = await fetch(
-        `${BASE_URL}/annual_plans/${searchParams.get("id")}`,
+        `${BASE_URL}/annual_plans/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -126,7 +126,7 @@ const AnnualAuditPlan = () => {
     refetchOnMount: false,
     refetchOnReconnect: true,
     refetchOnWindowFocus: false,
-    enabled: !!searchParams.get("id"),
+    enabled: !!params.get("id"),
   });
   useEffect(() => {
     if (!isLoading && isSuccess) {

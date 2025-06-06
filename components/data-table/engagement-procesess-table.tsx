@@ -67,6 +67,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { EngagementProcessSchema } from "@/lib/types";
+import { EngagementProcessForm } from "../forms/engagement-process-form";
 
 type EngagementProcessesValues = z.infer<typeof EngagementProcessSchema>;
 
@@ -153,7 +154,7 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
         More
       </Label>
     ),
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -165,12 +166,25 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <EngagementProcessForm
+                data={{
+                  process: row.original.process,
+                  sub_process: row.original.sub_process,
+                  description: row.original.description,
+                  business_unit: row.original.business_unit,
+                }}
+                mode="update"
+                title="Edit Engagement Process"
+                id={row.original.id ?? null}
+                endpoint="engagements/context/engagement_process">
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
+                  <Pencil size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </EngagementProcessForm>
+
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">

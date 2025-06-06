@@ -30,12 +30,25 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type RaiseTaskValues = z.infer<typeof RaiseTaskSchema>;
 type UserValuses = z.infer<typeof UserSchema>;
 
+type ActionOwner = {
+  name?: string;
+  email?: string;
+};
+
+type DefaultTaskValues = {
+  title?: string;
+  description?: string;
+  action_owner: ActionOwner[];
+  due_date?: Date;
+};
+
 interface RaiseTaskProps {
   children: React.ReactNode;
   id: string | null;
   endpoint?: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: DefaultTaskValues;
 }
 
 export const RaiseTask = ({
@@ -43,11 +56,13 @@ export const RaiseTask = ({
   id,
   endpoint,
   title,
+  data,
 }: RaiseTaskProps) => {
   const [open, setOpen] = useState(false);
 
   const methods = useForm<RaiseTaskValues>({
     resolver: zodResolver(RaiseTaskSchema),
+    defaultValues: data,
   });
 
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
@@ -57,7 +72,7 @@ export const RaiseTask = ({
 
   const query_client = useQueryClient();
 
-  const { data, isLoading: userLoading } = useQuery({
+  const { data: users, isLoading: userLoading } = useQuery({
     queryKey: ["__users_", moduleId],
     queryFn: async (): Promise<UserValuses[]> => {
       const response = await fetch(`${BASE_URL}/users/module/${moduleId}`, {
@@ -88,10 +103,10 @@ export const RaiseTask = ({
   }, []);
 
   useEffect(() => {
-    if (data && Array.isArray(data)) {
-      setAuditUsers(data?.filter((user) => user.type === "audit"));
+    if (users && Array.isArray(users)) {
+      setAuditUsers(users?.filter((user) => user.type === "audit"));
     }
-  }, [data]);
+  }, [users]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -132,7 +147,6 @@ export const RaiseTask = ({
   } = methods;
 
   const onSubmit = (data: RaiseTaskValues) => {
-    console.log();
     const raiseData = {
       ...data,
       href: fullUrl,

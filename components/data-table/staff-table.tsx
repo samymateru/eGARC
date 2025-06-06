@@ -68,6 +68,7 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { StaffSchema } from "@/lib/types";
 import SearchInput from "../shared/search-input";
+import { StaffForm } from "../forms/staffing-form";
 
 type StaffValues = z.infer<typeof StaffSchema>;
 
@@ -150,7 +151,7 @@ const columns: ColumnDef<StaffValues>[] = [
   {
     id: "actions",
     header: () => <Label className="font-table">Actions</Label>,
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
@@ -162,12 +163,23 @@ const columns: ColumnDef<StaffValues>[] = [
           </PopoverTrigger>
           <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
             <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Edit size={16} strokeWidth={3} />
-                Edit
-              </Button>
+              <StaffForm
+                defaultValue={{
+                  role: row.original.role,
+                  start_date: new Date(row.original.start_date),
+                  end_date: new Date(row.original.end_date),
+                }}
+                title="Edit Staff"
+                mode="update"
+                id={""}
+                endpoint="engagements/staff">
+                <Button
+                  variant="ghost"
+                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
+                  <Edit size={16} strokeWidth={3} />
+                  Edit
+                </Button>
+              </StaffForm>
               <Button
                 variant="ghost"
                 className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">

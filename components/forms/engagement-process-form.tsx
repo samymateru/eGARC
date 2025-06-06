@@ -36,12 +36,20 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type EngagementProcessValues = z.infer<typeof EngagementProcessSchema>;
 
+type DefaultEngagementProcessValues = {
+  process?: string;
+  sub_process?: string[];
+  description?: string;
+  business_unit?: string;
+};
+
 interface EngagementProcessFormProps {
   children: React.ReactNode;
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
+  data?: DefaultEngagementProcessValues;
 }
 
 type BusinessProcessResponse = {
@@ -55,6 +63,7 @@ export const EngagementProcessForm = ({
   id,
   endpoint,
   title,
+  data,
 }: EngagementProcessFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -63,9 +72,14 @@ export const EngagementProcessForm = ({
 
   const methods = useForm<EngagementProcessValues>({
     resolver: zodResolver(EngagementProcessSchema),
+    defaultValues: data,
   });
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: process,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["__process__"],
     queryFn: async (): Promise<BusinessProcessResponse[]> => {
       const response = await fetch(`${BASE_URL}/profile/business_process`, {
@@ -145,8 +159,8 @@ export const EngagementProcessForm = ({
 
   const selectedProcess = watch("process");
   const subProcesses =
-    data?.find((bp) => bp.process_name === selectedProcess)?.sub_process_name ??
-    [];
+    process?.find((bp) => bp.process_name === selectedProcess)
+      ?.sub_process_name ?? [];
 
   return (
     <FormProvider {...methods}>
@@ -175,9 +189,7 @@ export const EngagementProcessForm = ({
                   render={({ field }) => (
                     <Select
                       onValueChange={(value) => {
-                        setValue("sub_process", [], {
-                          shouldValidate: true,
-                        });
+                        setValue("sub_process", []);
                         field.onChange(value);
                       }}
                       value={field.value}>
@@ -187,7 +199,7 @@ export const EngagementProcessForm = ({
 
                       <SelectContent className="">
                         <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                          {data?.map((department, index: number) => (
+                          {process?.map((department, index: number) => (
                             <SelectItem
                               className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
                               key={index}

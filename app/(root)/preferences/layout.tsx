@@ -13,11 +13,11 @@ export default function PreferencesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col w-full">
+    <section className="flex flex-col w-[100vw] h-[100vh]">
       <header className="py-2 pl-1">
         <PreferencesNavbar />
+        <Separator />
       </header>
-      <Separator />
       <main className="flex-1 flex h-full">
         <section className="flex-1 flex">{children}</section>
       </main>
