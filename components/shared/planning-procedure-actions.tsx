@@ -10,13 +10,7 @@ import { Label } from "../ui/label";
 import { RaiseTask } from "../forms/raise-task-form";
 import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-import {
-  AlertTriangle,
-  CheckCircle,
-  Eye,
-  ListTodoIcon,
-  MessagesSquare,
-} from "lucide-react";
+import { AlertTriangle, ListTodoIcon, MessagesSquare } from "lucide-react";
 import { RaiseReviewComment } from "../forms/raise-review_comment-form";
 import { Separator } from "../ui/separator";
 import { PRCMForm } from "../forms/prcm-form";
@@ -87,22 +81,6 @@ export const PlanningProcedureActions = ({
                 Add PRCM
               </Button>
             </PRCMForm>
-          ) : null}
-          {data?.prepared_by === null ? (
-            <Button
-              variant={"ghost"}
-              className="w-full flex justify-start items-center h-[30px]">
-              <CheckCircle size={16} strokeWidth={3} />
-              Mark Prepared
-            </Button>
-          ) : null}
-          {data?.reviewed_by === null && data.prepared_by !== null ? (
-            <Button
-              variant={"ghost"}
-              className="w-full flex justify-start items-center h-[30px]">
-              <Eye size={16} strokeWidth={3} />
-              Mark Reviewed
-            </Button>
           ) : null}
         </section>
       </PopoverContent>

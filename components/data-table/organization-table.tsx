@@ -164,6 +164,8 @@ const columns: ColumnDef<OrganizationValues>[] = [
     cell: ({ row }) => (
       <ModuleSelect
         id={row.original.id ?? ""}
+        organizationTelephone={row.original.telephone}
+        organizationEmail={row.original.email}
         organizationName={row.original.name}
         organizationType={row.original.type}>
         <Button
@@ -295,6 +297,8 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             data={{
               name: "",
               type: "",
+              telephone: "",
+              email: "",
             }}
             endpoint="organization"
             title="Organization"

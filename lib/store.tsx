@@ -21,3 +21,14 @@ export const useProcedureEditorVisibility = create<ProcedureEditorVisibility>(
     setProcedureEditor: (value) => set({ openProcedureEditor: value }),
   })
 );
+
+type AdministrationEditorVisibility = {
+  openAdministationEditor: boolean;
+  setAdministrationEditor: (value: boolean) => void;
+};
+
+export const useAdministrationEditorVisibility =
+  create<AdministrationEditorVisibility>((set) => ({
+    openAdministationEditor: true,
+    setAdministrationEditor: (value) => set({ openAdministationEditor: value }),
+  }));

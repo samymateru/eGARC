@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const Tasks = () => {
+export const SummaryTasks = () => {
   const params = useSearchParams();
   const { data } = useQuery({
-    queryKey: ["_summary_tasks_"],
+    queryKey: ["_summary_tasks_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
         `${BASE_URL}/engagements/fieldwork/summary_task/${params.get("id")}`,

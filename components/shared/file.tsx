@@ -75,7 +75,7 @@ export default function FileUpload() {
         <div className="inline-flex gap-2 text-xs">
           <p className="text-muted-foreground truncate" aria-live="polite">
             {fileName}
-          </p>{" "}
+          </p>
           <button
             onClick={() => removeFile(files[0]?.id)}
             className="text-destructive font-medium hover:underline"

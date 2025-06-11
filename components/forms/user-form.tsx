@@ -34,6 +34,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 type UsersValues = z.infer<typeof UserSchema>;
 
 const titles = [
+  "Head of Audit",
   "Chief Audit Executive",
   "Senior Auditor",
   "Audit Specialist",
@@ -51,18 +52,22 @@ const businessRoles = [
 ];
 
 const business = [
-  "Chief Executive Officer (CEO)",
-  "Head of HR",
-  "Director of IT",
-  "Head of department",
-  "Senior Manager",
+  "Chief Executive Officer (CEO/MD)",
+  "Director/Head of Public Relations",
+  "Director/Head of Finance",
+  "Director/Head of Human Resource",
+  "Director/Head of IT",
+  "Director/Head of Business",
+  "Director/Head of Risk",
+  "Director/Head of Compliance",
+  "Director/Head of Commercial",
+  "Director/Head of Marketing",
+  "Chief Operating Officer",
   "Management Assurance Specialist (MAS)",
   "Business Manager",
   "Business Specialist/Senior",
   "Business Officer",
   "Officer",
-  "Compliance Role (CR)",
-  "Risk Management Role (RMR)",
 ];
 
 interface UsersProps {
@@ -221,24 +226,26 @@ export const UsersForm = ({
                       <SelectTrigger>
                         <SelectValue placeholder="Select Member Title" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {member === "audit"
-                          ? titles.map((item, index) => (
-                              <SelectItem
-                                key={index}
-                                value={item}
-                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
-                                {item}
-                              </SelectItem>
-                            ))
-                          : business.map((item, index) => (
-                              <SelectItem
-                                key={index}
-                                value={item}
-                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
-                                {item}
-                              </SelectItem>
-                            ))}
+                      <SelectContent className="">
+                        <div className="h-[300px] overflow-auto">
+                          {member === "audit"
+                            ? titles.map((item, index) => (
+                                <SelectItem
+                                  key={index}
+                                  value={item}
+                                  className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                  {item}
+                                </SelectItem>
+                              ))
+                            : business.map((item, index) => (
+                                <SelectItem
+                                  key={index}
+                                  value={item}
+                                  className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                  {item}
+                                </SelectItem>
+                              ))}
+                        </div>
                       </SelectContent>
                     </Select>
                   )}

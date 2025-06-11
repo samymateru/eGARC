@@ -1,12 +1,12 @@
 import { IssueTable } from "@/components/data-table/issue-table";
-import { IssueSchema } from "@/lib/types";
+import { SummaryFindingSchema } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-type IssueValues = z.infer<typeof IssueSchema>;
+type IssueValues = z.infer<typeof SummaryFindingSchema>;
 
 export const SummaryFindings = () => {
   const params = useSearchParams();

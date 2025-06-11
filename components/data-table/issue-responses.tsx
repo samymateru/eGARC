@@ -1,51 +1,22 @@
 "use client";
-
-import { CSSProperties, useId, useState } from "react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
-  Cell,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Header,
   PaginationState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  Ellipsis,
-  GripVerticalIcon,
-  Pencil,
-  Trash,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -72,74 +43,76 @@ type IssueResponsesValues = z.infer<typeof IssueResponsesSchema>;
 
 const columns: ColumnDef<IssueResponsesValues>[] = [
   {
-    id: "sn",
-    header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "",
-    cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row.index + 1}</Label>
-    ),
-    size: 10,
-  },
-  {
     id: "notes",
     header: () => <Label className="font-table">Notes</Label>,
     accessorKey: "notes",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
-        {row.original.notes}
+      <Label className="ml-2 font-table truncate">{row.original.notes}</Label>
+    ),
+  },
+  {
+    id: "type",
+    header: () => <Label className="font-table">Type</Label>,
+    accessorKey: "type",
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate">{row.original.type}</Label>
+    ),
+  },
+  {
+    id: "issuer_name",
+    header: () => <Label className="font-table">Issuer Name</Label>,
+    accessorKey: "issuer_name",
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate">
+        {row.original.issued_by === null ? "N/A" : row.original.issued_by.name}
       </Label>
     ),
-    size: 300,
+  },
+  {
+    id: "issuer_email",
+    header: () => <Label className="font-table">Issuer Emal</Label>,
+    accessorKey: "issuer_name",
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate">
+        {row.original.issued_by === null ? "N/A" : row.original.issued_by.email}
+      </Label>
+    ),
+  },
+  {
+    id: "issued_on",
+    header: () => <Label className="font-table">Date Issued</Label>,
+    accessorKey: "issuer_on",
+    cell: ({ row }) => (
+      <Label className="ml-2 font-table truncate">
+        {row.original.issued_by !== null
+          ? new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }).format(new Date(row.original.issued_by.date_issued ?? ""))
+          : "N/A"}
+      </Label>
+    ),
   },
   {
     id: "attachment",
     header: () => <Label className="font-table">Attachment</Label>,
-    accessorKey: "attachment",
-    cell: ({ row }) => (
-      <a
-        href={row.getValue("attachment")}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-table">
-        View Attachment
-      </a>
-    ),
-  },
-
-  {
-    id: "actions",
-    header: () => <Label className="font-table">More</Label>,
-    cell: () => (
-      <div className="flex justify-center items-center w-full h-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Pencil size={16} strokeWidth={3} />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-    ),
-    size: 10,
-    minSize: 3,
+    accessorKey: "attachments",
+    cell: ({ row }) => {
+      if (row.original.attachments !== null) {
+        return (
+          <a
+            href={row.original.attachments?.[0]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline font-table">
+            View Attachment
+          </a>
+        );
+      } else {
+        return <Label className="ml-2 font-table truncate">N/A</Label>;
+      }
+    },
   },
 ];
 
@@ -182,46 +155,93 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
     paginationItemsToDisplay: 5,
   });
 
-  // reorder columns after drag & drop
-  function handleDragEnd(event: DragEndEvent) {
-    if (event.active.id === "actions") return;
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setColumnOrder((columnOrder) => {
-        const oldIndex = columnOrder.indexOf(active.id as string);
-        const newIndex = columnOrder.indexOf(over.id as string);
-        return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
-      });
-    }
-  }
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
-
   return (
-    <DndContext
-      id={useId()}
-      collisionDetection={closestCenter}
-      modifiers={[restrictToHorizontalAxis]}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}>
+    <div className="w-full">
       <Table
+        className="table-fixed"
         style={{
-          width: Math.max(table.getTotalSize(), window.innerWidth - 320),
+          width: Math.max(
+            table.getCenterTotalSize(),
+            window.innerWidth - 320 - 32
+          ),
         }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableTableHeader key={header.id} header={header} />
-                ))}
-              </SortableContext>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                        ? "descending"
+                        : "none"
+                    }
+                    {...{
+                      colSpan: header.colSpan,
+                      style: {
+                        width: header.getSize(),
+                      },
+                    }}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(
+                          header.column.getCanSort() &&
+                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                        onKeyDown={(e) => {
+                          // Enhanced keyboard handling for sorting
+                          if (
+                            header.column.getCanSort() &&
+                            (e.key === "Enter" || e.key === " ")
+                          ) {
+                            e.preventDefault();
+                            header.column.getToggleSortingHandler()?.(e);
+                          }
+                        }}
+                        tabIndex={header.column.getCanSort() ? 0 : undefined}>
+                        <span className="truncate">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </span>
+                        {{
+                          asc: (
+                            <ChevronUpIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                          desc: (
+                            <ChevronDownIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                    {header.column.getCanResize() && (
+                      <div
+                        {...{
+                          onDoubleClick: () => header.column.resetSize(),
+                          onMouseDown: header.getResizeHandler(),
+                          onTouchStart: header.getResizeHandler(),
+                          className:
+                            "absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
+                        }}
+                      />
+                    )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -232,12 +252,9 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <SortableContext
-                    key={cell.id}
-                    items={columnOrder}
-                    strategy={horizontalListSortingStrategy}>
-                    <DragAlongCell key={cell.id} cell={cell} />
-                  </SortableContext>
+                  <TableCell key={cell.id} className="truncate">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -250,7 +267,7 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div className="grow">
+      <div>
         <Pagination>
           <PaginationContent>
             {/* Previous page button */}
@@ -312,136 +329,6 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
           </PaginationContent>
         </Pagination>
       </div>
-    </DndContext>
-  );
-};
-
-const DraggableTableHeader = ({
-  header,
-}: {
-  header: Header<IssueResponsesValues, unknown>;
-}) => {
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: header.column.id,
-  });
-  const isActionColumn = header.column.id === "actions";
-  const isSnColumn = header.column.id === "sn";
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    whiteSpace: "nowrap",
-    width: header.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableHead
-      ref={setNodeRef}
-      className="before:bg-border relative h-10 border-t before:absolute before:inset-y-0 before:start-0 before:w-px first:before:bg-transparent"
-      style={style}
-      aria-sort={
-        header.column.getIsSorted() === "asc"
-          ? "ascending"
-          : header.column.getIsSorted() === "desc"
-          ? "descending"
-          : "none"
-      }>
-      <div className="flex items-center justify-start gap-0.5">
-        {!isActionColumn && !isSnColumn ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="-ml-2 size-7 shadow-none"
-            {...attributes}
-            {...listeners}
-            aria-label="Drag to reorder">
-            <GripVerticalIcon
-              className="opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          </Button>
-        ) : null}
-
-        <span className="grow truncate">
-          {header.isPlaceholder
-            ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
-        </span>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="group -mr-1 size-7 shadow-none"
-          onClick={header.column.getToggleSortingHandler()}
-          onKeyDown={(e) => {
-            // Enhanced keyboard handling for sorting
-            if (
-              header.column.getCanSort() &&
-              (e.key === "Enter" || e.key === " ")
-            ) {
-              e.preventDefault();
-              header.column.getToggleSortingHandler()?.(e);
-            }
-          }}>
-          {{
-            asc: (
-              <ChevronUpIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-            desc: (
-              <ChevronDownIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-          }[header.column.getIsSorted() as string] ?? (
-            <ChevronUpIcon
-              className="shrink-0 opacity-0 group-hover:opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          )}
-        </Button>
-      </div>
-    </TableHead>
-  );
-};
-
-const DragAlongCell = ({
-  cell,
-}: {
-  cell: Cell<IssueResponsesValues, unknown>;
-}) => {
-  const { isDragging, setNodeRef, transform, transition } = useSortable({
-    id: cell.column.id,
-  });
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    width: cell.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableCell ref={setNodeRef} className="truncate" style={style}>
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </TableCell>
+    </div>
   );
 };

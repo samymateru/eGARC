@@ -1,4 +1,5 @@
 import { EngagementProcessesTable } from "@/components/data-table/engagement-procesess-table";
+import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -37,7 +38,10 @@ export const EngagementProcesses = () => {
   });
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="w-[calc(100vw-320px)] flex flex-col gap-2">
+      <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[18px] pl-2 pt-1">
+        Engagement Processes
+      </Label>
       <EngagementProcessesTable data={data ?? []} />
     </div>
   );

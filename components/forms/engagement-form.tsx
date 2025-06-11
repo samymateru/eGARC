@@ -32,6 +32,7 @@ import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { MultiErrorForm } from "../shared/multi-error-form";
 import { ListMultiSelector } from "../shared/list-multi-select";
 import { showToast } from "../shared/toast";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type EngagementValues = z.infer<typeof EngagementSchema>;
@@ -114,6 +115,7 @@ export const EngagementForm = ({
   endpoint,
   title,
   data,
+  mode,
 }: EngagementFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -190,29 +192,57 @@ export const EngagementForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results[3].data]);
 
-  const { mutate: createMutation, isPending } = useMutation({
-    mutationKey: ["_create_annual_plan_"],
-    mutationFn: async (data: EngagementValues): Promise<Response> => {
-      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        throw {
-          status: response.status,
-          body: errorBody,
-        };
-      }
-      return response.json();
-    },
-  });
+  const params = useSearchParams();
+
+  const { mutate: createEngagement, isPending: createEngagementPending } =
+    useMutation({
+      mutationKey: ["_create_engagement_"],
+      mutationFn: async (data: EngagementValues): Promise<Response> => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return response.json();
+      },
+    });
+
+  const { mutate: updateEngagement, isPending: updateEngagementPending } =
+    useMutation({
+      mutationKey: ["_update_engagement_"],
+      mutationFn: async (data: EngagementValues): Promise<Response> => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return response.json();
+      },
+    });
 
   const {
     register,
@@ -229,28 +259,50 @@ export const EngagementForm = ({
   };
 
   const onSubmit = (data: EngagementValues) => {
-    const engagementData: EngagementValues = {
-      ...data,
-      leads: data.leads.map((lead) => ({
-        name: lead.name,
-        email: lead.email,
-        role: "Lead",
-      })),
-    };
-
-    createMutation(engagementData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({ queryKey: ["_engagements_", id] });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      const engagementData: EngagementValues = {
+        ...data,
+        leads: data.leads.map((lead) => ({
+          name: lead.name,
+          email: lead.email,
+          role: "Lead",
+        })),
+      };
+      createEngagement(engagementData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_engagements_", id],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      const engagementData: EngagementValues = {
+        ...data,
+      };
+      updateEngagement(engagementData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_engagements_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   const selectedProcess = watch("department")?.name;
@@ -291,25 +343,27 @@ export const EngagementForm = ({
                     />
                     <FormError error={errors.name} />
                   </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Leads
-                    </Label>
-                    <Controller
-                      name="leads"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select Team leads"
-                          users={auditUsers}
-                          title="Engagement leads"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.leads} />
-                  </div>
+                  {mode === "create" ? (
+                    <div className="*:not-first:mt-2 flex-1">
+                      <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                        Leads
+                      </Label>
+                      <Controller
+                        name="leads"
+                        control={control}
+                        render={({ field }) => (
+                          <UserMultiSelector
+                            trigger="Select Team leads"
+                            users={auditUsers}
+                            title="Engagement leads"
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
+                        )}
+                      />
+                      <FormError error={errors.leads} />
+                    </div>
+                  ) : null}
                 </section>
                 <section className="flex flex-col gap-2">
                   <div className="*:not-first:mt-2">
@@ -495,7 +549,7 @@ export const EngagementForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={isPending}
+                disabled={createEngagementPending || updateEngagementPending}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

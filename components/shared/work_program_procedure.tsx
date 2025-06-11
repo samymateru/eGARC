@@ -205,6 +205,8 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
   const { mutate: review, isPending: reviewLoading } =
     useWorkProgramProcedureReview(params.get("action"));
 
+  const [userEmail, setUserEmail] = useState<string | null>();
+
   const onSubmit = (mode: string) => {
     const procedure: SaveWorkProgramProcedure = {
       brief_description: briefDescription,
@@ -278,6 +280,12 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
       onSettled: () => {},
     });
   };
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      setUserEmail(localStorage.getItem("user_email"));
+    }
+  }, []);
 
   return (
     <>
@@ -390,7 +398,9 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                     Prepare
                   </Button>
                 ) : null}
-                {!reviewedBy && !!preparedBy ? (
+                {!reviewedBy &&
+                !!preparedBy &&
+                userEmail !== preparedBy.email ? (
                   <Button
                     onClick={onReview}
                     disabled={reviewLoading}

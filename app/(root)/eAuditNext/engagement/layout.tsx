@@ -14,17 +14,17 @@ export default function EngagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-[100vw] h-[100vh]">
       <header className="py-2 pl-1">
         <EngagementNavbar />
+        <Separator />
       </header>
-      <Separator />
-      <main className="flex-1 flex h-full">
+      <main className="flex-1 flex">
         <section className="min-w-[320px] h-full px-1 pt-1">
           <EngagementSidebarMenu />
         </section>
         <Separator orientation="vertical" />
-        <section className="flex-1 flex">{children}</section>
+        <section className="flex-1 flex h-full">{children}</section>
       </main>
     </div>
   );

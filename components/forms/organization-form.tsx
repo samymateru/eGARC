@@ -69,6 +69,7 @@ export const OrganizationForm = ({
   id,
   endpoint,
   data,
+  mode,
 }: OrganizationFormProps) => {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -80,6 +81,31 @@ export const OrganizationForm = ({
       mutationFn: async (data: OrganizationValues) => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return await response.json();
+      },
+    });
+
+  const { mutate: updateOrganization, isPending: updateOrganizationLoading } =
+    useMutation({
+      mutationKey: ["update_organization"],
+      mutationFn: async (data: OrganizationValues) => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${
@@ -115,27 +141,45 @@ export const OrganizationForm = ({
   const onSubmit = (data: OrganizationValues) => {
     const organizationData: OrganizationValues = {
       name: data.name,
-      email: localStorage.getItem("entity_email") || "",
+      email: data.email,
       type: data.type,
-      telephone: localStorage.getItem("user_telephone") || "",
+      telephone: data.telephone,
       website: "",
     };
 
-    createOrganization(organizationData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["organizations"],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      createOrganization(organizationData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["organizations"],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updateOrganization(organizationData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["organizations"],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -166,6 +210,32 @@ export const OrganizationForm = ({
                   {...register("name")}
                 />
                 <FormError error={errors.name} />
+              </div>
+              <div className="*:not-first:mt-2 flex-1">
+                <Label
+                  htmlFor="website"
+                  className="font-table tracking-wide scroll-m-1 font-semibold">
+                  Email<span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  placeholder="Organization Email"
+                  {...register("email")}
+                />
+                <FormError error={errors.email} />
+              </div>
+              <div className="*:not-first:mt-2 flex-1">
+                <Label
+                  htmlFor="website"
+                  className="font-table tracking-wide scroll-m-1 font-semibold">
+                  Telephone<span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  placeholder="Organization Telephone"
+                  {...register("telephone")}
+                />
+                <FormError error={errors.telephone} />
               </div>
               <div className="*:not-first:mt-2 flex-1">
                 <Label
@@ -211,7 +281,9 @@ export const OrganizationForm = ({
               </Button>
               <Button
                 variant="ghost"
-                disabled={createOrganizationLoading}
+                disabled={
+                  createOrganizationLoading || updateOrganizationLoading
+                }
                 type="submit"
                 className="bg-green-800 font-serif font-semibold flex-1">
                 <Send size={16} strokeWidth={3} />

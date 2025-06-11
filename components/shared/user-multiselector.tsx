@@ -62,7 +62,7 @@ export const UserMultiSelector = ({
         <Button
           type="button"
           variant="outline"
-          className="w-full justify-start font-serif tracking-wide font-semibold h-auto py-2">
+          className="w-full justify-start font-[helvetica] tracking-wide font-semibold h-auto py-2">
           {value && value.length > 0 ? (
             <div className="flex flex-col gap-0.5 text-left">
               {value.slice(0, 3).map((v, i) => (
@@ -83,7 +83,7 @@ export const UserMultiSelector = ({
       </DialogTrigger>
       <DialogContent className="h-[520px] gap-0 flex flex-col max-w-[800px] dark:bg-black">
         <DialogHeader className="h-[30px]">
-          <DialogTitle className="font-serif tracking-wide scroll-m-0 text-[24px] font-semibold">
+          <DialogTitle className="font-[helvetica] tracking-wide scroll-m-0 text-[20px] font-semibold">
             {title}
           </DialogTitle>
           <DialogDescription />
@@ -97,7 +97,7 @@ export const UserMultiSelector = ({
           />
           <Button
             variant="ghost"
-            className="flex-1 font-semibold font-serif tracking-wide scroll-m-0 flex items-center gap-2 bg-green-800"
+            className="flex-1 font-semibold font-[helvetica] tracking-wide scroll-m-0 flex items-center gap-2 bg-green-800"
             onClick={() => setOpen(false)}>
             <CircleCheck size={16} strokeWidth={3} />
             Pick
@@ -116,7 +116,7 @@ export const UserMultiSelector = ({
                     />
                     <Label
                       htmlFor={user.email}
-                      className="flex-1 h-8 mr-3 flex items-center px-2 py-1 rounded-md cursor-pointer font-serif tracking-wide scroll-m-0 font-semibold dark:hover:bg-neutral-700">
+                      className="flex-1 h-8 mr-3 flex items-center px-2 py-1 rounded-md cursor-pointer font-[helvetica] tracking-wide scroll-m-0 font-semibold dark:hover:bg-neutral-700">
                       {user.name}
                     </Label>
                   </section>

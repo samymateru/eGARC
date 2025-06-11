@@ -95,7 +95,7 @@ export const PlanningForm = ({
       const response = await fetch(
         `${BASE_URL}/${endpoint}/${company_module_id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${
               typeof window === "undefined" ? "" : localStorage.getItem("token")

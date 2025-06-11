@@ -1,7 +1,7 @@
 import { Response, StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
 import { Button } from "../ui/button";
-import { Menu, PanelLeft, Save } from "lucide-react";
+import { Menu, PanelLeft, Save, UserCheck, UserCog } from "lucide-react";
 import TextEditor from "@/components/shared/tiptap-text-editor";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -9,6 +9,7 @@ type EditorOutput = {
   value: string;
 };
 type SaveProcedure = {
+  objectives: EditorOutput;
   tests: EditorOutput;
   results: EditorOutput;
   observation: EditorOutput;
@@ -45,7 +46,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { ScrollArea } from "../ui/scroll-area";
 import { PRCM } from "@/app/(root)/eAuditNext/engagement/_planning/prcm";
 import { SummaryAuditProgram } from "@/app/(root)/eAuditNext/engagement/_planning/summary-audit-program";
 import { Separator } from "../ui/separator";
@@ -55,33 +55,73 @@ import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "./toast";
 import { useSearchParams } from "next/navigation";
+import {
+  useStdTemplatePrepare,
+  useStdTemplateReview,
+} from "@/hooks/use-prepare-review-std-template";
+import PreparedReviewedBy from "./prepared_reviewed_by";
+import { Attachments } from "./attachments";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface PlanningHomeProps {
   data?: z.infer<typeof StandardTemplateSchema>;
 }
 
+type PreparedReviewedBy = {
+  name: string;
+  email: string;
+  date_issued: string;
+};
+
 export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
+  const params = useSearchParams();
   const [objective, setObjective] = useState<string>("");
   const [tests, setTests] = useState<string>("");
   const [results, setResults] = useState<string>("");
   const [observation, setObservation] = useState<string>("");
   const [conclusion, setConclusion] = useState<string>("");
+  const [preparedBy, setPreparedBy] = useState<PreparedReviewedBy>();
+  const [reviewedBy, setRevieweddBy] = useState<PreparedReviewedBy>();
+
+  const { mutate: prepare, isPending: prepareLoading } = useStdTemplatePrepare(
+    params.get("action"),
+    params.get("stage") ?? ""
+  );
+
+  const { mutate: review, isPending: reviewLoading } = useStdTemplateReview(
+    params.get("action"),
+    params.get("stage") ?? ""
+  );
+
+  const [userEmail, setUserEmail] = useState<string | null>();
 
   useEffect(() => {
-    setObjective("");
+    setObjective(data?.objectives.value ?? "");
     setTests(data?.tests.value ?? "");
     setResults(data?.results.value ?? "");
     setObservation(data?.observation.value ?? "");
     setConclusion(data?.conclusion.value ?? "");
+    if (data?.prepared_by) {
+      setPreparedBy({
+        name: data.prepared_by.name ?? "",
+        email: data.prepared_by?.email ?? "",
+        date_issued: data.prepared_by?.date_issued ?? "",
+      });
+    }
+    if (data?.reviewed_by) {
+      setRevieweddBy({
+        name: data.reviewed_by.name ?? "",
+        email: data.reviewed_by?.email ?? "",
+        date_issued: data.reviewed_by?.date_issued ?? "",
+      });
+    }
   }, [data]);
 
-  const params = useSearchParams();
   const query_client = useQueryClient();
 
   const { mutate: saveProcedure, isPending: saveProcedureLoading } =
     useMutation({
-      mutationKey: ["_save_procedure"],
+      mutationKey: ["_save_procedure", params.get("action")],
       mutationFn: async (data: SaveProcedure): Promise<Response> => {
         const response = await fetch(
           `${BASE_URL}/engagements/procedure/${params.get("action")}`,
@@ -114,6 +154,7 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
       tests: {
         value: tests,
       },
+      objectives: { value: objective },
       results: { value: results },
       observation: {
         value: observation,
@@ -127,7 +168,15 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
     saveProcedure(procedure, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["work_program"],
+          queryKey: ["planning", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["finalization", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["reporting", params.get("id")],
         });
         showToast(data.detail, "success");
       },
@@ -137,6 +186,71 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
       onSettled: () => {},
     });
   };
+
+  const onPrepare = () => {
+    const preparedData: PreparedReviewedBy = {
+      name: localStorage.getItem("user_name") ?? "",
+      email: localStorage.getItem("user_email") ?? "",
+      date_issued: new Date().toISOString(),
+    };
+
+    prepare(preparedData, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["planning", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["finalization", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["reporting", params.get("id")],
+        });
+        showToast(data.detail, "success");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+      onSettled: () => {},
+    });
+  };
+
+  const onReview = () => {
+    const reviewData: PreparedReviewedBy = {
+      name: localStorage.getItem("user_name") ?? "",
+      email: localStorage.getItem("user_email") ?? "",
+      date_issued: new Date().toISOString(),
+    };
+
+    review(reviewData, {
+      onSuccess: (data) => {
+        query_client.invalidateQueries({
+          queryKey: ["planning", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["finalization", params.get("id")],
+        });
+
+        query_client.invalidateQueries({
+          queryKey: ["reporting", params.get("id")],
+        });
+
+        showToast(data.detail, "success");
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+      onSettled: () => {},
+    });
+  };
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      setUserEmail(localStorage.getItem("user_email"));
+    }
+  }, []);
 
   return (
     <section className="flex flex-col w-full">
@@ -181,25 +295,76 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
         </section>
       </header>
       <Separator />
-      <main className="flex-1 pt-3">
-        <ScrollArea className="max-h-[500px] h-auto overflow-auto hide-scrollbar">
-          <TemplateWrapper
-            setObjective={setObjective}
-            setTests={setTests}
-            setResults={setResults}
-            setObservation={setObservation}
-            setConclusion={setConclusion}
-            objective={objective}
-            tests={tests}
-            results={results}
-            observation={observation}
-            conclusion={conclusion}
-          />
-          <section className="pt-2 w-[calc(100vw-320px)]">
-            {data?.type === "risk" ? <PRCM /> : null}
-            {data?.type === "program" ? <SummaryAuditProgram /> : null}
+      <main className="pt-3 overflow-y-auto overflow-x-hidden h-[calc(100vh-91px)] w-[calc(100vw-320px)]">
+        <TemplateWrapper
+          setObjective={setObjective}
+          setTests={setTests}
+          setResults={setResults}
+          setObservation={setObservation}
+          setConclusion={setConclusion}
+          objective={objective}
+          tests={tests}
+          results={results}
+          observation={observation}
+          conclusion={conclusion}
+        />
+        <Separator className="my-3" />
+        <section id="letters" className="px-2 my-2">
+          {data?.type === "letter" ? (
+            <section id="letters">
+              <Attachments />
+            </section>
+          ) : null}
+        </section>
+        <Separator className="my-3" />
+        <section>
+          <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-320px)] px-2">
+            {!preparedBy ? (
+              <Button
+                disabled={prepareLoading}
+                onClick={onPrepare}
+                variant="ghost"
+                className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                <UserCog size={16} strokeWidth={3} />
+                Prepare
+              </Button>
+            ) : null}
+            {!reviewedBy && !!preparedBy && userEmail !== preparedBy.email ? (
+              <Button
+                onClick={onReview}
+                disabled={reviewLoading}
+                variant="ghost"
+                className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                <UserCheck size={16} strokeWidth={3} />
+                Review
+              </Button>
+            ) : null}
           </section>
-        </ScrollArea>
+          <div className=" pb-2 w-[calc(100vw-320px)] px-2">
+            <PreparedReviewedBy
+              preparedBy={preparedBy}
+              reviewedBy={reviewedBy}
+            />
+          </div>
+        </section>
+        <section className="pt-2 w-full overflow-x-hidden mt-2">
+          {data?.type === "risk" ? (
+            <section>
+              <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] ml-2">
+                Process Risk Control Matrix
+              </Label>
+              <PRCM />
+            </section>
+          ) : null}
+          {data?.type === "program" ? (
+            <section>
+              <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] ml-2">
+                Engagement Work Program
+              </Label>
+              <SummaryAuditProgram />
+            </section>
+          ) : null}
+        </section>
       </main>
     </section>
   );

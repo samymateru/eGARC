@@ -6,7 +6,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const SummaryReviewComments = () => {
   const params = useSearchParams();
   const { data } = useQuery({
-    queryKey: ["_summary_review_comments_"],
+    queryKey: ["_summary_review_comments_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
         `${BASE_URL}/engagements/fieldwork/summary_review_notes/${params.get(

@@ -5,13 +5,16 @@ import "@/app/globals.css";
 import { OrganizationSchema } from "@/lib/types";
 import { z } from "zod";
 import OrganizationTable from "@/components/data-table/organization-table";
+import { useEffect, useState } from "react";
+import CommandExample from "@/components/shared/search";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type OrganizationValues = z.infer<typeof OrganizationSchema>;
 
 export default function HomePage() {
-  const { data } = useQuery({
+  const [organization, setOrganization] = useState<OrganizationValues[]>([]);
+  const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["organizations"],
     queryFn: async (): Promise<OrganizationValues[]> => {
       const response = await fetch(`${BASE_URL}/organization`, {
@@ -36,6 +39,21 @@ export default function HomePage() {
     refetchOnReconnect: true,
   });
 
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      const sortedOrganization = data?.sort(
+        (a: OrganizationValues, b: OrganizationValues) => {
+          return (
+            new Date(b.created_at ?? "").getTime() -
+            new Date(a.created_at ?? "").getTime()
+          );
+        }
+      );
+      setOrganization(sortedOrganization ?? []);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isSuccess, data]);
+
   return (
     <section className="w-full h-screen flex flex-col">
       <h1 className="text-2xl font-bold mb-4 text-center">Organizations</h1>
@@ -43,7 +61,8 @@ export default function HomePage() {
         <p className="text-center text-xs">
           These are organization that you were added on
         </p>
-        <OrganizationTable data={data ?? []} />
+        <CommandExample />
+        <OrganizationTable data={organization ?? []} />
       </section>
     </section>
   );

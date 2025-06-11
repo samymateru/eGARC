@@ -41,34 +41,6 @@ export const PlanSchema = z.object({
   created_at: z.string().datetime().optional(),
 });
 
-export const StandardTemplateSchema = z.object({
-  id: z.string(),
-  reference: z.string(),
-  title: z.string(),
-  tests: z.object({
-    value: z.string(),
-  }),
-  results: z.object({
-    value: z.string(),
-  }),
-  observation: z.object({
-    value: z.string(),
-  }),
-  attachments: z.array(z.string()),
-  conclusion: z.object({
-    value: z.string(),
-  }),
-  type: z.string(),
-  prepared_by: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
-  reviewed_by: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
-});
-
 export const RaiseTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
@@ -280,8 +252,10 @@ export const SummaryProcedureSchema = z.object({
 
 export const ReviewCommentsSchema = z.object({
   id: z.string(),
+  engagement: z.string().optional(),
   reference: z.string(),
-  title: z.string(),
+  href: z.string().optional(),
+  title: z.string().optional(),
   description: z.string(),
   raised_by: User,
   due_date: z.date().optional(),
@@ -295,8 +269,10 @@ export const ReviewCommentsSchema = z.object({
 
 export const TasksSchema = z.object({
   id: z.string(),
+  engagement: z.string().optional(),
   reference: z.string(),
-  title: z.string(),
+  href: z.string().optional(),
+  title: z.string().optional(),
   description: z.string(),
   raised_by: User,
   due_date: z.date().optional(),
@@ -354,32 +330,14 @@ export const EngagementProcessSchema = z.object({
 });
 
 export const EngagementProfileSchema = z.object({
-  id: z.string(),
-  audit_background: z.object({
-    value: z.string(),
-  }),
-  audit_objectives: z.object({
-    value: z.string(),
-  }),
-  key_legislations: z.object({
-    value: z.string(),
-  }),
-  relevant_systems: z.object({
-    value: z.string(),
-  }),
-  key_changes: z.object({
-    value: z.string(),
-  }),
-  reliance: z.object({
-    value: z.string(),
-  }),
-  scope_exclusion: z.object({
-    value: z.string(),
-  }),
+  audit_background: z.record(z.any()),
+  audit_objectives: z.record(z.any()),
+  key_legislations: z.record(z.any()),
+  relevant_systems: z.record(z.any()),
+  key_changes: z.record(z.any()),
+  reliance: z.record(z.any()),
+  scope_exclusion: z.record(z.any()),
   core_risk: z.array(z.string()),
-  estimated_dates: z.object({
-    value: z.string(),
-  }),
 });
 
 export const IssueSchema = z.object({
@@ -451,8 +409,8 @@ export const ModuleSchema = z.object({
 export const OrganizationSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Organization name is required"),
-  email: z.string().email().optional(),
-  telephone: z.string().optional(),
+  email: z.string().email(),
+  telephone: z.string(),
   default: z.boolean().optional(),
   type: z
     .string({ required_error: "Organization type is required" })
@@ -491,7 +449,7 @@ export const IssueResponder = z.object({
 export const IssueResponsesSchema = z.object({
   id: z.string().optional(),
   notes: z.string(),
-  attachements: z.array(z.string()),
+  attachments: z.array(z.string()),
   issued_by: IssueResponder,
   type: z.string(),
 });
@@ -556,4 +514,143 @@ export const SummaryProceduresSchema = z.object({
   significant_improvement_required: z.number().int(),
   unacceptable: z.number().int(),
   recurring_issues: z.number().int(),
+});
+
+export const ResolveTaskSchema = z.object({
+  resolution_summary: z.string().min(1, "Resolution summary required"),
+  resolution_details: z.string().min(1, "Resolution summary required"),
+  resolved_by: IssueResponder.optional(),
+});
+
+export const ResolveReviewCommentSchema = z.object({
+  resolution_summary: z.string().min(1, "Resolution summary required"),
+  resolution_details: z.string().min(1, "Resolution summary required"),
+  resolved_by: IssueResponder.optional(),
+});
+
+export const SummaryAuditProcessSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().optional().default("N/A"),
+  status: z.string().optional().default("N/A"),
+  process_rating: z.string().optional().default("N/A"),
+  issue_count: z.number().int().default(0),
+  acceptable: z.number().int().default(0),
+  improvement_required: z.number().int().default(0),
+  significant_improvement_required: z.number().int().default(0),
+  unacceptable: z.number().int().default(0),
+  recurring_issues: z.number().int().default(0),
+});
+
+export const SummaryFindingSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, "Provide issue title"),
+  ref: z.string().optional(),
+  criteria: z.string().min(1, "Criteria is required"),
+  finding: z.string().min(1, "Povide finding weakness"),
+  risk_rating: z
+    .string({ required_error: "Providee risk rating" })
+    .min(1, "Providee risk rating"),
+  process: z
+    .string({ required_error: "Provide process" })
+    .min(1, "Provide process"),
+  source: z
+    .string({ required_error: "Provide issue source" })
+    .min(1, "Provide issue source"),
+  sdi_name: z.string().optional(),
+  sub_process: z
+    .string({ required_error: "Provide sub process" })
+    .min(1, "Provide sub process"),
+  root_cause_description: z.string().min(1, "Provide root cause description"),
+  root_cause: z
+    .string({ required_error: "Root cause required" })
+    .min(1, "Root cause required"),
+  sub_root_cause: z
+    .string({ required_error: "Sub root cause is required" })
+    .min(1, "Sub root cause is required"),
+  risk_category: z
+    .string({ required_error: "Provide risk category" })
+    .min(1, "Provide risk category"),
+  sub_risk_category: z
+    .string({ required_error: "Provide sub risk category" })
+    .min(1, "Provide sub risk category"),
+  impact_description: z.string().min(1, "Impact description required"),
+  impact_category: z
+    .string({ required_error: "Provide impact category" })
+    .min(1, "Provide impact category"),
+  impact_sub_category: z
+    .string({ required_error: "Provide sub category" })
+    .min(1, "Provide sub category"),
+  recurring_status: z.boolean().optional(),
+  reportable: z.boolean().optional(),
+  recommendation: z.string().min(1, "Provide recommendation"),
+  management_action_plan: z.string().min(1, "Action plan needed"),
+  regulatory: z.boolean().optional(),
+  estimated_implementation_date: z.date({
+    required_error: "Estimated date required",
+  }),
+  status: z
+    .enum(["Not started", "In progress", "Completed", "Closed"])
+    .optional()
+    .default("Not started"),
+  lod1_implementer: z.array(User),
+  lod1_owner: z.array(User),
+  observers: z.array(User),
+  lod2_risk_manager: z.array(User),
+  lod2_compliance_officer: z.array(User),
+  lod3_audit_manager: z.array(User),
+  date_opened: z.date().optional(),
+  date_closed: z.date().optional(),
+  date_revised: z.date().optional(),
+  revised_status: z.boolean().default(false),
+  revised_count: z.number().int().default(0),
+  prepared_by: IssueResponder.optional(),
+  reviewed_by: IssueResponder.optional(),
+});
+
+export const EngagementProfile = z.object({
+  audit_background: z.record(z.any()),
+  audit_objectives: z.record(z.any()),
+  key_legislations: z.record(z.any()),
+  relevant_systems: z.record(z.any()),
+  key_changes: z.record(z.any()),
+  reliance: z.record(z.any()),
+  scope_exclusion: z.record(z.any()),
+  core_risk: z.array(z.string()),
+});
+
+const PreparedReviewedBy = z.object({
+  name: z.string().optional(),
+  email: z.string().optional(),
+  date_issued: z.string().optional(),
+});
+
+export const StandardTemplateSchema = z.object({
+  id: z.string(),
+  reference: z.string(),
+  title: z.string(),
+  objectives: z.object({
+    value: z.string(),
+  }),
+  tests: z.object({
+    value: z.string(),
+  }),
+  results: z.object({
+    value: z.string(),
+  }),
+  observation: z.object({
+    value: z.string(),
+  }),
+  attachments: z.array(z.string()),
+  conclusion: z.object({
+    value: z.string(),
+  }),
+  type: z.string(),
+  prepared_by: PreparedReviewedBy.optional(),
+  reviewed_by: PreparedReviewedBy.optional(),
+});
+
+export const BusinessContactSchema = z.object({
+  id: z.string().optional(),
+  user: z.array(IssueResponder),
+  type: z.string().optional(),
 });

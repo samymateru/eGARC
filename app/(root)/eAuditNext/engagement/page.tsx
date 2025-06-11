@@ -3,13 +3,16 @@ import { useQueries } from "@tanstack/react-query";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import z from "zod";
-import { IssueSchema, StandardTemplateSchema } from "@/lib/types";
+import {
+  SummaryFindingSchema,
+  ReviewCommentsSchema,
+  StandardTemplateSchema,
+} from "@/lib/types";
 import { Administration } from "./_administration/administration-home";
 import { StandardTemplateProcedure } from "@/components/shared/standard-template-procedure";
 import { SummaryProcedure } from "./_fieldwork/summary-procedures";
 import { useSearchParams } from "next/navigation";
 import { SummaryReviewComments } from "./_fieldwork/summary-review-comments";
-import { Tasks } from "./_fieldwork/summary-tasks";
 import { WorkProgramProcedure } from "@/components/shared/work_program_procedure";
 import { Loader } from "@/components/shared/loader";
 import { SummaryFindings } from "./_reporting/summary-findings";
@@ -19,8 +22,12 @@ import "@/app/globals.css";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { SummaryProcess } from "./_reporting/summary-process";
+import { ReviewComment } from "./_fieldwork/review-comment";
+import { SummaryTasks } from "./_fieldwork/summary-tasks";
+import { Tasks } from "./_fieldwork/task";
 
-type IssueValues = z.infer<typeof IssueSchema>;
+type IssueValues = z.infer<typeof SummaryFindingSchema>;
+type CommentAndTaskValues = z.infer<typeof ReviewCommentsSchema>;
 
 type Procedure = {
   procedure_id?: string;
@@ -89,13 +96,31 @@ export default function EngagementPage() {
         enabled: !!params.get("id"),
       },
       {
-        queryKey: ["findings", params.get("id")],
+        queryKey: ["_summary_findinds_", params.get("id")],
         queryFn: async (): Promise<IssueValues[]> =>
           fetchData("summary_findings", params.get("id")),
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         enabled: !!params.get("id"),
+      },
+      {
+        queryKey: ["_summary_review_comments_", params.get("id")],
+        queryFn: async (): Promise<CommentAndTaskValues[]> =>
+          fetchData("fieldwork/summary_review_notes", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("action"),
+      },
+      {
+        queryKey: ["_summary_tasks_", params.get("id")],
+        queryFn: async (): Promise<CommentAndTaskValues[]> =>
+          fetchData("fieldwork/summary_task", params.get("id")),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        enabled: !!params.get("action"),
       },
     ],
   });
@@ -120,7 +145,7 @@ export default function EngagementPage() {
   return (
     <Tabs
       value={params.get("action") ?? "dashboard"}
-      className="w-full flex-1 flex flex-col">
+      className="w-full flex-1 h-full flex flex-col">
       <TabsContent
         value="dashboard"
         className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden">
@@ -158,7 +183,7 @@ export default function EngagementPage() {
           <Label className="text-[20px] font-semibold">Summary of Tasks</Label>
         </section>
         <Separator className="my-2" />
-        <Tasks />
+        <SummaryTasks />
       </TabsContent>
 
       {results[0].data?.map((item, index) => (
@@ -188,6 +213,12 @@ export default function EngagementPage() {
               value={item.id}
               key={index}
               className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <section className="pt-1 pl-4">
+                <Label className="text-[20px] font-semibold">
+                  Summary of Audit Processes
+                </Label>
+              </section>
+              <Separator className="my-1" />
               <SummaryProcess />
             </TabsContent>
           );
@@ -229,8 +260,25 @@ export default function EngagementPage() {
         <TabsContent
           value={item.id ?? ""}
           key={index}
-          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex overflow-auto">
+          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex overflow-auto hide-scrollbar">
           <IssueDetails data={item} />
+        </TabsContent>
+      ))}
+
+      {results[5].data?.map((item, index) => (
+        <TabsContent
+          value={item.id ?? ""}
+          key={index}
+          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex h-full">
+          <ReviewComment review_comment={item} />
+        </TabsContent>
+      ))}
+      {results[6].data?.map((item, index) => (
+        <TabsContent
+          value={item.id ?? ""}
+          key={index}
+          className="data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex h-full">
+          <Tasks task={item} />
         </TabsContent>
       ))}
     </Tabs>

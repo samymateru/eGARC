@@ -36,6 +36,8 @@ interface ModuleSelectProps {
   children: ReactNode;
   organizationName: string;
   organizationType: string;
+  organizationTelephone: string;
+  organizationEmail: string;
   id: string;
 }
 
@@ -44,6 +46,8 @@ export const ModuleSelect = ({
   id,
   organizationName,
   organizationType,
+  organizationTelephone,
+  organizationEmail,
 }: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const { data } = useQuery({
@@ -93,10 +97,12 @@ export const ModuleSelect = ({
             data={{
               name: organizationName,
               type: organizationType,
+              email: organizationEmail,
+              telephone: organizationTelephone,
             }}
             endpoint="organization"
-            title="Organization"
-            mode="create"
+            title="Edit Organization"
+            mode="update"
             id={id}>
             <Button className="w-[30px] h-[30px]" variant="ghost">
               <Edit size={16} />
