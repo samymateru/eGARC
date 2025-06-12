@@ -24,7 +24,7 @@ import { UserMultiSelector } from "../shared/user-multiselector";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { DatePicker } from "../shared/date-picker";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RaiseTaskValues = z.infer<typeof RaiseTaskSchema>;
@@ -57,6 +57,7 @@ export const RaiseTask = ({
   endpoint,
   title,
   data,
+  mode,
 }: RaiseTaskProps) => {
   const [open, setOpen] = useState(false);
 
@@ -71,6 +72,7 @@ export const RaiseTask = ({
   const [fullUrl, setFullUrl] = useState("");
 
   const query_client = useQueryClient();
+  const params = useSearchParams();
 
   const { data: users, isLoading: userLoading } = useQuery({
     queryKey: ["__users_", moduleId],
@@ -138,6 +140,30 @@ export const RaiseTask = ({
     },
   });
 
+  const { mutate: editTask, isPending: editTaskPending } = useMutation({
+    mutationKey: ["_edit_task_", id],
+    mutationFn: async (data: RaiseTaskValues): Promise<Response> => {
+      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -147,7 +173,7 @@ export const RaiseTask = ({
   } = methods;
 
   const onSubmit = (data: RaiseTaskValues) => {
-    const raiseData = {
+    const taskData = {
       ...data,
       href: fullUrl,
       raised_by: {
@@ -156,20 +182,71 @@ export const RaiseTask = ({
         date_issued: new Date(),
       },
     };
-
-    raiseTask(raiseData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({ queryKey: ["_summary_tasks_"] });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      raiseTask(taskData, {
+        onSuccess: (data) => {
+          const isSummaryTask = !!query_client.getQueryCache().find({
+            queryKey: ["_summary_tasks_", params.get("id")],
+          });
+          if (isSummaryTask) {
+            query_client.invalidateQueries({
+              queryKey: ["_summary_tasks_", params.get("id")],
+            });
+          } else {
+            query_client.fetchQuery({
+              queryKey: ["_summary_tasks_", params.get("id")],
+              queryFn: async () => {
+                const response = await fetch(
+                  `${BASE_URL}/engagements/fieldwork/summary_task/${params.get(
+                    "id"
+                  )}`,
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${
+                        typeof window === "undefined"
+                          ? ""
+                          : localStorage.getItem("token")
+                      }`,
+                    },
+                  }
+                );
+                if (!response.ok) {
+                  const errorBody = await response.json().catch(() => ({}));
+                  throw {
+                    status: response.status,
+                    body: errorBody,
+                  };
+                }
+                return await response.json();
+              },
+            });
+          }
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      editTask(taskData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({ queryKey: ["_summary_tasks_"] });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
   if (userLoading) {
     return <div>loading...</div>;
@@ -268,7 +345,7 @@ export const RaiseTask = ({
                 Cancel
               </Button>
               <Button
-                disabled={raiseTaskPending}
+                disabled={raiseTaskPending || editTaskPending}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

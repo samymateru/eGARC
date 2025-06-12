@@ -654,3 +654,9 @@ export const BusinessContactSchema = z.object({
   user: z.array(IssueResponder),
   type: z.string().optional(),
 });
+
+export type Search = {
+  tag?: string;
+  name?: string;
+  value?: string;
+};

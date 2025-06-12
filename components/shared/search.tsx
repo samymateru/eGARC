@@ -1,39 +1,56 @@
 "use client";
-
-import { useState } from "react";
 import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandItem,
-  CommandGroup,
-} from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { ReactNode, useEffect, useState } from "react";
 
-export default function CommandExample() {
+type Search = {
+  tag?: string;
+  name?: string;
+  value?: string;
+};
+
+interface SearchBar {
+  children: ReactNode;
+}
+
+export default function SearchBar({ children }: SearchBar) {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState<Search[] | null>(null);
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const searchStr = localStorage.getItem("search");
+      const search = searchStr ? JSON.parse(searchStr) : null;
+      setSearch(search);
+    }
+    console.log("mount");
+  }, []);
 
+  const onOpen = (open: boolean) => {
+    setOpen(open);
+    if (open) {
+      if (typeof window !== undefined) {
+        const searchStr = localStorage.getItem("search");
+        const search = searchStr ? JSON.parse(searchStr) : null;
+        setSearch(search);
+      }
+    }
+  };
+  console.log(search);
   return (
-    <div>
-      {/* Input that opens the command menu when focused or typed in */}
-      <Input
-        className="w-[300px]"
-        placeholder="Search..."
-        onFocus={() => setOpen(true)}
-        onChange={() => setOpen(true)} // Optional: opens on typing too
-      />
-
-      {/* Command Dialog */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search commands..." />
-        <CommandList>
-          <CommandGroup heading="Actions">
-            <CommandItem onSelect={() => setOpen(false)}>Profile</CommandItem>
-            <CommandItem onSelect={() => setOpen(false)}>Settings</CommandItem>
-            <CommandItem onSelect={() => setOpen(false)}>Logout</CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </div>
+    <Dialog open={open} onOpenChange={onOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle></DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
   );
 }

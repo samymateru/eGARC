@@ -19,6 +19,7 @@ import {
   ChevronUpIcon,
   CircleCheck,
   CircleX,
+  Ellipsis,
   SendHorizontal,
 } from "lucide-react";
 
@@ -47,6 +48,7 @@ import SearchInput from "../shared/search-input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import Link from "next/link";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -161,6 +163,28 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         </div>
       ),
       accessorKey: "recurring_status",
+    },
+    {
+      id: "actions",
+      header: () => (
+        <Label className="font-table flex justify-center">Actions</Label>
+      ),
+      cell: () => (
+        <div className="flex justify-center items-center w-full h-full">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+                variant="ghost">
+                <Ellipsis />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg"></PopoverContent>
+          </Popover>
+        </div>
+      ),
+      maxSize: 70,
+      size: 100,
     },
   ];
 
@@ -291,14 +315,14 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -371,14 +395,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

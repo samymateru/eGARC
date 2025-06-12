@@ -6,7 +6,10 @@ import { OrganizationSchema } from "@/lib/types";
 import { z } from "zod";
 import OrganizationTable from "@/components/data-table/organization-table";
 import { useEffect, useState } from "react";
-import CommandExample from "@/components/shared/search";
+import SearchBar from "@/components/shared/search";
+import { Button } from "@/components/ui/button";
+import { saveSearchToLocalStorage } from "@/lib/utils";
+import { Search } from "lucide-react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -61,7 +64,23 @@ export default function HomePage() {
         <p className="text-center text-xs">
           These are organization that you were added on
         </p>
-        <CommandExample />
+
+        <SearchBar>
+          <Button className="w-[150px] justify-start h-[30px]" variant="ghost">
+            <Search size={6} strokeWidth={3} />
+            Search
+          </Button>
+        </SearchBar>
+        <Button
+          onClick={() =>
+            saveSearchToLocalStorage({
+              name: "hello",
+              value: "value",
+              tag: "tag",
+            })
+          }>
+          click
+        </Button>
         <OrganizationTable data={organization ?? []} />
       </section>
     </section>

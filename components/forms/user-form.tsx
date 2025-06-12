@@ -41,6 +41,7 @@ const titles = [
   "System Auditor",
   "Auditor",
   "Audit Associate",
+  "Administrator",
 ];
 
 const auditRoles = ["Head of Audit", "Administrator", "Member"];
@@ -87,6 +88,7 @@ export const UsersForm = ({
   title,
   member,
   data,
+  mode,
 }: UsersProps) => {
   const [open, setOpen] = useState(false);
 
@@ -97,6 +99,30 @@ export const UsersForm = ({
 
   const query_client = useQueryClient();
   const params = useSearchParams();
+
+  const { mutate: updateUser, isPending: updateUserLoading } = useMutation({
+    mutationKey: ["_update_teams_", id],
+    mutationFn: async (data: UsersValues): Promise<Response> => {
+      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
 
   const { mutate: createUser, isPending: createUserLoading } = useMutation({
     mutationKey: ["_create_teams_", id],
@@ -141,21 +167,39 @@ export const UsersForm = ({
       type: member,
     };
 
-    createUser(userData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_teams_", params.get("moduleId")],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      createUser(userData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_teams_", params.get("moduleId")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updateUser(userData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_teams_", params.get("moduleId")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -173,45 +217,49 @@ export const UsersForm = ({
 
             <Separator className="" />
             <main className="px-5 py-3 flex flex-col gap-2">
-              <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="name"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="Team member name"
-                  {...register("name")}
-                />
-                <FormError error={errors.name} />
-              </div>
-              <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="email"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Email <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  placeholder="Team member email"
-                  {...register("email")}
-                />
-                <FormError error={errors.email} />
-              </div>
-              <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="telephone"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Telephone <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="telephone"
-                  placeholder="+255 787306314"
-                  {...register("telephone")}
-                />
-                <FormError error={errors.telephone} />
-              </div>
+              {mode === "create" ? (
+                <>
+                  <div className="*:not-first:mt-2">
+                    <Label
+                      htmlFor="name"
+                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                      Name <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="Team member name"
+                      {...register("name")}
+                    />
+                    <FormError error={errors.name} />
+                  </div>
+                  <div className="*:not-first:mt-2">
+                    <Label
+                      htmlFor="email"
+                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                      Email <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="email"
+                      placeholder="Team member email"
+                      {...register("email")}
+                    />
+                    <FormError error={errors.email} />
+                  </div>
+                  <div className="*:not-first:mt-2">
+                    <Label
+                      htmlFor="telephone"
+                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                      Telephone <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="telephone"
+                      placeholder="+255 787306314"
+                      {...register("telephone")}
+                    />
+                    <FormError error={errors.telephone} />
+                  </div>
+                </>
+              ) : null}
               <div className="*:not-first:mt-2 flex-1">
                 <Label
                   htmlFor="title"
@@ -303,7 +351,7 @@ export const UsersForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={createUserLoading}
+                disabled={createUserLoading || updateUserLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

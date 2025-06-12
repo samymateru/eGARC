@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { UserSchema } from "@/lib/types";
 import { z } from "zod";
+import "@/app/globals.css";
 
 type UserValuses = z.infer<typeof UserSchema>;
 

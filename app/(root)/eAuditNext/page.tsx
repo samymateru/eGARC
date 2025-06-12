@@ -150,7 +150,7 @@ const AnnualAuditPlan = () => {
 
   if (isSuccess) {
     return (
-      <div>
+      <div className="w-[calc(100vw-300px)]">
         <AnnualAuditPlanningTable data={auditplans ?? []} />
       </div>
     );

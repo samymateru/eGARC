@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { Search } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -19,4 +20,26 @@ export function formatLabel(text?: string): string {
     .join(" ");
 
   return capitalized;
+}
+
+export const saveSearchToLocalStorage = (search: Search) => {
+
+  const stored = localStorage.getItem("search");
+
+  let searchArray: Search[] = [];
+  try {
+    if (stored) {
+      searchArray = JSON.parse(stored);
+      if (!Array.isArray(searchArray)) {
+        searchArray = [];
+      }
+    }
+  } catch {
+    searchArray = [];
+  }
+
+  searchArray.push(search);
+
+  // Save back to localStorage
+  localStorage.setItem("search", JSON.stringify(searchArray));
 }

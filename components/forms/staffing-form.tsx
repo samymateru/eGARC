@@ -36,6 +36,7 @@ type StaffValues = z.infer<typeof StaffSchema>;
 type UserValuses = z.infer<typeof UserSchema>;
 
 type DefaultUsersValues = {
+  name?: string;
   role?: string;
   start_date?: Date;
   end_date?: Date;
@@ -51,12 +52,14 @@ interface StaffFormProps {
 }
 
 const engagementRole = ["Reviewer", "Lead", "Member"];
+
 export const StaffForm = ({
   children,
   id,
   endpoint,
   title,
   defaultValue,
+  mode,
 }: StaffFormProps) => {
   const [open, setOpen] = useState(false);
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
@@ -67,7 +70,12 @@ export const StaffForm = ({
 
   const methods = useForm<StaffValues>({
     resolver: zodResolver(StaffSchema),
-    defaultValues: defaultValue,
+    defaultValues: {
+      name: defaultValue?.name,
+      start_date: defaultValue?.start_date,
+      end_date: defaultValue?.end_date,
+      role: defaultValue?.role,
+    },
   });
 
   const [moduleId, setModuleId] = useState<string | null>(null);
@@ -105,11 +113,38 @@ export const StaffForm = ({
     enabled: !!moduleId,
   });
 
+  console.log(errors);
+
   const { mutate: createStaff, isPending: createStaffLoading } = useMutation({
-    mutationKey: ["_create_staff_"],
+    mutationKey: ["_create_staff_", id],
     mutationFn: async (data: StaffValues): Promise<Response> => {
       const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
+
+  const { mutate: updateStaff, isPending: updateStaffLoading } = useMutation({
+    mutationKey: ["_update_staff_", id],
+    mutationFn: async (data: StaffValues): Promise<Response> => {
+      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
@@ -146,21 +181,40 @@ export const StaffForm = ({
       ...data,
       email: auditUsers.find((user) => user.name === data.name)?.email ?? "",
     };
-    createStaff(staffData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_staff_", params.get("id")],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+
+    if (mode === "create") {
+      createStaff(staffData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_staff_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updateStaff(staffData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_staff_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -178,42 +232,45 @@ export const StaffForm = ({
 
             <Separator className="" />
             <main className="px-5 py-3 flex flex-col gap-2">
-              <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="name"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Name<span className="text-destructive">*</span>
-                </Label>
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                      }}
-                      value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
-                      </SelectTrigger>
+              {mode === "create" ? (
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label
+                    htmlFor="name"
+                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Name<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select User" />
+                        </SelectTrigger>
 
-                      <SelectContent className="">
-                        <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                          {auditUsers?.map((user, index: number) => (
-                            <SelectItem
-                              className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                              key={index}
-                              value={user?.name ?? ""}>
-                              {user?.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormError error={errors.name} />
-              </div>
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {auditUsers?.map((user, index: number) => (
+                              <SelectItem
+                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                key={index}
+                                value={user?.name ?? ""}>
+                                {user?.name}
+                              </SelectItem>
+                            ))}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormError error={errors.name} />
+                </div>
+              ) : null}
+
               <div className="*:not-first:mt-2 flex-1">
                 <Label
                   htmlFor="name"
@@ -230,7 +287,9 @@ export const StaffForm = ({
                       }}
                       value={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
+                        <SelectValue placeholder="Select Role">
+                          {field.value}
+                        </SelectValue>
                       </SelectTrigger>
 
                       <SelectContent className="">
@@ -262,6 +321,8 @@ export const StaffForm = ({
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        side="left"
+                        offset={25}
                         value={field.value ? new Date(field.value) : undefined}
                         onChange={(date) => {
                           field.onChange(date);
@@ -277,13 +338,15 @@ export const StaffForm = ({
                   <Label
                     htmlFor="year"
                     className="ml-[2px] font-table pb-[3px]">
-                    Start
+                    End
                   </Label>
                   <Controller
                     name="end_date"
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        offset={25}
+                        side="right"
                         value={field.value ? new Date(field.value) : undefined}
                         onChange={(date) => {
                           field.onChange(date);
@@ -309,7 +372,7 @@ export const StaffForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={createStaffLoading}
+                disabled={createStaffLoading || updateStaffLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

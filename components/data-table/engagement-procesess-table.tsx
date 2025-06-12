@@ -53,27 +53,19 @@ type EngagementProcessesValues = z.infer<typeof EngagementProcessSchema>;
 const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "process",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Process
-      </Label>
-    ),
+    header: () => <Label className="font-table truncate">Process</Label>,
     accessorKey: "process",
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
-        {row.original.process}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.process}</Label>
     ),
   },
   {
     id: "sub_process",
     header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Sub Process
-      </Label>
+      <Label className="font-table flex truncate">Sub Process</Label>
     ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate">
         {row.original.sub_process[0]}
       </Label>
     ),
@@ -82,12 +74,10 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "description",
     header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Description
-      </Label>
+      <Label className="ml-2 font-table truncate">Description</Label>
     ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-serif tracking-wide scroll-m-0 font-medium text-[15px] truncate text-balance">
+      <Label className="ml-2 font-table truncate">
         {row.original.description}
       </Label>
     ),
@@ -95,14 +85,10 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   },
   {
     id: "business_unit",
-    header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        Business Unit
-      </Label>
-    ),
+    header: () => <Label className="font-table">Business Unit</Label>,
     accessorKey: "business_unit",
     cell: ({ row }) => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
+      <Label className="ml-2 font-table truncate">
         {row.original.business_unit}
       </Label>
     ),
@@ -111,9 +97,7 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-serif tracking-wide scroll-m-0 font-semibold text-[15px]">
-        More
-      </Label>
+      <Label className="font-table flex justify-center">More</Label>
     ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
@@ -157,6 +141,8 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
         </Popover>
       </div>
     ),
+    maxSize: 70,
+    size: 100,
   },
 ];
 
@@ -208,14 +194,14 @@ export const EngagementProcessesTable = ({
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -288,14 +274,16 @@ export const EngagementProcessesTable = ({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

@@ -1,32 +1,12 @@
 "use client";
-
-import { CSSProperties, useEffect, useId, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
-  Cell,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Header,
   PaginationState,
   SortingState,
   useReactTable,
@@ -45,7 +25,6 @@ import {
   CirclePlus,
   Edit,
   Ellipsis,
-  GripVerticalIcon,
   SendHorizonal,
   Trash2,
 } from "lucide-react";
@@ -73,38 +52,24 @@ import Link from "next/link";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { PlanningForm } from "../forms/create-audit-plan-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
 
 const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   {
-    id: "sn",
-    header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "name",
-    cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row.index + 1}</Label>
-    ),
-    size: 5,
-  },
-  {
     id: "name",
     header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.name}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
     ),
-    size: 350,
   },
   {
     id: "year",
     header: () => <Label className="font-table">Year</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.year}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.year}</Label>
     ),
     accessorKey: "year",
   },
@@ -112,9 +77,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     id: "status",
     header: () => <Label className="font-table">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
-        {row.original.status}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.status}</Label>
     ),
     accessorKey: "status",
   },
@@ -128,11 +91,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("start")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
     },
   },
   {
@@ -145,11 +104,7 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("end")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
     },
   },
   {
@@ -168,7 +123,9 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
+    header: () => (
+      <Label className="font-table flex justify-center">Actions</Label>
+    ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -219,8 +176,8 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         </Popover>
       </div>
     ),
-    size: 20,
-    minSize: 3,
+    maxSize: 70,
+    size: 100,
   },
 ];
 
@@ -231,7 +188,6 @@ interface AnnualAuditPlanningTableProps {
 export default function AnnualAuditPlanningTable({
   data,
 }: AnnualAuditPlanningTableProps) {
-  const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const params = useSearchParams();
@@ -291,32 +247,8 @@ export default function AnnualAuditPlanningTable({
     paginationItemsToDisplay: 5,
   });
 
-  // reorder columns after drag & drop
-  function handleDragEnd(event: DragEndEvent) {
-    if (event.active.id === "actions") return;
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setColumnOrder((columnOrder) => {
-        const oldIndex = columnOrder.indexOf(active.id as string);
-        const newIndex = columnOrder.indexOf(over.id as string);
-        return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
-      });
-    }
-  }
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
-
   return (
-    <DndContext
-      id={useId()}
-      collisionDetection={closestCenter}
-      modifiers={[restrictToHorizontalAxis]}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}>
+    <div className="">
       <div className="flex justify-between items-center  pb-1">
         <section className="flex items-center gap-3">
           <SearchInput
@@ -349,39 +281,103 @@ export default function AnnualAuditPlanningTable({
           </PlanningForm>
         </section>
       </div>
-      <Table>
-        <TableHeader>
+      <Table
+        className="table-fixed"
+        style={{
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
+        }}>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableTableHeader key={header.id} header={header} />
-                ))}
-              </SortableContext>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                        ? "descending"
+                        : "none"
+                    }
+                    {...{
+                      colSpan: header.colSpan,
+                      style: {
+                        width: header.getSize(),
+                      },
+                    }}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(
+                          header.column.getCanSort() &&
+                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                        onKeyDown={(e) => {
+                          // Enhanced keyboard handling for sorting
+                          if (
+                            header.column.getCanSort() &&
+                            (e.key === "Enter" || e.key === " ")
+                          ) {
+                            e.preventDefault();
+                            header.column.getToggleSortingHandler()?.(e);
+                          }
+                        }}
+                        tabIndex={header.column.getCanSort() ? 0 : undefined}>
+                        <span className="truncate">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </span>
+                        {{
+                          asc: (
+                            <ChevronUpIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                          desc: (
+                            <ChevronDownIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                    {header.column.getCanResize() && (
+                      <div
+                        {...{
+                          onDoubleClick: () => header.column.resetSize(),
+                          onMouseDown: header.getResizeHandler(),
+                          onTouchStart: header.getResizeHandler(),
+                          className:
+                            "absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
+                        }}
+                      />
+                    )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onDoubleClick={() => {
-                  router.push(
-                    `/eAuditNext/engagements?id=${row.original.id}&plan=${row.original.name}`
-                  );
-                }}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <SortableContext
+                  <TableCell
                     key={cell.id}
-                    items={columnOrder}
-                    strategy={horizontalListSortingStrategy}>
-                    <DragAlongCell key={cell.id} cell={cell} />
-                  </SortableContext>
+                    className="truncate border-l border-l-neutral-800">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -394,7 +390,7 @@ export default function AnnualAuditPlanningTable({
           )}
         </TableBody>
       </Table>
-      <div className="grow">
+      <div>
         <Pagination>
           <PaginationContent>
             {/* Previous page button */}
@@ -456,136 +452,6 @@ export default function AnnualAuditPlanningTable({
           </PaginationContent>
         </Pagination>
       </div>
-    </DndContext>
+    </div>
   );
 }
-
-const DraggableTableHeader = ({
-  header,
-}: {
-  header: Header<AnnualAuditPlanningValues, unknown>;
-}) => {
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: header.column.id,
-  });
-  const isActionColumn = header.column.id === "actions";
-  const isSnColumn = header.column.id === "sn";
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    whiteSpace: "nowrap",
-    width: header.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableHead
-      ref={setNodeRef}
-      className="before:bg-border relative h-10 border-t before:absolute before:inset-y-0 before:start-0 before:w-px first:before:bg-transparent"
-      style={style}
-      aria-sort={
-        header.column.getIsSorted() === "asc"
-          ? "ascending"
-          : header.column.getIsSorted() === "desc"
-          ? "descending"
-          : "none"
-      }>
-      <div className="flex items-center justify-start gap-0.5">
-        {!isActionColumn && !isSnColumn ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="-ml-2 size-7 shadow-none"
-            {...attributes}
-            {...listeners}
-            aria-label="Drag to reorder">
-            <GripVerticalIcon
-              className="opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          </Button>
-        ) : null}
-
-        <span className="grow truncate">
-          {header.isPlaceholder
-            ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
-        </span>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="group -mr-1 size-7 shadow-none"
-          onClick={header.column.getToggleSortingHandler()}
-          onKeyDown={(e) => {
-            // Enhanced keyboard handling for sorting
-            if (
-              header.column.getCanSort() &&
-              (e.key === "Enter" || e.key === " ")
-            ) {
-              e.preventDefault();
-              header.column.getToggleSortingHandler()?.(e);
-            }
-          }}>
-          {{
-            asc: (
-              <ChevronUpIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-            desc: (
-              <ChevronDownIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-          }[header.column.getIsSorted() as string] ?? (
-            <ChevronUpIcon
-              className="shrink-0 opacity-0 group-hover:opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          )}
-        </Button>
-      </div>
-    </TableHead>
-  );
-};
-
-const DragAlongCell = ({
-  cell,
-}: {
-  cell: Cell<AnnualAuditPlanningValues, unknown>;
-}) => {
-  const { isDragging, setNodeRef, transform, transition } = useSortable({
-    id: cell.column.id,
-  });
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    width: cell.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableCell ref={setNodeRef} className="truncate" style={style}>
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </TableCell>
-  );
-};

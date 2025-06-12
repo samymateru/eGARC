@@ -104,7 +104,9 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
+    header: () => (
+      <Label className="font-table flex justify-center">Actions</Label>
+    ),
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -119,6 +121,8 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
         </Popover>
       </div>
     ),
+    maxSize: 70,
+    size: 100,
   },
 ];
 
@@ -170,14 +174,14 @@ export const SummaryProceduresTable = ({
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -250,14 +254,16 @@ export const SummaryProceduresTable = ({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

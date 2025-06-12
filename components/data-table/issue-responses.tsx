@@ -165,14 +165,14 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
             window.innerWidth - 320 - 32
           ),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -245,14 +245,16 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

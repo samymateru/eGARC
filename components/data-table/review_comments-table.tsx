@@ -53,6 +53,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ResolveReviewCommentForm } from "../forms/resolve-review-comment-form";
 import { ReviewCommentDecisionForm } from "../forms/review-comment-decision-form";
+import { RaiseReviewComment } from "../forms/raise-review_comment-form";
 
 enum Status {
   PENDING = "Pending",
@@ -121,6 +122,29 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
           );
         }
       },
+    },
+    {
+      id: "due_date",
+      header: () => <Label className="font-table">Due Date</Label>,
+      cell: ({ row }) => {
+        if (row.original.due_date !== null) {
+          const formatted = new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }).format(new Date(row?.original?.due_date ?? ""));
+          return (
+            <Label className="ml-2 font-table truncate overflow-hidden">
+              {formatted}
+            </Label>
+          );
+        } else {
+          <Label className="ml-2 font-table truncate overflow-hidden">
+            N/A
+          </Label>;
+        }
+      },
+      accessorKey: "due_date",
     },
     {
       id: "issuer_name",
@@ -238,7 +262,9 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
 
     {
       id: "actions",
-      header: () => <Label className="font-table">More</Label>,
+      header: () => (
+        <Label className="font-table flex justify-center">More</Label>
+      ),
       cell: ({ row }) => {
         return (
           <div className="flex justify-center items-center w-full h-full">
@@ -290,12 +316,24 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
                     </ReviewCommentDecisionForm>
                   ) : null}
                   {row.original.status === Status.PENDING ? (
-                    <Button
-                      variant="ghost"
-                      className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                      <Pencil size={16} strokeWidth={3} />
-                      Edit
-                    </Button>
+                    <RaiseReviewComment
+                      data={{
+                        title: row.original.title,
+                        description: row.original.description,
+                        action_owner: row.original.action_owner,
+                        due_date: new Date(row.original.due_date ?? new Date()),
+                      }}
+                      title="Edit Review Comment"
+                      endpoint="review_comment/raise"
+                      mode="update"
+                      id={row.original.id}>
+                      <Button
+                        variant="ghost"
+                        className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
+                        <Pencil size={16} strokeWidth={3} />
+                        Edit
+                      </Button>
+                    </RaiseReviewComment>
                   ) : null}
 
                   <Button
@@ -310,6 +348,8 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
           </div>
         );
       },
+      maxSize: 70,
+      size: 100,
     },
   ];
 
@@ -354,14 +394,14 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -434,14 +474,16 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

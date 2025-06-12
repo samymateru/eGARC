@@ -24,7 +24,7 @@ import { UserMultiSelector } from "../shared/user-multiselector";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { DatePicker } from "../shared/date-picker";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RaiseReviewCommentValues = z.infer<typeof RaiseReviewCommentSchema>;
@@ -56,6 +56,7 @@ export const RaiseReviewComment = ({
   id,
   endpoint,
   title,
+  mode,
   data,
 }: RaiseTaskProps) => {
   const [open, setOpen] = useState(false);
@@ -69,6 +70,7 @@ export const RaiseReviewComment = ({
   const [moduleId, setModuleId] = useState<string | null>();
   const router = useRouter();
   const [fullUrl, setFullUrl] = useState("");
+  const params = useSearchParams();
 
   const query_client = useQueryClient();
 
@@ -116,10 +118,35 @@ export const RaiseReviewComment = ({
 
   const { mutate: raiseReviewComment, isPending: raiseReviewCommentPending } =
     useMutation({
-      mutationKey: ["_raise_task_"],
+      mutationKey: ["_raise_review_comment_", id],
       mutationFn: async (data: RaiseReviewCommentValues): Promise<Response> => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return response.json();
+      },
+    });
+
+  const { mutate: editReviewComment, isPending: editReviewCommentPending } =
+    useMutation({
+      mutationKey: ["_edit_review_comment_", id],
+      mutationFn: async (data: RaiseReviewCommentValues): Promise<Response> => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${
@@ -148,7 +175,7 @@ export const RaiseReviewComment = ({
   } = methods;
 
   const onSubmit = (data: RaiseReviewCommentValues) => {
-    const raiseData = {
+    const reviewCommentData = {
       ...data,
       href: fullUrl,
       raised_by: {
@@ -158,21 +185,74 @@ export const RaiseReviewComment = ({
       },
     };
 
-    raiseReviewComment(raiseData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_summary_review_comments_"],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      raiseReviewComment(reviewCommentData, {
+        onSuccess: (data) => {
+          const isSummaryComments = !!query_client.getQueryCache().find({
+            queryKey: ["_summary_review_comments_", params.get("id")],
+          });
+
+          if (isSummaryComments) {
+            query_client.invalidateQueries({
+              queryKey: ["_summary_review_comments_", params.get("id")],
+            });
+          } else {
+            query_client.fetchQuery({
+              queryKey: ["_summary_review_comments_", params.get("id")],
+              queryFn: async () => {
+                const response = await fetch(
+                  `${BASE_URL}/engagements/fieldwork/summary_review_notes/${params.get(
+                    "id"
+                  )}`,
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${
+                        typeof window === "undefined"
+                          ? ""
+                          : localStorage.getItem("token")
+                      }`,
+                    },
+                  }
+                );
+                if (!response.ok) {
+                  const errorBody = await response.json().catch(() => ({}));
+                  throw {
+                    status: response.status,
+                    body: errorBody,
+                  };
+                }
+                return await response.json();
+              },
+            });
+          }
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      editReviewComment(reviewCommentData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_summary_review_comments_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -268,7 +348,7 @@ export const RaiseReviewComment = ({
                 Cancel
               </Button>
               <Button
-                disabled={raiseReviewCommentPending}
+                disabled={raiseReviewCommentPending || editReviewCommentPending}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

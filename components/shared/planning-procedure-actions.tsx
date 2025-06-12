@@ -34,6 +34,12 @@ export const PlanningProcedureActions = ({
         <Separator />
         <section className="pt-1 divide-y">
           <RaiseTask
+            data={{
+              title: "",
+              description: "",
+              action_owner: [],
+            }}
+            mode="create"
             title="Raise Task"
             endpoint="task/raise"
             id={params.get("id")}>
@@ -50,7 +56,7 @@ export const PlanningProcedureActions = ({
               description: "",
               action_owner: [],
             }}
-            title="Raise Review Note"
+            title="Raise Review Comment"
             endpoint="review_comment/raise"
             mode="create"
             id={params.get("id")}>

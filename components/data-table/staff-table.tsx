@@ -93,11 +93,7 @@ const columns: ColumnDef<StaffValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row?.original?.start_date));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
     },
     accessorKey: "start_date",
   },
@@ -111,16 +107,14 @@ const columns: ColumnDef<StaffValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("end_date")));
-      return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
-          {formatted}
-        </Label>
-      );
+      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
     },
   },
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
+    header: () => (
+      <Label className="font-table flex justify-center">Actions</Label>
+    ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -135,14 +129,15 @@ const columns: ColumnDef<StaffValues>[] = [
             <div className="flex flex-col divide-y">
               <StaffForm
                 defaultValue={{
+                  name: "sam",
                   role: row.original.role,
                   start_date: new Date(row.original.start_date),
                   end_date: new Date(row.original.end_date),
                 }}
                 title="Edit Staff"
                 mode="update"
-                id={""}
-                endpoint="engagements/staff">
+                id={row.original.id ?? null}
+                endpoint="engagements/context/staff">
                 <Button
                   variant="ghost"
                   className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
@@ -161,6 +156,8 @@ const columns: ColumnDef<StaffValues>[] = [
         </Popover>
       </div>
     ),
+    maxSize: 70,
+    size: 100,
   },
 ];
 
@@ -211,14 +208,14 @@ export default function StaffTable({ data }: StaffTableProps) {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-800">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -291,14 +288,16 @@ export default function StaffTable({ data }: StaffTableProps) {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-800">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-800">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

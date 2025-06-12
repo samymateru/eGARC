@@ -1,32 +1,13 @@
 "use client";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
-import { CSSProperties, useId, useState } from "react";
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
-  useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
-  Cell,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Header,
   PaginationState,
   SortingState,
   useReactTable,
@@ -43,7 +24,6 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   Ellipsis,
-  GripVerticalIcon,
   Pencil,
   Trash,
 } from "lucide-react";
@@ -73,68 +53,46 @@ type UsersValues = z.infer<typeof UserSchema>;
 
 const columns: ColumnDef<UsersValues>[] = [
   {
-    id: "sn",
-    header: () => <Label className="font-table">S/N</Label>,
-    accessorKey: "",
-    cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row.index + 1}</Label>
-    ),
-    size: 10,
-  },
-  {
     id: "name",
     header: () => <Label className="font-table">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
-        {row.original.name}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
     ),
-    size: 300,
   },
   {
     id: "email",
     header: () => <Label className="font-table">Email</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
-        {row.original.email}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.email}</Label>
     ),
     accessorKey: "email",
-    size: 250,
   },
   {
     id: "title",
     header: () => <Label className="font-table">Title</Label>,
     accessorKey: "title",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
-        {row.original.title}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.title}</Label>
     ),
-    size: 250,
   },
   {
     id: "role",
     header: () => <Label className="font-table">Role</Label>,
     accessorKey: "role",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
-        {row.original.role}
-      </Label>
+      <Label className="ml-2 font-table truncate">{row.original.role}</Label>
     ),
-    size: 250,
   },
   {
     id: "telephone",
     header: () => <Label className="font-table">Telephone</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-table truncate">
         {row.original.telephone}
       </Label>
     ),
     accessorKey: "telephone",
-    size: 50,
   },
 
   {
@@ -156,6 +114,7 @@ const columns: ColumnDef<UsersValues>[] = [
                 data={{
                   title: row.original.title,
                   name: row.original.name,
+                  telephone: row.original.telephone,
                   email: row.original.email,
                   role: row.original.role,
                 }}
@@ -167,7 +126,7 @@ const columns: ColumnDef<UsersValues>[] = [
                     : "Edit Business Member"
                 }
                 endpoint="users"
-                id={""}>
+                id={row.original.id ?? null}>
                 <Button
                   variant="ghost"
                   className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
@@ -186,8 +145,6 @@ const columns: ColumnDef<UsersValues>[] = [
         </Popover>
       </div>
     ),
-    size: 10,
-    minSize: 3,
   },
 ];
 
@@ -230,46 +187,90 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
     paginationItemsToDisplay: 5,
   });
 
-  // reorder columns after drag & drop
-  function handleDragEnd(event: DragEndEvent) {
-    if (event.active.id === "actions") return;
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setColumnOrder((columnOrder) => {
-        const oldIndex = columnOrder.indexOf(active.id as string);
-        const newIndex = columnOrder.indexOf(over.id as string);
-        return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
-      });
-    }
-  }
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
-
   return (
-    <DndContext
-      id={useId()}
-      collisionDetection={closestCenter}
-      modifiers={[restrictToHorizontalAxis]}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}>
+    <div className="w-full">
       <Table
+        className="table-fixed"
         style={{
-          width: Math.max(table.getTotalSize(), window.innerWidth - 300),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
         }}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableTableHeader key={header.id} header={header} />
-                ))}
-              </SortableContext>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    aria-sort={
+                      header.column.getIsSorted() === "asc"
+                        ? "ascending"
+                        : header.column.getIsSorted() === "desc"
+                        ? "descending"
+                        : "none"
+                    }
+                    {...{
+                      colSpan: header.colSpan,
+                      style: {
+                        width: header.getSize(),
+                      },
+                    }}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(
+                          header.column.getCanSort() &&
+                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                        onKeyDown={(e) => {
+                          // Enhanced keyboard handling for sorting
+                          if (
+                            header.column.getCanSort() &&
+                            (e.key === "Enter" || e.key === " ")
+                          ) {
+                            e.preventDefault();
+                            header.column.getToggleSortingHandler()?.(e);
+                          }
+                        }}
+                        tabIndex={header.column.getCanSort() ? 0 : undefined}>
+                        <span className="truncate">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </span>
+                        {{
+                          asc: (
+                            <ChevronUpIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                          desc: (
+                            <ChevronDownIcon
+                              className="shrink-0 opacity-60"
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          ),
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                    {header.column.getCanResize() && (
+                      <div
+                        {...{
+                          onDoubleClick: () => header.column.resetSize(),
+                          onMouseDown: header.getResizeHandler(),
+                          onTouchStart: header.getResizeHandler(),
+                          className:
+                            "absolute top-0 h-full w-4 cursor-col-resize user-select-none touch-none -right-2 z-10 flex justify-center before:absolute before:w-px before:inset-y-0 before:bg-border before:translate-x-px",
+                        }}
+                      />
+                    )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -280,12 +281,9 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <SortableContext
-                    key={cell.id}
-                    items={columnOrder}
-                    strategy={horizontalListSortingStrategy}>
-                    <DragAlongCell key={cell.id} cell={cell} />
-                  </SortableContext>
+                  <TableCell key={cell.id} className="truncate">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -298,7 +296,7 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div className="grow">
+      <div>
         <Pagination>
           <PaginationContent>
             {/* Previous page button */}
@@ -360,132 +358,6 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
           </PaginationContent>
         </Pagination>
       </div>
-    </DndContext>
-  );
-};
-
-const DraggableTableHeader = ({
-  header,
-}: {
-  header: Header<UsersValues, unknown>;
-}) => {
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: header.column.id,
-  });
-  const isActionColumn = header.column.id === "actions";
-  const isSnColumn = header.column.id === "sn";
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    whiteSpace: "nowrap",
-    width: header.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableHead
-      ref={setNodeRef}
-      className="before:bg-border relative h-10 border-t before:absolute before:inset-y-0 before:start-0 before:w-px first:before:bg-transparent"
-      style={style}
-      aria-sort={
-        header.column.getIsSorted() === "asc"
-          ? "ascending"
-          : header.column.getIsSorted() === "desc"
-          ? "descending"
-          : "none"
-      }>
-      <div className="flex items-center justify-start gap-0.5">
-        {!isActionColumn && !isSnColumn ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="-ml-2 size-7 shadow-none"
-            {...attributes}
-            {...listeners}
-            aria-label="Drag to reorder">
-            <GripVerticalIcon
-              className="opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          </Button>
-        ) : null}
-
-        <span className="grow truncate">
-          {header.isPlaceholder
-            ? null
-            : flexRender(header.column.columnDef.header, header.getContext())}
-        </span>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="group -mr-1 size-7 shadow-none"
-          onClick={header.column.getToggleSortingHandler()}
-          onKeyDown={(e) => {
-            // Enhanced keyboard handling for sorting
-            if (
-              header.column.getCanSort() &&
-              (e.key === "Enter" || e.key === " ")
-            ) {
-              e.preventDefault();
-              header.column.getToggleSortingHandler()?.(e);
-            }
-          }}>
-          {{
-            asc: (
-              <ChevronUpIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-            desc: (
-              <ChevronDownIcon
-                className="shrink-0 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-            ),
-          }[header.column.getIsSorted() as string] ?? (
-            <ChevronUpIcon
-              className="shrink-0 opacity-0 group-hover:opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-          )}
-        </Button>
-      </div>
-    </TableHead>
-  );
-};
-
-const DragAlongCell = ({ cell }: { cell: Cell<UsersValues, unknown> }) => {
-  const { isDragging, setNodeRef, transform, transition } = useSortable({
-    id: cell.column.id,
-  });
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: "relative",
-    transform: CSS.Translate.toString(transform),
-    transition,
-    width: cell.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  };
-
-  return (
-    <TableCell ref={setNodeRef} className="truncate" style={style}>
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </TableCell>
+    </div>
   );
 };

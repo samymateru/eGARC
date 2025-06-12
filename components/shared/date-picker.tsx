@@ -24,9 +24,16 @@ import {
 interface DatePickerProps {
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
+  side?: "left" | "right";
+  offset?: number;
 }
 
-export function DatePicker({ value, onChange }: DatePickerProps) {
+export function DatePicker({
+  value,
+  onChange,
+  side = "left",
+  offset = 0,
+}: DatePickerProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [month, setMonthState] = React.useState<Date>(new Date());
 
@@ -75,7 +82,9 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
       <PopoverContent
         onOpenAutoFocus={(e) => e.preventDefault()}
         className="w-auto p-2 flex flex-col dark:bg-black"
-        align="center">
+        side={side}
+        align="center"
+        sideOffset={offset}>
         <div className="flex items-center gap-2 mb-2">
           {/* Month Selector */}
           <Select
