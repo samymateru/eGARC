@@ -29,7 +29,8 @@ type PolicyValues = z.infer<typeof PolicySchema>;
 type DefaultPoliciesValues = {
   name?: string;
   version?: string;
-  key_areas: string;
+  key_areas?: string;
+  attachment?: File;
 };
 
 interface PolicyFormProps {
@@ -37,7 +38,7 @@ interface PolicyFormProps {
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
   data?: DefaultPoliciesValues;
 }
 
@@ -47,6 +48,7 @@ export const PolicyForm = ({
   endpoint,
   title,
   data,
+  mode,
 }: PolicyFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -68,10 +70,33 @@ export const PolicyForm = ({
   } = methods;
 
   const { mutate: createPolicy, isPending: createPolicyLoading } = useMutation({
-    mutationKey: ["_create_policy_"],
+    mutationKey: ["_create_policy_", id],
     mutationFn: async (data: FormData): Promise<Response> => {
       const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+        body: data,
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return response.json();
+    },
+  });
+
+  const { mutate: updatePolicy, isPending: updatePolicyLoading } = useMutation({
+    mutationKey: ["_update_policy_", id],
+    mutationFn: async (data: FormData): Promise<Response> => {
+      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${
             typeof window === "undefined" ? "" : localStorage.getItem("token")
@@ -97,23 +122,40 @@ export const PolicyForm = ({
     policyData.append("key_areas", data.key_areas);
     policyData.append("attachment", data.attachment);
 
-    createPolicy(policyData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_policies_", params.get("id")],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      createPolicy(policyData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_policies_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updatePolicy(policyData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_policies_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
-
   return (
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
@@ -164,41 +206,42 @@ export const PolicyForm = ({
                 />
                 <FormError error={errors.key_areas} />
               </div>
-              <div className="*:not-first:mt-2">
-                <Label htmlFor="attachment" className="ml-[2px] font-table">
-                  Attachment
-                </Label>
+              {mode === "create" ? (
+                <div className="*:not-first:mt-2">
+                  <Label htmlFor="attachment" className="ml-[2px] font-table">
+                    Attachment
+                  </Label>
 
-                <Controller
-                  control={control}
-                  name="attachment"
-                  rules={{
-                    required: "Attachment is required",
-                    validate: (file) =>
-                      file?.type === "application/pdf" ||
-                      file?.type === "application/msword" ||
-                      file?.type ===
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                      "Only PDF or Word documents are allowed",
-                  }}
-                  render={({ field }) => (
-                    <>
-                      <Input
-                        id="attachment"
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.onChange(file);
-                        }}
-                        ref={field.ref}
-                      />
-                    </>
-                  )}
-                />
-
-                <FormError error={errors.attachment} />
-              </div>
+                  <Controller
+                    control={control}
+                    name="attachment"
+                    rules={{
+                      required: "Attachment is required",
+                      validate: (file) =>
+                        file?.type === "application/pdf" ||
+                        file?.type === "application/msword" ||
+                        file?.type ===
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                        "Only PDF or Word documents are allowed",
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <Input
+                          id="attachment"
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            field.onChange(file);
+                          }}
+                          ref={field.ref}
+                        />
+                      </>
+                    )}
+                  />
+                  <FormError error={errors.attachment} />
+                </div>
+              ) : null}
             </main>
 
             <Separator />
@@ -212,7 +255,7 @@ export const PolicyForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={createPolicyLoading}
+                disabled={createPolicyLoading || updatePolicyLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

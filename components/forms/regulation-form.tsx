@@ -31,6 +31,7 @@ type DefaultRegulationValues = {
   name?: string;
   issue_date?: Date;
   key_areas?: string;
+  attachment: File;
 };
 
 interface RegulationFormProps {
@@ -38,7 +39,7 @@ interface RegulationFormProps {
   id: string | null;
   endpoint: string;
   title: string;
-  mode?: string;
+  mode?: "create" | "update";
   data?: DefaultRegulationValues;
 }
 
@@ -48,6 +49,7 @@ export const RegulationForm = ({
   endpoint,
   title,
   data,
+  mode,
 }: RegulationFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -61,10 +63,34 @@ export const RegulationForm = ({
 
   const { mutate: createRegulation, isPending: createRegulationLoading } =
     useMutation({
-      mutationKey: ["_create_regulation_"],
+      mutationKey: ["_create_regulation_", id],
       mutationFn: async (data: FormData): Promise<Response> => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: data,
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return response.json();
+      },
+    });
+
+  const { mutate: updateRegulation, isPending: updateRegulationLoading } =
+    useMutation({
+      mutationKey: ["_update_regulation_", id],
+      mutationFn: async (data: FormData): Promise<Response> => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${
               typeof window === "undefined" ? "" : localStorage.getItem("token")
@@ -98,21 +124,39 @@ export const RegulationForm = ({
     regulationData.append("key_areas", data.key_areas);
     regulationData.append("attachment", data.attachment);
 
-    createRegulation(regulationData, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_regulations_", params.get("id")],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      createRegulation(regulationData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_regulations_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updateRegulation(regulationData, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_regulations_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
 
   return (
@@ -224,7 +268,7 @@ export const RegulationForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={createRegulationLoading}
+                disabled={createRegulationLoading || updateRegulationLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">

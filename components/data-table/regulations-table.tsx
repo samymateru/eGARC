@@ -125,6 +125,9 @@ const columns: ColumnDef<RegulationsValues>[] = [
                   name: row.original.name,
                   key_areas: row.original.key_areas,
                   issue_date: new Date(row.original.issue_date),
+                  attachment: new File([], "attachment.pdf", {
+                    type: "application/pdf",
+                  }),
                 }}
                 mode="update"
                 title="Edit Regulation"

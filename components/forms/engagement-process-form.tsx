@@ -64,6 +64,7 @@ export const EngagementProcessForm = ({
   endpoint,
   title,
   data,
+  mode,
 }: EngagementProcessFormProps) => {
   const [open, setOpen] = useState(false);
 
@@ -75,11 +76,7 @@ export const EngagementProcessForm = ({
     defaultValues: data,
   });
 
-  const {
-    data: process,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: process } = useQuery({
     queryKey: ["__process__"],
     queryFn: async (): Promise<BusinessProcessResponse[]> => {
       const response = await fetch(`${BASE_URL}/profile/business_process`, {
@@ -99,10 +96,35 @@ export const EngagementProcessForm = ({
 
   const { mutate: createProcess, isPending: createProcessLoading } =
     useMutation({
-      mutationKey: ["_create_prcm_"],
+      mutationKey: ["_create_process_", id],
       mutationFn: async (data: EngagementProcessValues): Promise<Response> => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          throw {
+            status: response.status,
+            body: errorBody,
+          };
+        }
+        return response.json();
+      },
+    });
+
+  const { mutate: updateProcess, isPending: updateProcessLoading } =
+    useMutation({
+      mutationKey: ["_update_process_", id],
+      mutationFn: async (data: EngagementProcessValues): Promise<Response> => {
+        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${
@@ -133,29 +155,40 @@ export const EngagementProcessForm = ({
   } = methods;
 
   const onSubmit = (data: EngagementProcessValues) => {
-    createProcess(data, {
-      onSuccess: (data) => {
-        query_client.invalidateQueries({
-          queryKey: ["_engagement_processes_", params.get("id")],
-        });
-        showToast(data.detail, "success");
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-      onSettled: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+    if (mode === "create") {
+      createProcess(data, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_engagement_processes_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    } else {
+      updateProcess(data, {
+        onSuccess: (data) => {
+          query_client.invalidateQueries({
+            queryKey: ["_engagement_processes_", params.get("id")],
+          });
+          showToast(data.detail, "success");
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+        onSettled: () => {
+          reset();
+          setOpen(false);
+        },
+      });
+    }
   };
-
-  if (isLoading) {
-    return <div>loading</div>;
-  }
-  if (isError) {
-    return <div>loading</div>;
-  }
 
   const selectedProcess = watch("process");
   const subProcesses =
@@ -275,7 +308,7 @@ export const EngagementProcessForm = ({
                 Cancel
               </Button>
               <Button
-                disabled={createProcessLoading}
+                disabled={createProcessLoading || updateProcessLoading}
                 type="submit"
                 variant="ghost"
                 className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
