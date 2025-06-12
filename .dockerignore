@@ -1,10 +1,6 @@
-/my-app
-  /public
-  /pages
-  /components
-  /node_modules
-  .dockerignore
-  Dockerfile
-  next.config.js
-  package.json
-  tsconfig.json
+node_modules
+.next
+.env
+.dockerignore
+Dockerfile
+README.md
