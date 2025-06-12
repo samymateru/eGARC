@@ -6,7 +6,7 @@ WORKDIR /app
 # Install dependencies (for faster caching)
 COPY package.json ./
 COPY package-lock.json ./  
-COPY pnpm-lock.yaml ./  
+
 RUN npm install
 
 # -------- Build Stage --------
