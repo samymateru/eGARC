@@ -4,7 +4,9 @@ FROM node:18-alpine AS base
 WORKDIR /app
 
 # Install dependencies (for faster caching)
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
+COPY package.json ./
+COPY package-lock.json ./  
+COPY pnpm-lock.yaml ./  
 RUN npm install
 
 # -------- Build Stage --------
