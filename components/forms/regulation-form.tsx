@@ -31,7 +31,7 @@ type DefaultRegulationValues = {
   name?: string;
   issue_date?: Date;
   key_areas?: string;
-  attachment: File;
+  attachment?: File;
 };
 
 interface RegulationFormProps {
