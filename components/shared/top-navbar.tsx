@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ModeToggle } from "./toggle-button";
 import { Bell, Settings } from "lucide-react";
+import { Button } from "../ui/button";
 
 export const TopNavbar = () => {
   return (
@@ -21,7 +22,9 @@ export const TopNavbar = () => {
           </Link>
         </li>
         <li>
-          <ModeToggle />
+          <ModeToggle>
+            <Button>click</Button>
+          </ModeToggle>
         </li>
       </ul>
     </section>

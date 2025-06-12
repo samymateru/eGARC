@@ -42,7 +42,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CirclePlus,
   Edit,
   Ellipsis,
   GripVerticalIcon,
@@ -72,8 +71,7 @@ import { PlanSchema } from "@/lib/types";
 import Link from "next/link";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
-import { PlanningForm } from "../forms/create-audit-plan-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
 
@@ -221,8 +219,6 @@ export default function AnnualAuditPlanningTable({
 }: AnnualAuditPlanningTableProps) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const params = useSearchParams();
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
@@ -318,18 +314,6 @@ export default function AnnualAuditPlanningTable({
             onChange={setSelectedStatuses}
           />
         </section>
-        <PlanningForm
-          endpoint="annual_plans"
-          title="Audit Plan"
-          mode="create"
-          company_module_id={params.get("id") ?? undefined}>
-          <Button
-            variant="ghost"
-            className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
-            <CirclePlus size={16} strokeWidth={3} />
-            Plan
-          </Button>
-        </PlanningForm>
       </div>
       <Table
         style={{

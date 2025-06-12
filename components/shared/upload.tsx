@@ -1,11 +1,10 @@
 "use client";
 
-import { CircleUserRoundIcon, FileTextIcon, X } from "lucide-react";
+import { FileTextIcon, X } from "lucide-react";
 
 import { FileWithPreview } from "@/hooks/use-file-upload";
 import { Button } from "@/components/ui/button";
 import { InputHTMLAttributes } from "react";
-import Image from "next/image";
 import { Label } from "../ui/label";
 
 interface FileUploaderProps {

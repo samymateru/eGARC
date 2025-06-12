@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReviewCommentReport } from "@/components/reports/review-comments-report";
+import SearchBar from "@/components/shared/search";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -74,9 +75,10 @@ export default function AuditNextPage() {
           </TabsTrigger>
         </section>
         <section className="w-full mb-1">
+          <SearchBar className="bg-black" />
           <SystemOptions>
             <Button className="w-full h-[33px] bg-black" variant="ghost">
-              click
+              Options
             </Button>
           </SystemOptions>
         </section>

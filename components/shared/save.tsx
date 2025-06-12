@@ -72,7 +72,6 @@ export const SaveIssue = ({ children, title, submit_text }: SaveIssue) => {
     handleSubmit,
     register,
     reset,
-    control,
     formState: { errors },
   } = methods;
 

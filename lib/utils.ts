@@ -37,9 +37,30 @@ export const saveSearchToLocalStorage = (search: Search) => {
   } catch {
     searchArray = [];
   }
+  const isDuplicate = searchArray.some(item => item.value === search.value);
 
-  searchArray.push(search);
-
-  // Save back to localStorage
-  localStorage.setItem("search", JSON.stringify(searchArray));
+  if (!isDuplicate) {
+    searchArray.push(search);
+    localStorage.setItem("search", JSON.stringify(searchArray));
+  }
 }
+
+export const deleteSearchFromLocalStorage = (valueToRemove: string) => {
+  const stored = localStorage.getItem("search");
+
+  let searchArray: Search[] = [];
+  try {
+    if (stored) {
+      searchArray = JSON.parse(stored);
+      if (!Array.isArray(searchArray)) {
+        searchArray = [];
+      }
+    }
+  } catch {
+    searchArray = [];
+  }
+
+  const updatedArray = searchArray.filter(item => item.value !== valueToRemove);
+
+  localStorage.setItem("search", JSON.stringify(updatedArray));
+};
