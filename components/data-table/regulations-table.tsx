@@ -126,7 +126,7 @@ const columns: ColumnDef<RegulationsValues>[] = [
                   key_areas: row.original.key_areas,
                   issue_date: new Date(row.original.issue_date),
                   attachment:
-                    typeof window !== "undefined"
+                    typeof File !== "undefined"
                       ? new File([], "attachment.pdf", {
                           type: "application/pdf",
                         })
