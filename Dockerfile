@@ -17,6 +17,8 @@ COPY . .
 # Next.js requires NODE_ENV=production for static/SSG output
 ENV NODE_ENV=production
 
+COPY .env .env
+
 # Build the Next.js app
 RUN npm run build
 
