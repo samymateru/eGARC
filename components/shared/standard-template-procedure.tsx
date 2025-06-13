@@ -272,22 +272,24 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             </Label>
           </section>
         </section>
-        <section className="flex-1 flex items-center justify-end gap-2 pr-1">
+        <section className="flex-1 flex items-center justify-end gap-2 pr-1 h-[30px]">
           <div className="px-2">
             <ToggleProcedureVisibility />
           </div>
+          <Separator className="mx-1" orientation="vertical" />
           <Button
             onClick={onSubmit}
             disabled={saveProcedureLoading}
             variant={"ghost"}
-            className="dark:bg-neutral-800 w-[100px] flex justify-start items-center h-[30px]">
+            className="w-[130px] flex justify-start items-center h-7 font-bold text-white bg-blue-700">
             <Save size={16} strokeWidth={3} />
             Save
           </Button>
+          <Separator className="mx-1" orientation="vertical" />
           <PlanningProcedureActions data={data}>
             <Button
               variant={"ghost"}
-              className="dark:bg-neutral-800 w-[100px] flex justify-start items-center h-[30px]">
+              className="w-[130px] flex justify-start items-center h-7 font-bold text-white bg-blue-700">
               <Menu size={16} strokeWidth={3} />
               Menu
             </Button>
@@ -308,7 +310,6 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           observation={observation}
           conclusion={conclusion}
         />
-        <Separator className="my-3" />
         <section id="letters" className="px-2 my-2">
           {data?.type === "letter" ? (
             <section id="letters">
@@ -316,7 +317,6 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             </section>
           ) : null}
         </section>
-        <Separator className="my-3" />
         <section>
           <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-320px)] px-2">
             {!preparedBy ? (
@@ -324,7 +324,7 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
                 disabled={prepareLoading}
                 onClick={onPrepare}
                 variant="ghost"
-                className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                className="w-[130px] h-7 flex items-center justify-start text-white font-bold bg-blue-700">
                 <UserCog size={16} strokeWidth={3} />
                 Prepare
               </Button>
@@ -334,13 +334,13 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
                 onClick={onReview}
                 disabled={reviewLoading}
                 variant="ghost"
-                className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                className="w-[130px] h-7 flex items-center text-white justify-start font-bold bg-blue-700">
                 <UserCheck size={16} strokeWidth={3} />
                 Review
               </Button>
             ) : null}
           </section>
-          <div className=" pb-2 w-[calc(100vw-320px)] px-2">
+          <div className=" pb-2 w-[calc(100vw-328x)] px-2">
             <PreparedReviewedBy
               preparedBy={preparedBy}
               reviewedBy={reviewedBy}

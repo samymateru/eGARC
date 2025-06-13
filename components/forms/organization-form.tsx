@@ -26,6 +26,7 @@ import { FormError } from "../shared/form-error";
 import { showToast } from "../shared/toast";
 import { OrganizationSchema } from "@/lib/types";
 import { Input } from "../ui/input";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -155,8 +156,8 @@ export const OrganizationForm = ({
           });
           showToast(data.detail, "success");
         },
-        onError: (error) => {
-          console.log(error);
+        onError: (error: unknown) => {
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -172,7 +173,7 @@ export const OrganizationForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

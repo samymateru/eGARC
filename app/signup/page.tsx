@@ -18,6 +18,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { SelectValue } from "@/components/ui/select";
+import { ErrorMessage } from "@/lib/utils";
 
 const organization_types = [
   { value: "Technology", label: "Technology" },
@@ -104,7 +105,7 @@ export default function EntityForm() {
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

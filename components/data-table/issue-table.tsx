@@ -76,8 +76,8 @@ export const IssueTable = ({ data }: IssueTableProps) => {
             aria-label="Select row"
           />
         ) : null,
-      minSize: 24,
-      maxSize: 24,
+      minSize: 30,
+      maxSize: 30,
     },
     {
       id: "ref",

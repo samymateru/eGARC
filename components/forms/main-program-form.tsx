@@ -22,6 +22,7 @@ import {
 import { MainProgramSchema, Response } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
+import { ErrorMessage } from "@/lib/utils";
 
 type MainProgramValues = z.infer<typeof MainProgramSchema>;
 
@@ -90,7 +91,7 @@ export const MainProgramForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

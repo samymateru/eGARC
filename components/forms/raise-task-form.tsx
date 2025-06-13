@@ -25,6 +25,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { DatePicker } from "../shared/date-picker";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RaiseTaskValues = z.infer<typeof RaiseTaskSchema>;
@@ -225,7 +226,7 @@ export const RaiseTask = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -239,7 +240,7 @@ export const RaiseTask = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

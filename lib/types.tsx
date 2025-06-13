@@ -660,3 +660,12 @@ export type Search = {
   name?: string;
   value?: string;
 };
+
+type Body = {
+  detail?: string;
+};
+
+export type ErrorHandlerSchema = {
+  status?: number;
+  body?: Body;
+};

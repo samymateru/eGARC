@@ -12,6 +12,8 @@ import {
   MessageCircle,
   Reply,
   CheckCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import "../../globals.css";
 import { z } from "zod";
@@ -160,6 +162,7 @@ const AnnualAuditPlan = () => {
 };
 
 const Reporting = () => {
+  const [open, setOpen] = useState<boolean>(false);
   const [tabValue, setTabValue] = useState("issue");
 
   const menuItems = [
@@ -190,15 +193,32 @@ const Reporting = () => {
       value={tabValue}
       onValueChange={setTabValue}
       className="flex-1">
-      <div className="flex items-center justify-between px-2">
-        <Label>hello</Label>
-        <DropdownMenu>
+      <div className="flex items-center justify-between px-2 pt-2">
+        <Label className="font-[helvetica] font-bold text-[24px] tracking-wide scroll-m-1">
+          {tabValue === "issue"
+            ? "Issues Report"
+            : tabValue === "comments"
+            ? "Review Comments Report"
+            : tabValue === "responses"
+            ? "Responses Report"
+            : "Report"}
+        </Label>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="w-[180px] justify-start flex items-center h-[30px] border border-neutral-800">
-              {menuItems.find((item) => item.value === tabValue)?.icon}
-              {menuItems.find((item) => item.value === tabValue)?.label}
+              className="w-[200px] font-bold justify-between flex items-center h-7 bg-blue-700 text-white">
+              <span className="flex item-center gap-1">
+                {menuItems.find((item) => item.value === tabValue)?.icon}
+                {menuItems.find((item) => item.value === tabValue)?.label}
+              </span>
+              <span>
+                {open ? (
+                  <ChevronUp size={16} strokeWidth={3} />
+                ) : (
+                  <ChevronDown size={16} strokeWidth={3} />
+                )}
+              </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[250px]">

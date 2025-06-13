@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const TaskDecisionSchema = z.object({
@@ -99,7 +100,7 @@ export const TaskDecisionForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

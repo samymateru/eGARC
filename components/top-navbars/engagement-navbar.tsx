@@ -17,9 +17,11 @@ export const EngagementNavbar = () => {
           </Label>
         )}
       </section>
-      <section className="flex gap-1 items-center pr-2">
+      <section className="flex gap-2 items-center pr-2">
         <EngagementDropdownMenu>
-          <Button className="dark:hover:bg-neutral-900 px-3 py-1 h-7 w-[130px]  bg-black text-neutral-200 font-table flex items-center gap-1">
+          <Button
+            className="w-[200px] font-bold font-[helvetica] h-[28px] bg-blue-700 flex items-center justify-start text-white"
+            variant="ghost">
             <Package size={16} strokeWidth={3} />
             Options
           </Button>

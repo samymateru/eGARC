@@ -51,7 +51,7 @@ export default function MultiStatusFilter({
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="w-[200px] dark:bg-neutral-800 dark:hover:bg-neutral-900 h-[30px] flex items-center justify-start font-serif tracking-wide scroll-m-0">
+          className="w-full dark:bg-neutral-800 dark:hover:bg-neutral-900 h-7 flex items-center justify-start font-serif tracking-wide scroll-m-0">
           <FilterIcon size={16} strokeWidth={3} />
           <span className="flex flex-col">{buttonLabel}</span>
         </Button>

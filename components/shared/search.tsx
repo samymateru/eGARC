@@ -83,7 +83,7 @@ export default function SearchBar({ className }: SearchBarProps) {
       <DialogTrigger asChild>
         <Button
           className={cn(
-            "w-full justify-between h-[30px] px-3 border border-neutral-600",
+            "w-full justify-between h-[30px] px-3 border border-neutral-800",
             className
           )}
           variant="ghost">
@@ -115,7 +115,7 @@ export default function SearchBar({ className }: SearchBarProps) {
             <div className="relative">
               <Input
                 id={id}
-                className="peer ps-9 "
+                className="peer ps-9"
                 placeholder="Search..."
                 type="search"
                 value={inputValue}

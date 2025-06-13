@@ -50,7 +50,11 @@ const fetchData = async (endpont: string, id: string | null) => {
     },
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch modules");
+    const errorBody = await response.json().catch(() => ({}));
+    throw {
+      status: response.status,
+      body: errorBody,
+    };
   }
   return await response.json();
 };

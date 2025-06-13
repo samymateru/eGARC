@@ -305,13 +305,42 @@ export const IssueForm = ({
 
     createIssue(IssueData, {
       onSuccess: (data) => {
-        const allQueries = query_client.getQueryCache().findAll();
-        allQueries.forEach((query) => {
-          console.log("Key:", query.queryKey);
+        const isSummaryFinding = !!query_client.getQueryCache().find({
+          queryKey: ["_summary_findinds_", params.get("id")],
         });
-        query_client.invalidateQueries({
-          queryKey: ["_summary_findinds_", "d6e7ebf227da"],
-        });
+        if (isSummaryFinding) {
+          query_client.invalidateQueries({
+            queryKey: ["_summary_findinds_", params.get("id")],
+          });
+        } else {
+          query_client.fetchQuery({
+            queryKey: ["_summary_findinds_", params.get("id")],
+            queryFn: async () => {
+              const response = await fetch(
+                `${BASE_URL} /engagements/summary_findings/${params.get("id")}`,
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${
+                      typeof window === "undefined"
+                        ? ""
+                        : localStorage.getItem("token")
+                    }`,
+                  },
+                }
+              );
+              if (!response.ok) {
+                const errorBody = await response.json().catch(() => ({}));
+                throw {
+                  status: response.status,
+                  body: errorBody,
+                };
+              }
+              return await response.json();
+            },
+          });
+        }
+
         showToast(data.detail, "success");
       },
       onError: (error) => {

@@ -25,6 +25,7 @@ import { z } from "zod";
 import { FormError } from "../shared/form-error";
 import { showToast } from "../shared/toast";
 import { ModuleSchema } from "@/lib/types";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -99,7 +100,7 @@ export const ModuleForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

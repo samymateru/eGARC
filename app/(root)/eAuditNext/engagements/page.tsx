@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { AnnuaPlanDashboard } from "@/components/dashboards/annual-plan-dashboard";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 type EngagementsValues = z.infer<typeof EngagementSchema>;
 
@@ -64,10 +65,10 @@ export default function EngagementPage() {
     <Tabs
       className="w-full dark:bg-background flex flex-col gap-[6px]"
       defaultValue="engagements">
-      <TabsList className="bg-neutral-300 w-full rounded-none flex gap-1 justify-start py-5 pl-1">
+      <TabsList className="w-full rounded-none flex gap-1 justify-start py-5 pl-1 bg-background">
         <section className="flex items-center justify-between w-full">
           <section className="flex-1">
-            <Label className="text-black font-bold text-[25px] pl-2">
+            <Label className="text-white font-bold text-[25px] pl-2">
               {params.get("plan")}
             </Label>
           </section>
@@ -93,7 +94,7 @@ export default function EngagementPage() {
               id={searchParams.get("id") ?? undefined}>
               <Button
                 variant="ghost"
-                className="bg-black text-white hover:text-white hover:bg-neutral-900  flex items-center gap-2 h-[30px] w-fit justify-start font-table">
+                className="bg-blue-700 font-[helvetica] font-bold text-white flex items-center gap-2 h-[28px] w-fit justify-start">
                 <CirclePlus size={16} strokeWidth={3} />
                 Engagement
               </Button>
@@ -102,6 +103,7 @@ export default function EngagementPage() {
           </section>
         </section>
       </TabsList>
+      <Separator className="my-1" />
       <TabsContent
         value="engagements"
         className="w-[100vw] px-2 flex flex-col gap-2">

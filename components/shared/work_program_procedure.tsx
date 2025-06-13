@@ -327,10 +327,11 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 </Label>
               </section>
             </section>
-            <section className="flex-1 flex items-center justify-end gap-2 ">
+            <section className="flex-1 flex items-center justify-end gap-2 h-[30px]">
               <div className="px-2">
                 <ToggleProcedureVisibility />
               </div>
+              <Separator className="mx-1" orientation="vertical" />
               <Button
                 disabled={saveProcedureLoading}
                 variant="ghost"
@@ -338,17 +339,18 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                   e.stopPropagation();
                   onSubmit("manual");
                 }}
-                className="w-[100px] h-[30px] flex items-center justify-start dark:hover:bg-neutral-800 rounded-md">
+                className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
                 <Save size={16} />
                 Save
               </Button>
+              <Separator className="mx-1" orientation="vertical" />
               <ProcedureAction
                 side="bottom"
                 subProgramTitle={data?.title ?? ""}>
                 <Button
                   variant="ghost"
                   onClick={(e) => e.stopPropagation()}
-                  className="w-[100px] h-[30px] flex items-center justify-start dark:hover:bg-neutral-800 rounded-md">
+                  className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
                   <Menu size={16} />
                   Menu
                 </Button>
@@ -393,7 +395,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                     disabled={prepareLoading}
                     onClick={onPrepare}
                     variant="ghost"
-                    className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                    className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
                     <UserCog size={16} strokeWidth={3} />
                     Prepare
                   </Button>
@@ -405,7 +407,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                     onClick={onReview}
                     disabled={reviewLoading}
                     variant="ghost"
-                    className="w-[120px] h-[30px] flex items-center justify-start bg-blue-950">
+                    className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
                     <UserCheck size={16} strokeWidth={3} />
                     Review
                   </Button>

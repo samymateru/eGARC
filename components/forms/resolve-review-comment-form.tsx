@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type ResolveReviewCommentValues = z.infer<typeof ResolveReviewCommentSchema>;
@@ -99,7 +100,7 @@ export const ResolveReviewCommentForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

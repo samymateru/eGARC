@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useSearchParams } from "next/navigation";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type UsersValues = z.infer<typeof UserSchema>;
@@ -176,7 +177,7 @@ export const UsersForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -192,7 +193,7 @@ export const UsersForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

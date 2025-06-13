@@ -9,7 +9,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, Download } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -24,7 +24,8 @@ import {
 import { IssueDetailedSchema } from "@/lib/types";
 import z from "zod";
 import { Label } from "../ui/label";
-import MultiStatusFilter from "../shared/multi-status-filter";
+import { IssueDetailedFilter } from "../filters/issue-detailed";
+import { Button } from "../ui/button";
 
 type IssueDetailedValues = z.infer<typeof IssueDetailedSchema>;
 
@@ -318,14 +319,17 @@ interface IssueDetailedProps {
 export default function IssueDetailedTable({ data }: IssueDetailedProps) {
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: "name",
+      id: "issue_name",
       desc: false,
     },
   ]);
   const [tableData, setTableData] = useState<IssueDetailedValues[]>([]);
-
   const [revised, setSelectedRevised] = useState<string[]>([]);
   const [overdue, setSelectedOverdue] = useState<string[]>([]);
+  const [rating, setRating] = useState<string[]>([]);
+  const [issueSource, setIssueSource] = useState<string[]>([]);
+  const [issueYear, setIssueYear] = useState<string[]>([]);
+  const [issueStatus, setIssueStatus] = useState<string[]>([]);
 
   const issueRatingOptions = useMemo(() => {
     return Array.from(new Set(data.map((item) => String(item.issue_rating))));
@@ -361,20 +365,36 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
     const filtered = data.filter((row) => {
       const revisedStatus =
         revised.length === 0 || revised.includes(row.is_issue_revised ?? "");
+
       const overDueStatus =
         overdue.length === 0 || overdue.includes(row.is_issue_pass_due ?? "");
 
-      return revisedStatus && overDueStatus;
+      const issueRating =
+        rating.length === 0 || rating.includes(row.issue_rating ?? "");
+
+      const issueSourceOptions =
+        issueSource.length === 0 ||
+        issueSource.includes(row.issue_source ?? "");
+
+      const issueYearOptions =
+        issueYear.length === 0 ||
+        issueYear.includes(String(row?.financial_year) ?? "");
+
+      const issueStatusOptions =
+        issueStatus.length === 0 ||
+        issueStatus.includes(row.issue_overall_status ?? "");
+
+      return (
+        revisedStatus &&
+        overDueStatus &&
+        issueRating &&
+        issueSourceOptions &&
+        issueYearOptions &&
+        issueStatusOptions
+      );
     });
     setTableData(filtered);
-  }, [data, revised, overdue]);
-
-  console.log("Rating", issueRatingOptions);
-  console.log("Status", issueStatusOptions);
-  console.log("Year", yearOptions);
-  console.log("Revised", revisedOptions);
-  console.log("Overue", overDueOptions);
-  console.log("Source", issueSourceOptions);
+  }, [data, revised, overdue, rating, issueSource, issueYear, issueStatus]);
 
   const table = useReactTable({
     data: tableData,
@@ -390,25 +410,41 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
   });
 
   return (
-    <div className="flex flex-col w-[calc(100vw-300px)]">
-      <div className="w-full flex items-center gap-2">
-        <MultiStatusFilter
-          options={revisedOptions}
-          value={revised}
-          onChange={setSelectedRevised}
+    <div className="flex flex-col w-[calc(100vw-300px)] [&>div]:max-h-[calc(100vh-98px)]">
+      <div className="w-full flex items-center gap-2 pb-2 px-2 justify-between">
+        <IssueDetailedFilter
+          revised={revised}
+          revisedOptions={revisedOptions}
+          setSelectedRevised={setSelectedRevised}
+          overdue={overdue}
+          overDueOptions={overDueOptions}
+          setSelectedOverdue={setSelectedOverdue}
+          issueRatingOptions={issueRatingOptions}
+          issueRating={rating}
+          setIssueRating={setRating}
+          issueSource={issueSource}
+          issueSourceOptions={issueSourceOptions}
+          setIssueSource={setIssueSource}
+          issueYear={issueYear}
+          issueYearOptions={yearOptions}
+          setIssueYear={setIssueYear}
+          issueStatus={issueStatus}
+          issueStatusOptions={issueStatusOptions}
+          setIssueStatus={setIssueStatus}
         />
-        <MultiStatusFilter
-          options={overDueOptions}
-          value={overdue}
-          onChange={setSelectedOverdue}
-        />
+        <Button
+          className="font-[helvetica] tracking-wide scroll-m-0 font-bold bg-blue-700 w-[130px] flex items-center justify-center text-white h-7"
+          variant="ghost">
+          <Download size={16} strokeWidth={3} />
+          Export
+        </Button>
       </div>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-800 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
@@ -488,7 +524,7 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-800 overflow-auto">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow

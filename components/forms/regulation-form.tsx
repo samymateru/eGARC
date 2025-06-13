@@ -24,6 +24,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
 import { DatePicker } from "../shared/date-picker";
+import { ErrorMessage } from "@/lib/utils";
 
 type RegulationValues = z.infer<typeof RegulationSchema>;
 
@@ -133,7 +134,7 @@ export const RegulationForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -149,7 +150,7 @@ export const RegulationForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

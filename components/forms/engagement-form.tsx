@@ -33,6 +33,7 @@ import { MultiErrorForm } from "../shared/multi-error-form";
 import { ListMultiSelector } from "../shared/list-multi-select";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type EngagementValues = z.infer<typeof EngagementSchema>;
@@ -276,7 +277,7 @@ export const EngagementForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -295,7 +296,7 @@ export const EngagementForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

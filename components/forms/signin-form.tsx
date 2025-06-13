@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { cn, ErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,7 +63,11 @@ export function LoginForm({
         }),
       });
       if (!response.ok) {
-        throw new Error("Login failed");
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
       }
       return await response.json();
     },
@@ -95,8 +99,8 @@ export function LoginForm({
           showToast(data.detail, "error");
         }
       },
-      onError: (error) => {
-        showToast(error.message, "error");
+      onError: (error: unknown) => {
+        ErrorMessage(error);
       },
     });
   };

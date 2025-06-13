@@ -29,6 +29,7 @@ import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { ScrollArea } from "../ui/scroll-area";
 import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RiskControlFormValues = z.infer<typeof RiskControlSchema>;
@@ -172,7 +173,7 @@ export const RiskControlForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();

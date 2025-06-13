@@ -30,6 +30,7 @@ import {
 } from "../ui/select";
 import { ScrollArea } from "../ui/scroll-area";
 import { DatePicker } from "../shared/date-picker";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type StaffValues = z.infer<typeof StaffSchema>;
@@ -191,7 +192,7 @@ export const StaffForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();
@@ -207,7 +208,7 @@ export const StaffForm = ({
           showToast(data.detail, "success");
         },
         onError: (error) => {
-          console.log(error);
+          ErrorMessage(error);
         },
         onSettled: () => {
           reset();

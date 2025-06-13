@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Search } from "./types";
+import { ErrorHandler } from "@/components/shared/error-handler";
+import { showToast } from "@/components/shared/toast";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -64,3 +66,21 @@ export const deleteSearchFromLocalStorage = (valueToRemove: string) => {
 
   localStorage.setItem("search", JSON.stringify(updatedArray));
 };
+
+
+export const ErrorMessage = (error: unknown) => {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "body" in error &&
+      "status" in error
+    ) {
+      const err = error as { status: number; body?: { detail?: string } };
+      ErrorHandler({
+        status: err.status,
+        body: { detail: err.body?.detail },
+      });
+    } else {
+      showToast("Service Down", "error");
+    }
+}

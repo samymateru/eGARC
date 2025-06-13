@@ -20,6 +20,7 @@ import {
 import { Response, SubProgramSchema } from "@/lib/types";
 import { showToast } from "../shared/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -94,7 +95,7 @@ export const SubProgramForm = ({
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {
         reset();
