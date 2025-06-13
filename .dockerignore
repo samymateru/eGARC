@@ -1,6 +1,5 @@
 node_modules
 .next
-.env
 .dockerignore
 Dockerfile
 README.md
