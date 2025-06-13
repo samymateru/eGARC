@@ -18,11 +18,12 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ModuleForm } from "../forms/modules-form";
 import { Separator } from "../ui/separator";
 import { OrganizationForm } from "../forms/organization-form";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -50,7 +51,7 @@ export const ModuleSelect = ({
   organizationEmail,
 }: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
-  const { data } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["_modules_", id],
     queryFn: async (): Promise<ModuleResponse[]> => {
       const response = await fetch(`${BASE_URL}/modules/${id}`, {
@@ -74,6 +75,12 @@ export const ModuleSelect = ({
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [data, isError, error]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

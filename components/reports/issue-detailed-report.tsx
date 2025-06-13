@@ -2,13 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import IssueDetailedTable from "../data-table/issue-detailed-table";
 import { Separator } from "../ui/separator";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
+import { Loader } from "../shared/loader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const IssueDetailedReport = () => {
   const params = useSearchParams();
 
-  const { data } = useQuery({
+  const { data, isError, isLoading, error } = useQuery({
     queryKey: ["_issue_detailed_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -36,6 +39,20 @@ export const IssueDetailedReport = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-[calc(100vw-300px)] h-[100vh] relative">
+        <Loader title="Issue Reports" />
+      </div>
+    );
+  }
 
   return (
     <section className="w-full">

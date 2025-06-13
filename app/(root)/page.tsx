@@ -6,8 +6,8 @@ import { OrganizationSchema } from "@/lib/types";
 import { z } from "zod";
 import OrganizationTable from "@/components/data-table/organization-table";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { saveSearchToLocalStorage } from "@/lib/utils";
+import { Loader } from "@/components/shared/loader";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -15,7 +15,7 @@ type OrganizationValues = z.infer<typeof OrganizationSchema>;
 
 export default function HomePage() {
   const [organization, setOrganization] = useState<OrganizationValues[]>([]);
-  const { data, isLoading, isSuccess } = useQuery({
+  const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["organizations"],
     queryFn: async (): Promise<OrganizationValues[]> => {
       const response = await fetch(`${BASE_URL}/organization`, {
@@ -52,8 +52,10 @@ export default function HomePage() {
       );
       setOrganization(sortedOrganization ?? []);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, isSuccess, data]);
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isLoading, isSuccess, isError, error, data]);
 
   return (
     <section className="w-full h-screen flex flex-col">
@@ -62,17 +64,13 @@ export default function HomePage() {
         <p className="text-center text-xs">
           These are organization that you were added on
         </p>
-        <Button
-          onClick={() =>
-            saveSearchToLocalStorage({
-              name: "hello",
-              value: "value",
-              tag: "tag",
-            })
-          }>
-          click
-        </Button>
-        <OrganizationTable data={organization ?? []} />
+        <div>
+          {isLoading ? (
+            <Loader title="Organizations" />
+          ) : (
+            <OrganizationTable data={organization ?? []} />
+          )}
+        </div>
       </section>
     </section>
   );

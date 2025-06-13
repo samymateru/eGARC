@@ -8,6 +8,9 @@ import { EngagementSummaryDonutChart } from "../shared/engagement-summary-donut-
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { IssueStatusDonutChart } from "../shared/issue-status-donut-chart";
+import { Loader } from "../shared/loader";
+import { ErrorMessage } from "@/lib/utils";
+import { ErrorQuery } from "../shared/error-query";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allRootCauses = [
@@ -29,17 +32,19 @@ const allImpactCategory = [
 
 export const EauditDashboard = () => {
   const params = useSearchParams();
-  const [rootCause, setRootCause] = useState<Record<string, number>>();
-  const [recurring, setRecurring] = useState<Record<string, number>>();
-  const [process, setProcess] = useState<Record<string, number>>();
-  const [issueStatus, setIssueStatus] = useState<Record<string, number>>();
-  const [impactCategory, setImpactCategory] =
-    useState<Record<string, number>>();
-  const [auditSummary, setAuditSummary] = useState<Record<string, number>>();
-  const [engagementSummary, setEngagementSummary] =
-    useState<Record<string, number>>();
+  const [rootCause, setRootCause] = useState<Record<string, number>>({});
+  const [recurring, setRecurring] = useState<Record<string, number>>({});
+  const [process, setProcess] = useState<Record<string, number>>({});
+  const [issueStatus, setIssueStatus] = useState<Record<string, number>>({});
+  const [impactCategory, setImpactCategory] = useState<Record<string, number>>(
+    {}
+  );
+  const [auditSummary, setAuditSummary] = useState<Record<string, number>>({});
+  const [engagementSummary, setEngagementSummary] = useState<
+    Record<string, number>
+  >({});
 
-  const { data, isSuccess, isLoading } = useQuery({
+  const { data, isSuccess, isLoading, isError, error } = useQuery({
     queryKey: ["_eaudit_next_dashboard", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -68,38 +73,54 @@ export const EauditDashboard = () => {
   });
 
   useEffect(() => {
-    if (isSuccess) {
-      const root = allRootCauses.reduce((acc, cause) => {
-        if (typeof cause === "string" || typeof cause === "number") {
-          acc[cause] =
-            (data?.issues_data?.root_cause_summary || {})[cause] || 0;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+    const root = allRootCauses.reduce((acc, cause) => {
+      if (typeof cause === "string" || typeof cause === "number") {
+        acc[cause] = (data?.issues_data?.root_cause_summary || {})[cause] || 0;
+      }
+      return acc;
+    }, {} as Record<string, number>);
 
-      const impact = allImpactCategory.reduce((acc, cause) => {
-        if (typeof cause === "string" || typeof cause === "number") {
-          acc[cause] = (data?.issues_data?.impact_summary || {})[cause] || 0;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+    const impact = allImpactCategory.reduce((acc, cause) => {
+      if (typeof cause === "string" || typeof cause === "number") {
+        acc[cause] = (data?.issues_data?.impact_summary || {})[cause] || 0;
+      }
+      return acc;
+    }, {} as Record<string, number>);
 
-      const auditSummary = data?.audits_summary;
-      const engagementSummary = data?.engagements_summary;
-      const issueRecurring = data?.issues_data.recurring_summary;
-      const issueStatus = data?.issues_data.status_summary;
-      const topRatedProcess = data.issues_data.process_summary;
-      setRootCause(root);
-      setImpactCategory(impact);
-      setAuditSummary(auditSummary);
-      setEngagementSummary(engagementSummary);
-      setRecurring(issueRecurring);
-      setIssueStatus(issueStatus);
-      setProcess(topRatedProcess);
+    const auditSummary = data?.audits_summary;
+    const engagementSummary = data?.engagements_summary;
+    const issueRecurring = data?.issues_data.recurring_summary;
+    const issueStatus = data?.issues_data.status_summary;
+    const topRatedProcess = data?.issues_data.process_summary;
+    setRootCause(root);
+    setImpactCategory(impact);
+    setAuditSummary(auditSummary);
+    setEngagementSummary(engagementSummary);
+    setRecurring(issueRecurring);
+    setIssueStatus(issueStatus);
+    setProcess(topRatedProcess);
+
+    if (isError) {
+      ErrorMessage(error);
     }
-  }, [data, isLoading, isSuccess]);
+  }, [data, isLoading, isSuccess, isError, error]);
 
-  console.log(data?.issues_data?.impact_summary);
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="eAudit Next Dashboard" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full h-full flex item-center justify-center relative">
+        <ErrorQuery />
+      </div>
+    );
+  }
+
   if (isSuccess && data) {
     return (
       <section className="w-full flex flex-col h-[100vh]">

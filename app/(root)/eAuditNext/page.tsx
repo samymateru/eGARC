@@ -18,7 +18,6 @@ import {
 import "../../globals.css";
 import { z } from "zod";
 import { EauditDashboard } from "@/components/dashboards/eadit-next-dashboard";
-import PropagateLoader from "react-spinners/PropagateLoader";
 import { usePathname, useSearchParams } from "next/navigation";
 import AnnualAuditPlanningTable from "@/components/data-table/annual_audit_planning-table";
 import { useEffect, useState } from "react";
@@ -34,6 +33,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ReviewCommentReport } from "@/components/reports/review-comments-report";
 import SearchBar from "@/components/shared/search";
+import { Loader } from "@/components/shared/loader";
+import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -104,7 +105,7 @@ export default function AuditNextPage() {
 const AnnualAuditPlan = () => {
   const params = useSearchParams();
   const [auditplans, setAuditPlans] = useState<AuditPlanType[]>([]);
-  const { data, isLoading, isSuccess } = useQuery({
+  const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["_annual_plan_", params.get("id")],
     queryFn: async (): Promise<AuditPlanType[]> => {
       const response = await fetch(
@@ -132,6 +133,7 @@ const AnnualAuditPlan = () => {
     refetchOnWindowFocus: false,
     enabled: !!params.get("id"),
   });
+
   useEffect(() => {
     if (!isLoading && isSuccess) {
       const auditPlans = data?.sort((a: AuditPlanType, b: AuditPlanType) => {
@@ -142,23 +144,24 @@ const AnnualAuditPlan = () => {
       });
       setAuditPlans(auditPlans ?? []);
     }
-  }, [isLoading, isSuccess, data]);
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isLoading, isSuccess, isError, error, data]);
 
   if (isLoading) {
     return (
-      <div className="h-full flex justify-center items-center w-full">
-        <PropagateLoader className="text-white" color="white" />
+      <div className="h-full flex justify-center items-center w-full relative">
+        <Loader title="Audit Plans" />
       </div>
     );
   }
 
-  if (isSuccess) {
-    return (
-      <div className="w-[calc(100vw-300px)]">
-        <AnnualAuditPlanningTable data={auditplans ?? []} />
-      </div>
-    );
-  }
+  return (
+    <div className="w-[calc(100vw-300px)]">
+      <AnnualAuditPlanningTable data={auditplans ?? []} />
+    </div>
+  );
 };
 
 const Reporting = () => {

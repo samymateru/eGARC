@@ -2,13 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { Separator } from "../ui/separator";
 import ReviewCommentsReportTable from "../data-table/review-comments-report-table";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
+import { Loader } from "../shared/loader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const ReviewCommentReport = () => {
   const params = useSearchParams();
 
-  const { data } = useQuery({
+  const { data, isError, isLoading, error } = useQuery({
     queryKey: ["_review_comment_report_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -36,6 +39,20 @@ export const ReviewCommentReport = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-[calc(100vw-300px)] h-[100vh] relative">
+        <Loader title="Issue Reports" />
+      </div>
+    );
+  }
 
   return (
     <section className="w-full">
