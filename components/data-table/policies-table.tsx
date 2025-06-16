@@ -117,12 +117,7 @@ const columns: ColumnDef<PoliciesValues>[] = [
                   name: row.original.name,
                   version: row.original.version,
                   key_areas: row.original.key_areas,
-                  attachment:
-                    typeof window !== undefined
-                      ? new File([], "attachment.pdf", {
-                          type: "application/pdf",
-                        })
-                      : undefined,
+                  attachment: undefined,
                 }}
                 mode="update"
                 title="Edit Policy"
