@@ -15,6 +15,8 @@ WORKDIR /app
 # Copy ALL necessary files including next.config.mjs and environment
 COPY . .
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Set environment
 ENV NODE_ENV=production
 
