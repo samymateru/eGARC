@@ -12,7 +12,7 @@ import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type OrganizationValues = z.infer<typeof OrganizationSchema>;
-
+console.log(new URL("/organization", BASE_URL).toString());
 export default function HomePage() {
   const [organization, setOrganization] = useState<OrganizationValues[]>([]);
   const { data, isLoading, isSuccess, isError, error } = useQuery({
