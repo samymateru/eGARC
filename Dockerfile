@@ -36,7 +36,7 @@ COPY --from=builder /app/.next ./.next
 #COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.* ./
-
+RUN npm install --production
 # If using standalone output, copy it like this:
 # COPY --from=builder /app/.next/standalone ./
 # COPY --from=builder /app/.next/static ./.next/static
