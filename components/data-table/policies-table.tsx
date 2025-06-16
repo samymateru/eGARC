@@ -118,7 +118,7 @@ const columns: ColumnDef<PoliciesValues>[] = [
                   version: row.original.version,
                   key_areas: row.original.key_areas,
                   attachment:
-                    typeof File !== undefined
+                    typeof window !== undefined
                       ? new File([], "attachment.pdf", {
                           type: "application/pdf",
                         })
