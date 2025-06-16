@@ -6,17 +6,39 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import { CirclePlus, Settings, Shield, User, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  CirclePlus,
+  LoaderCircle,
+  Settings,
+  Shield,
+  User,
+  Users,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { UserSchema } from "@/lib/types";
 import { z } from "zod";
 import "@/app/globals.css";
+import { ErrorMessage } from "@/lib/utils";
+import { Eva } from "@/components/shared/loader";
 
 type UserValuses = z.infer<typeof UserSchema>;
 
+type TeamsProps = {
+  onStatusChange: (status: { isLoading: boolean; isError: boolean }) => void;
+};
+
 export default function PreferencesPage() {
+  const [teamStatus, setTeamStatus] = useState<{
+    isLoading: boolean;
+    isError: boolean;
+  }>({
+    isLoading: false,
+    isError: false,
+  });
+
   return (
     <Tabs defaultValue="account" className="flex-1 flex h-full">
       <TabsList className="bg-neutral-300 flex flex-col gap-[3px] justify-start min-w-[300px] pb-2 h-[100vh] rounded-none">
@@ -33,7 +55,13 @@ export default function PreferencesPage() {
         <TabsTrigger
           value="teams"
           className="h-[30px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica]  rounded-none tracking-wide scroll-m-0 font-semibold">
-          <Users size={16} strokeWidth={3} />
+          {teamStatus.isLoading ? (
+            <LoaderCircle size={16} strokeWidth={3} className="animate-spin" />
+          ) : teamStatus.isError ? (
+            <AlertTriangle size={16} strokeWidth={3} className="text-red-700" />
+          ) : (
+            <Users size={16} strokeWidth={3} />
+          )}
           Teams
         </TabsTrigger>
         <TabsTrigger
@@ -48,7 +76,7 @@ export default function PreferencesPage() {
         Account
       </TabsContent>
       <TabsContent value="teams" className="mt-0 flex-1 flex">
-        <Teams />
+        <Teams onStatusChange={setTeamStatus} />
       </TabsContent>
       <TabsContent value="roles" className="mt-0 flex-1 flex">
         Roles
@@ -57,13 +85,13 @@ export default function PreferencesPage() {
   );
 }
 
-const Teams = () => {
+const Teams = ({ onStatusChange }: TeamsProps) => {
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
   const [businessUsers, setBusinessUsers] = useState<UserValuses[]>();
 
   const params = useSearchParams();
   const [tab, setTab] = useState<string>("audit");
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_teams_", params.get("moduleId")],
     queryFn: async (): Promise<UserValuses[]> => {
       const response = await fetch(
@@ -98,6 +126,24 @@ const Teams = () => {
       setBusinessUsers(data?.filter((user) => user.type === "business"));
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  useEffect(() => {
+    onStatusChange({ isLoading, isError });
+  }, [isLoading, isError, onStatusChange]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Eva title="Team" />
+      </div>
+    );
+  }
 
   return (
     <Tabs
@@ -158,3 +204,5 @@ const Teams = () => {
     </Tabs>
   );
 };
+
+Teams.displayName = "Teams";

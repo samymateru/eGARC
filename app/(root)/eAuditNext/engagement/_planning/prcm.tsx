@@ -3,13 +3,15 @@ import { PRCMSchema } from "@/lib/types";
 import z from "zod";
 import { useSearchParams } from "next/navigation";
 import { PRCMTable } from "@/components/data-table/prcm-table";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type PRCMValues = z.infer<typeof PRCMSchema>;
 
 export const PRCM = () => {
   const params = useSearchParams();
-  const { data, isLoading } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["_prcm_", params.get("id")],
     queryFn: async (): Promise<PRCMValues[]> => {
       const response = await fetch(
@@ -37,9 +39,13 @@ export const PRCM = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [error, isError]);
+
   return (
     <section className="w-[calc(100vw-320px)]">
       <PRCMTable data={data ?? []} />

@@ -27,7 +27,7 @@ interface MultiSelectorProps {
   users?: Array<Users>;
   trigger?: string;
   children?: ReactNode;
-  value: { name?: string; email?: string; date_issued?: string }[];
+  value: { id?: string; name?: string; email?: string; date_issued?: string }[];
   onChange: (value: Users[]) => void;
 }
 

@@ -203,6 +203,7 @@ export const RoleSchema = z.object({
 });
 
 export const LeadSchema = z.object({
+  id: z.string(),
   name: z.string().min(1, "Leader name is required"),
   email: z.string().min(1, "Leader email is required"),
   role: z.string().default("Lead").optional(),
@@ -340,64 +341,74 @@ export const EngagementProfileSchema = z.object({
   core_risk: z.array(z.string()),
 });
 
-export const IssueSchema = z.object({
-  id: z.string().optional(),
-  title: z.string().min(1, "Provide issue title"),
-  ref: z.string().optional(),
-  criteria: z.string().min(1, "Criteria is required"),
-  finding: z.string().min(1, "Povide finding weakness"),
-  risk_rating: z
-    .string({ required_error: "Providee risk rating" })
-    .min(1, "Providee risk rating"),
-  process: z
-    .string({ required_error: "Provide process" })
-    .min(1, "Provide process"),
-  source: z
-    .string({ required_error: "Provide issue source" })
-    .min(1, "Provide issue source"),
-  sdi_name: z.string().optional(),
-  sub_process: z
-    .string({ required_error: "Provide sub process" })
-    .min(1, "Provide sub process"),
-  root_cause_description: z.string().min(1, "Provide root cause description"),
-  root_cause: z
-    .string({ required_error: "Root cause required" })
-    .min(1, "Root cause required"),
-  sub_root_cause: z
-    .string({ required_error: "Sub root cause is required" })
-    .min(1, "Sub root cause is required"),
-  risk_category: z
-    .string({ required_error: "Provide risk category" })
-    .min(1, "Provide risk category"),
-  sub_risk_category: z
-    .string({ required_error: "Provide sub risk category" })
-    .min(1, "Provide sub risk category"),
-  impact_description: z.string().min(1, "Impact description required"),
-  impact_category: z
-    .string({ required_error: "Provide impact category" })
-    .min(1, "Provide impact category"),
-  impact_sub_category: z
-    .string({ required_error: "Provide sub category" })
-    .min(1, "Provide sub category"),
-  recurring_status: z.boolean().optional(),
-  reportable: z.boolean().optional(),
-  recommendation: z.string().min(1, "Provide recommendation"),
-  management_action_plan: z.string().min(1, "Action plan needed"),
-  regulatory: z.boolean().optional(),
-  estimated_implementation_date: z.date({
-    required_error: "Estimated date required",
-  }),
-  status: z
-    .enum(["Not started", "In progress", "Completed", "Closed"])
-    .optional()
-    .default("Not started"),
-  lod1_implementer: z.array(User),
-  lod1_owner: z.array(User),
-  observers: z.array(User),
-  lod2_risk_manager: z.array(User),
-  lod2_compliance_officer: z.array(User),
-  lod3_audit_manager: z.array(User),
-});
+export const IssueSchema = z
+  .object({
+    id: z.string().optional(),
+    title: z.string().min(1, "Provide issue title"),
+    ref: z.string().optional(),
+    criteria: z.string().min(1, "Criteria is required"),
+    finding: z.string().min(1, "Povide finding weakness"),
+    risk_rating: z
+      .string({ required_error: "Providee risk rating" })
+      .min(1, "Providee risk rating"),
+    process: z
+      .string({ required_error: "Provide process" })
+      .min(1, "Provide process"),
+    source: z
+      .string({ required_error: "Provide issue source" })
+      .min(1, "Provide issue source"),
+    sdi_name: z.string().optional(),
+    sub_process: z
+      .string({ required_error: "Provide sub process" })
+      .min(1, "Provide sub process"),
+    root_cause_description: z.string().min(1, "Provide root cause description"),
+    root_cause: z
+      .string({ required_error: "Root cause required" })
+      .min(1, "Root cause required"),
+    sub_root_cause: z
+      .string({ required_error: "Sub root cause is required" })
+      .min(1, "Sub root cause is required"),
+    risk_category: z
+      .string({ required_error: "Provide risk category" })
+      .min(1, "Provide risk category"),
+    sub_risk_category: z
+      .string({ required_error: "Provide sub risk category" })
+      .min(1, "Provide sub risk category"),
+    impact_description: z.string().min(1, "Impact description required"),
+    impact_category: z
+      .string({ required_error: "Provide impact category" })
+      .min(1, "Provide impact category"),
+    impact_sub_category: z
+      .string({ required_error: "Provide sub category" })
+      .min(1, "Provide sub category"),
+    recurring_status: z.boolean().optional(),
+    reportable: z.boolean().optional(),
+    recommendation: z.string().min(1, "Provide recommendation"),
+    management_action_plan: z.string().min(1, "Action plan needed"),
+    regulatory: z.boolean().default(false),
+    estimated_implementation_date: z.date({
+      required_error: "Estimated date required",
+    }),
+    status: z
+      .enum(["Not started", "In progress", "Completed", "Closed"])
+      .optional()
+      .default("Not started"),
+    lod1_implementer: z.array(User),
+    lod1_owner: z.array(User),
+    observers: z.array(User),
+    lod2_risk_manager: z.array(User),
+    lod2_compliance_officer: z.array(User).optional(),
+    lod3_audit_manager: z.array(User),
+  })
+  .superRefine((data, ctx) => {
+    if (data.source === "Self Disclosed" && !data.sdi_name) {
+      ctx.addIssue({
+        path: ["sdi_name"],
+        code: z.ZodIssueCode.custom,
+        message: "SDI Name is required",
+      });
+    }
+  });
 
 export const ModuleSchema = z.object({
   id: z.string().optional(),
@@ -433,6 +444,7 @@ export const UserSchema = z.object({
 
 export const StaffSchema = z.object({
   id: z.string().optional(),
+  user_id: z.string().optional(),
   name: z.string().min(1, "Please provide staff name"),
   email: z.string().email().optional(),
   start_date: z.date({ required_error: "Start date is required" }),
@@ -669,3 +681,10 @@ export type ErrorHandlerSchema = {
   status?: number;
   body?: Body;
 };
+
+export const RatingSchema = z.object({
+  opinion_rating_description: z
+    .string()
+    .min(1, "Provide opinion rating desciption"),
+  opinion_rating: z.string({ required_error: "Opinion rating required" }),
+});

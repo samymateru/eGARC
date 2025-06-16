@@ -37,11 +37,69 @@ import { Loader } from "@/components/shared/loader";
 import { ErrorMessage } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+type Entity = {
+  id?: string;
+  name?: string;
+  owner?: string;
+  email?: string;
+  telephone?: string;
+  created_at: Date;
+};
 
 type AuditPlanType = z.infer<typeof PlanSchema>;
 
 export default function AuditNextPage() {
+  const params = useSearchParams();
   const pathname = usePathname();
+
+  const { data, isLoading, isSuccess, isError, error } = useQuery({
+    queryKey: ["_entity_", params.get("organizationId")],
+    queryFn: async (): Promise<Entity> => {
+      const response = await fetch(
+        `${BASE_URL}/entity/${params.get("organizationId")}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: false,
+    enabled: !!params.get("id"),
+  });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+    if (isSuccess) {
+      if (typeof window !== undefined) {
+        localStorage.setItem("entity_id", data?.id ?? "");
+      }
+    }
+  }, [isError, error, isLoading, isSuccess, data]);
+
+  if (isLoading) {
+    return (
+      <div className="h-full flex justify-center items-center w-full relative">
+        <Loader title="Audit Plans" />
+      </div>
+    );
+  }
+
   return (
     <Tabs defaultValue="dashboard" className="flex-1 flex">
       <TabsList className="bg-neutral-300 flex flex-col gap-1 rounded-none justify-start min-w-[300px] h-full">
@@ -91,6 +149,12 @@ export default function AuditNextPage() {
           <EauditDashboard />
         </TabsContent>
         <TabsContent value="audit_plan" className="flex-1 mt-0">
+          <section className="px-2 pt-2">
+            <Label className="font-[helvetica] font-bold tracking-wide scroll-m-1 text-[20px] ml-2">
+              Annual Audit Plans
+            </Label>
+          </section>
+          <Separator className="my-2" />
           <AnnualAuditPlan />
         </TabsContent>
         <TabsContent value="follow_up" className="flex-1 mt-0"></TabsContent>

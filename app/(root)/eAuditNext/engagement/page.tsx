@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useQueries } from "@tanstack/react-query";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -25,6 +26,12 @@ import { SummaryProcess } from "./_reporting/summary-process";
 import { ReviewComment } from "./_fieldwork/review-comment";
 import { SummaryTasks } from "./_fieldwork/summary-tasks";
 import { Tasks } from "./_fieldwork/task";
+import { ErrorQuery } from "@/components/shared/error-query";
+import { ErrorMessage } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { EngagementRatingForm } from "@/components/forms/engagement-rating-form";
+import { Star } from "lucide-react";
 
 type IssueValues = z.infer<typeof SummaryFindingSchema>;
 type CommentAndTaskValues = z.infer<typeof ReviewCommentsSchema>;
@@ -60,6 +67,7 @@ const fetchData = async (endpont: string, id: string | null) => {
 };
 
 export default function EngagementPage() {
+  const [error, setError] = useState<boolean>(false);
   const params = useSearchParams();
   const results = useQueries({
     queries: [
@@ -129,21 +137,81 @@ export default function EngagementPage() {
     ],
   });
 
+  useEffect(() => {
+    if (results[0].isError) {
+      if (!error) {
+        ErrorMessage(results[0].error);
+        setError(true);
+      }
+    }
+    if (results[1].isError) {
+      if (!error) {
+        ErrorMessage(results[1].error);
+        setError(true);
+      }
+    }
+    if (results[2].isError) {
+      if (!error) {
+        ErrorMessage(results[2].error);
+        setError(true);
+      }
+    }
+    if (results[3].isError) {
+      if (!error) {
+        ErrorMessage(results[3].error);
+        setError(true);
+      }
+    }
+    if (results[4].isError) {
+      if (!error) {
+        ErrorMessage(results[4].error);
+        setError(true);
+      }
+    }
+    if (results[5].isError) {
+      if (!error) {
+        ErrorMessage(results[5].error);
+        setError(true);
+      }
+    }
+    if (results[6].isError) {
+      if (!error) {
+        ErrorMessage(results[6].error);
+        setError(true);
+      }
+    }
+  }, [results]);
+
   if (
     results[0].isLoading ||
     results[1].isLoading ||
     results[2].isLoading ||
-    results[3].isLoading
+    results[3].isLoading ||
+    results[4].isLoading ||
+    results[5].isLoading ||
+    results[6].isLoading
   ) {
-    return <Loader size={15} />;
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Engagement" />
+      </div>
+    );
   }
+
   if (
     results[0].isError ||
     results[1].isError ||
     results[2].isError ||
-    results[3].isError
+    results[3].isError ||
+    results[4].isError ||
+    results[5].isError ||
+    results[6].isError
   ) {
-    return <div>Error</div>;
+    return (
+      <div className="w-full h-full relative">
+        <ErrorQuery />
+      </div>
+    );
   }
 
   return (
@@ -217,10 +285,21 @@ export default function EngagementPage() {
               value={item.id}
               key={index}
               className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
-              <section className="pt-1 pl-4">
+              <section className="pt-1 pl-4 flex items-center justify-between px-2">
                 <Label className="text-[20px] font-semibold">
                   Summary of Audit Processes
                 </Label>
+                <EngagementRatingForm
+                  title="Engagement Rating"
+                  endpoint=""
+                  id={"sam"}>
+                  <Button
+                    className="w-[130px] h-7 flex items-center justify-start bg-blue-700 text-white font-bold font-[helvetica]"
+                    variant="ghost">
+                    <Star size={16} strokeWidth={3} />
+                    Rate
+                  </Button>
+                </EngagementRatingForm>
               </section>
               <Separator className="my-1" />
               <SummaryProcess />

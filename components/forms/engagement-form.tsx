@@ -139,40 +139,61 @@ export const EngagementForm = ({
   });
 
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
+  const [userName, setName] = useState<string | null>(null);
+  const [userEmail, setEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const query_client = useQueryClient();
   const [openSelect, setOpenSelect] = useState<null | "risk" | "dept" | "type">(
     null
   );
 
+  const [entityId, setEntityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userName = localStorage.getItem("user_name");
+    const userEmail = localStorage.getItem("user_email");
+    const userId = localStorage.getItem("user_id");
+    setName(userName);
+    setEmail(userEmail);
+    setUserId(userId);
+  }, []);
+
+  useEffect(() => {
+    const entityId = localStorage.getItem("entity_id");
+    if (entityId) {
+      setEntityId(entityId);
+    }
+  }, []);
+
   const results = useQueries({
     queries: [
       {
-        queryKey: ["__engagement_types__"],
+        queryKey: ["__engagement_types__", entityId],
         queryFn: async (): Promise<EngagementTypeResponse> =>
-          fetchData("profile/engagement_type", ""),
+          fetchData("profile/engagement_type", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__risk_rating__"],
+        queryKey: ["__risk_rating__", entityId],
         queryFn: async (): Promise<RiskRatingResponse> =>
-          fetchData("profile/risk_rating", ""),
+          fetchData("profile/risk_rating", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__business_process__"],
+        queryKey: ["__business_process__", entityId],
         queryFn: async (): Promise<BusinessProcessResponse[]> =>
-          fetchData("profile/business_process", ""),
+          fetchData("profile/business_process", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
       {
         queryKey: ["__leads__"],
@@ -263,11 +284,20 @@ export const EngagementForm = ({
     if (mode === "create") {
       const engagementData: EngagementValues = {
         ...data,
-        leads: data.leads.map((lead) => ({
-          name: lead.name,
-          email: lead.email,
-          role: "Lead",
-        })),
+        leads: [
+          ...data.leads.map((lead) => ({
+            id: lead.id,
+            name: lead.name,
+            email: lead.email,
+            role: "Lead",
+          })),
+          {
+            id: userId ?? "",
+            name: userName ?? "",
+            email: userEmail ?? "",
+            role: "Lead",
+          },
+        ],
       };
       createEngagement(engagementData, {
         onSuccess: (data) => {
@@ -355,7 +385,11 @@ export const EngagementForm = ({
                         render={({ field }) => (
                           <UserMultiSelector
                             trigger="Select Team leads"
-                            users={auditUsers}
+                            users={auditUsers.filter(
+                              (user) =>
+                                user.role !== "Head of Audit" &&
+                                user.id !== userId
+                            )}
                             title="Engagement leads"
                             value={field.value || []}
                             onChange={field.onChange}

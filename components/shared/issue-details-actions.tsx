@@ -13,6 +13,7 @@ import { IssueResponder } from "@/lib/types";
 import { z } from "zod";
 import { showToast } from "./toast";
 import { IssueReportForm } from "../forms/issue-reportable-form";
+import { useSearchParams } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type PreparedBy = z.infer<typeof IssueResponder>;
@@ -29,6 +30,8 @@ export const IssueDetailsActions = ({
   const query_client = useQueryClient();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+
+  const params = useSearchParams();
 
   const { mutate: prepareIssue, isPending: prepareIssuePending } = useMutation({
     mutationKey: ["prepare_issue", id],
@@ -87,7 +90,7 @@ export const IssueDetailsActions = ({
     prepareIssue(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["organizations"],
+          queryKey: ["_summary_findinds_", params.get("id")],
         });
         showToast(data.detail, "success");
       },
@@ -109,7 +112,7 @@ export const IssueDetailsActions = ({
     reviewIssue(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["organizations"],
+          queryKey: ["_summary_findinds_", params.get("id")],
         });
         showToast(data.detail, "success");
       },

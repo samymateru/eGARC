@@ -60,80 +60,158 @@ export const Attachments = () => {
     return (
       <section className="flex flex-col gap-5">
         <Separator className="mt-2" />
-        {data.sort().map((letter, index: number) => {
-          const { type, name, size, extension } = letter;
-          if (letter.type !== "") {
-            return (
-              <section key={index} className="flex flex-col gap-1">
-                <section className="flex items-center justify-between px-2">
-                  <Label className="font-[helvetica] font-bold scroll-m-1 tracking-normal">
-                    {letter.type === "final"
-                      ? "Signed Engagement Letter"
-                      : "Scoped Engagement Letter"}
-                  </Label>
-                  {type === "final" ? <UploadDialog /> : null}
-                </section>
-                <section
-                  key={index}
-                  className=" px-2 py-2 rounded-md flex items-center bg-neutral-800">
-                  <section className="flex-1 flex items-center gap-2">
-                    <section>
-                      {extension === "pdf" ? (
-                        <FaFilePdf size={24} />
-                      ) : extension === "xls" ? (
-                        <FaFileExcel size={24} />
-                      ) : extension === "docx" ? (
-                        <FaFileWord size={24} />
-                      ) : extension === "image/png" ? (
-                        <FaFileImage size={24} />
-                      ) : extension === "image/jpeg" ? (
-                        <FaFileImage size={24} />
-                      ) : (
-                        <FileText size={24} />
-                      )}
+        {data
+          ?.filter((letter) => letter.type === "scoped")
+          .map((letter, index: number) => {
+            const { type, name, size, extension } = letter;
+            if (letter.type !== "") {
+              return (
+                <section key={index} className="flex flex-col gap-1">
+                  <section className="flex items-center justify-between px-2">
+                    <Label className="font-[helvetica] font-bold scroll-m-1 tracking-normal">
+                      {letter.type === "final"
+                        ? "Signed Engagement Letter"
+                        : "Scoped Engagement Letter"}
+                    </Label>
+                    {type === "final" ? <UploadDialog /> : null}
+                  </section>
+                  <section
+                    key={index}
+                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-800">
+                    <section className="flex-1 flex items-center gap-2">
+                      <section>
+                        {extension === "pdf" ? (
+                          <FaFilePdf size={24} />
+                        ) : extension === "xls" ? (
+                          <FaFileExcel size={24} />
+                        ) : extension === "docx" ? (
+                          <FaFileWord size={24} />
+                        ) : extension === "image/png" ? (
+                          <FaFileImage size={24} />
+                        ) : extension === "image/jpeg" ? (
+                          <FaFileImage size={24} />
+                        ) : (
+                          <FileText size={24} />
+                        )}
+                      </section>
+                      <section>
+                        <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 truncate text-[15px]">
+                          {name}
+                        </Label>
+                      </section>
                     </section>
-                    <section>
-                      <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 truncate text-[15px]">
-                        {name}
-                      </Label>
+                    <section className="flex items-center gap-1 h-[20px]">
+                      <section>
+                        <Label className="font-[helvetica] font-semibold italic">
+                          {size}MB
+                        </Label>
+                      </section>
+                      <Separator
+                        orientation="vertical"
+                        className="mx-2 bg-white"
+                      />
+                      <section>
+                        <Label className="font-[helvetica] font-semibold">
+                          {extension}
+                        </Label>
+                      </section>
+                      <Separator
+                        orientation="vertical"
+                        className="mx-2 bg-white"
+                      />
+                      <section>
+                        <Button
+                          className="w-[30px] h-[30px] hover:bg-black"
+                          variant="ghost">
+                          <Trash2
+                            size={16}
+                            className="text-red-700"
+                            strokeWidth={3}
+                          />
+                        </Button>
+                      </section>
                     </section>
                   </section>
-                  <section className="flex items-center gap-1 h-[20px]">
-                    <section>
-                      <Label className="font-[helvetica] font-semibold italic">
-                        {size}MB
-                      </Label>
+                </section>
+              );
+            }
+          })}
+        {data
+          ?.filter((letter) => letter.type === "final")
+          .map((letter, index: number) => {
+            const { type, name, size, extension } = letter;
+            if (letter.type !== "") {
+              return (
+                <section key={index} className="flex flex-col gap-1">
+                  <section className="flex items-center justify-between px-2">
+                    <Label className="font-[helvetica] font-bold scroll-m-1 tracking-normal">
+                      {letter.type === "final"
+                        ? "Signed Engagement Letter"
+                        : "Scoped Engagement Letter"}
+                    </Label>
+                    {type === "final" ? <UploadDialog /> : null}
+                  </section>
+                  <section
+                    key={index}
+                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-800">
+                    <section className="flex-1 flex items-center gap-2">
+                      <section>
+                        {extension === "pdf" ? (
+                          <FaFilePdf size={24} />
+                        ) : extension === "xls" ? (
+                          <FaFileExcel size={24} />
+                        ) : extension === "docx" ? (
+                          <FaFileWord size={24} />
+                        ) : extension === "image/png" ? (
+                          <FaFileImage size={24} />
+                        ) : extension === "image/jpeg" ? (
+                          <FaFileImage size={24} />
+                        ) : (
+                          <FileText size={24} />
+                        )}
+                      </section>
+                      <section>
+                        <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 truncate text-[15px]">
+                          {name}
+                        </Label>
+                      </section>
                     </section>
-                    <Separator
-                      orientation="vertical"
-                      className="mx-2 bg-white"
-                    />
-                    <section>
-                      <Label className="font-[helvetica] font-semibold">
-                        {extension}
-                      </Label>
-                    </section>
-                    <Separator
-                      orientation="vertical"
-                      className="mx-2 bg-white"
-                    />
-                    <section>
-                      <Button
-                        className="w-[30px] h-[30px] hover:bg-black"
-                        variant="ghost">
-                        <Trash2
-                          size={16}
-                          className="text-red-700"
-                          strokeWidth={3}
-                        />
-                      </Button>
+                    <section className="flex items-center gap-1 h-[20px]">
+                      <section>
+                        <Label className="font-[helvetica] font-semibold italic">
+                          {size}MB
+                        </Label>
+                      </section>
+                      <Separator
+                        orientation="vertical"
+                        className="mx-2 bg-white"
+                      />
+                      <section>
+                        <Label className="font-[helvetica] font-semibold">
+                          {extension}
+                        </Label>
+                      </section>
+                      <Separator
+                        orientation="vertical"
+                        className="mx-2 bg-white"
+                      />
+                      <section>
+                        <Button
+                          className="w-[30px] h-[30px] hover:bg-black"
+                          variant="ghost">
+                          <Trash2
+                            size={16}
+                            className="text-red-700"
+                            strokeWidth={3}
+                          />
+                        </Button>
+                      </section>
                     </section>
                   </section>
                 </section>
-              </section>
-            );
-          }
-        })}
+              );
+            }
+          })}
         <Separator className="mb-2" />
       </section>
     );

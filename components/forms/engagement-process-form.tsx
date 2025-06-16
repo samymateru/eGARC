@@ -7,7 +7,7 @@ import { FormProvider, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -77,23 +77,53 @@ export const EngagementProcessForm = ({
     defaultValues: data,
   });
 
-  const { data: process } = useQuery({
-    queryKey: ["__process__"],
+  const [entityId, setEntityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const entityId = localStorage.getItem("entity_id");
+    if (entityId) {
+      setEntityId(entityId);
+    }
+  }, []);
+
+  const {
+    data: process,
+    isError: processIsError,
+    error: processError,
+  } = useQuery({
+    queryKey: ["__process__", entityId],
     queryFn: async (): Promise<BusinessProcessResponse[]> => {
-      const response = await fetch(`${BASE_URL}/profile/business_process`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-      });
+      const response = await fetch(
+        `${BASE_URL}/profile/business_process/${entityId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
       if (!response.ok) {
-        throw new Error("Failed to fetch");
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
       }
       return await response.json();
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: true,
+    enabled: !!entityId,
   });
+
+  useEffect(() => {
+    if (processIsError) {
+      ErrorMessage(processError);
+    }
+  }, [processError, processIsError]);
 
   const { mutate: createProcess, isPending: createProcessLoading } =
     useMutation({

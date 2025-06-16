@@ -256,7 +256,7 @@ export default function AnnualAuditPlanningTable({
 
   return (
     <div className="">
-      <div className="flex justify-between items-center  pb-1">
+      <div className="flex justify-between items-center  pb-1 px-2">
         <section className="flex items-center gap-3">
           <SearchInput
             placeholder="Plan name"
@@ -281,7 +281,7 @@ export default function AnnualAuditPlanningTable({
             company_module_id={params.get("id") ?? undefined}>
             <Button
               variant="ghost"
-              className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[110px] justify-start font-serif tracking-wide scroll-m-0">
+              className="bg-blue-700 text-white flex items-center gap-2 h-[30px] w-[130px] justify-start font-[helvetica] font-bold tracking-wide scroll-m-0">
               <CirclePlus size={16} strokeWidth={3} />
               Plan
             </Button>

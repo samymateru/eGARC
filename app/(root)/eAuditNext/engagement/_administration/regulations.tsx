@@ -1,12 +1,15 @@
 import { RegulationsTable } from "@/components/data-table/regulations-table";
+import { Loader } from "@/components/shared/loader";
 import { Label } from "@/components/ui/label";
+import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const Regulations = () => {
   const params = useSearchParams();
-  const { data } = useQuery({
+  const { data, isError, isLoading, error } = useQuery({
     queryKey: ["_regulations_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -34,6 +37,20 @@ export const Regulations = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Regulations" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-[calc(100vw-320px)] flex flex-col gap-2">

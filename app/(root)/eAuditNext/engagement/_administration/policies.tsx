@@ -1,12 +1,15 @@
 import { PoliciesTable } from "@/components/data-table/policies-table";
+import { Loader } from "@/components/shared/loader";
 import { Label } from "@/components/ui/label";
+import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const Policies = () => {
   const params = useSearchParams();
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_policies_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -34,6 +37,20 @@ export const Policies = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Policies" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-[calc(100vw-320px)] flex flex-col gap-2">

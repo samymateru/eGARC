@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   AtSignIcon,
   CirclePlus,
@@ -8,7 +9,7 @@ import {
   Folder,
   ZapIcon,
 } from "lucide-react";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 
 import {
   Accordion,
@@ -17,7 +18,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
@@ -26,6 +27,7 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { MainProgramForm } from "../forms/main-program-form";
 import { MainProgramAction } from "./main-program-actions";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type Procedure = {
@@ -91,35 +93,7 @@ export default function Component() {
   const [updateMenu, setUpdateMenu] = useState<boolean>(false);
   const params = useSearchParams();
   const router = useRouter();
-
-  const { data: workProgram } = useQuery<WorkProgramResponse[]>({
-    queryKey: ["work_program", params.get("id")],
-    queryFn: async () => {
-      const response = await fetch(
-        `${BASE_URL}/engagements/work_program/${params.get("id")}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              typeof window === "undefined" ? "" : localStorage.getItem("token")
-            }`,
-          },
-        }
-      );
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        throw {
-          status: response.status,
-          body: errorBody,
-        };
-      }
-      return await response.json();
-    },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
-    enabled: !!params.get("id"),
-  });
+  const [error, setError] = useState<boolean>(false);
 
   const results = useQueries({
     queries: [
@@ -162,6 +136,33 @@ export default function Component() {
     ],
   });
 
+  useEffect(() => {
+    if (results[0].isError) {
+      if (!error) {
+        ErrorMessage(results[0].error);
+        setError(true);
+      }
+    }
+    if (results[1].isError) {
+      if (!error) {
+        ErrorMessage(results[1].error);
+        setError(true);
+      }
+    }
+    if (results[2].isError) {
+      if (!error) {
+        ErrorMessage(results[2].error);
+        setError(true);
+      }
+    }
+    if (results[3].isError) {
+      if (!error) {
+        ErrorMessage(results[3].error);
+        setError(true);
+      }
+    }
+  }, [results]);
+
   const setAction = (action: string, stage?: string) => {
     const param = new URLSearchParams(params.toString());
     param.set("action", action);
@@ -172,7 +173,7 @@ export default function Component() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 relative">
       <Accordion
         type="single"
         collapsible
@@ -295,7 +296,7 @@ export default function Component() {
             </Button>
           </MainProgramForm>
         </section>
-        {workProgram?.map((item) => (
+        {results[3]?.data?.map((item) => (
           <AccordionItem
             value={item.id ?? ""}
             key={item.id}

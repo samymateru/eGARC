@@ -114,8 +114,6 @@ export const StaffForm = ({
     enabled: !!moduleId,
   });
 
-  console.log(errors);
-
   const { mutate: createStaff, isPending: createStaffLoading } = useMutation({
     mutationKey: ["_create_staff_", id],
     mutationFn: async (data: StaffValues): Promise<Response> => {
@@ -180,6 +178,7 @@ export const StaffForm = ({
   const onSubmit = (data: StaffValues) => {
     const staffData: StaffValues = {
       ...data,
+      user_id: auditUsers.find((user) => user.name === data.name)?.id ?? "",
       email: auditUsers.find((user) => user.name === data.name)?.email ?? "",
     };
 

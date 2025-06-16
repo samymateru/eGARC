@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Briefcase, LayoutDashboard } from "lucide-react";
 import Component from "../shared/test";
-import { ScrollArea } from "../ui/scroll-area";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const EngagementSidebarMenu = () => {
@@ -15,24 +14,22 @@ export const EngagementSidebarMenu = () => {
     router.replace(`?${param.toString()}`, { scroll: false });
   };
   return (
-    <>
-      <ScrollArea className="max-h-[550px] overflow-y-auto hide-scrollbar">
-        <Button
-          variant={"ghost"}
-          className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-hel-heading"
-          onClick={() => setAction("dashboard")}>
-          <LayoutDashboard size={16} strokeWidth={3} />
-          Dashboard
-        </Button>
-        <Button
-          variant={"ghost"}
-          className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-hel-heading"
-          onClick={() => setAction("administration")}>
-          <Briefcase size={16} strokeWidth={3} />
-          Adminstation
-        </Button>
-        <Component />
-      </ScrollArea>
-    </>
+    <section className="max-h-[calc(100vh-60px)] overflow-y-auto hide-scrollbar">
+      <Button
+        variant={"ghost"}
+        className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-hel-heading"
+        onClick={() => setAction("dashboard")}>
+        <LayoutDashboard size={16} strokeWidth={3} />
+        Dashboard
+      </Button>
+      <Button
+        variant={"ghost"}
+        className="mb-1 dark:bg-neutral-800 dark:hover:text-white flex w-full justify-start font-hel-heading"
+        onClick={() => setAction("administration")}>
+        <Briefcase size={16} strokeWidth={3} />
+        Adminstation
+      </Button>
+      <Component />
+    </section>
   );
 };

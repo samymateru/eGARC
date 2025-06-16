@@ -3,13 +3,15 @@ import { SummaryAuditProgramSchema } from "@/lib/types";
 import z from "zod";
 import { useSearchParams } from "next/navigation";
 import { SummaryAuditProgramTable } from "@/components/data-table/summary-audit-program";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 
 export const SummaryAuditProgram = () => {
   const params = useSearchParams();
-  const { data, isLoading } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["_summary_program_", params.get("id")],
     queryFn: async (): Promise<SummaryAuditProgramValues[]> => {
       const response = await fetch(
@@ -37,9 +39,13 @@ export const SummaryAuditProgram = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [error, isError]);
+
   return (
     <section>
       <SummaryAuditProgramTable data={data ?? []} />

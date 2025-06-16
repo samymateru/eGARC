@@ -85,11 +85,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
       accessorKey: "ref",
       cell: ({ row }) => (
         <Link
+          onClick={() => {
+            if (typeof window !== undefined) {
+              localStorage.setItem("issue_id", params.get("action") ?? "");
+            }
+          }}
           href={`/eAuditNext/engagement?id=${params.get(
             "id"
           )}&name=${params.get("name")}&action=${row.original.id}&stage=Issue`}
           replace
-          className="ml-4 font-table cursor-pointer">
+          className="font-table cursor-pointer w-full text-center">
           {row?.original?.ref}
         </Link>
       ),
@@ -277,7 +282,7 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     sendIssue(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["sub_program_procedure", params.get("action")],
+          queryKey: ["_summary_findinds_", params.get("id")],
         });
         showToast(data.detail, "success");
       },

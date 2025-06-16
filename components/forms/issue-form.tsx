@@ -103,12 +103,20 @@ export const IssueForm = ({
   title,
 }: IssueFormProps) => {
   const [open, setOpen] = useState(false);
-  const [regulatory, setRegulatory] = useState<boolean>(false);
   const [recurring, setRecurring] = useState<boolean>(false);
 
   const methods = useForm<IssueValues>({
     resolver: zodResolver(IssueSchema),
   });
+
+  const [entityId, setEntityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const entityId = localStorage.getItem("entity_id");
+    if (entityId) {
+      setEntityId(entityId);
+    }
+  }, []);
 
   const params = useSearchParams();
 
@@ -133,52 +141,58 @@ export const IssueForm = ({
   const results = useQueries({
     queries: [
       {
-        queryKey: ["__issue_source__"],
+        queryKey: ["__issue_source__", entityId],
         queryFn: async (): Promise<IssueSourceResponse> =>
-          fetchData("profile/issue_source", ""),
+          fetchData("profile/issue_source", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__control_weakness__"],
+        queryKey: ["__control_weakness__", entityId],
         queryFn: async (): Promise<RiskRatingResponse> =>
-          fetchData("profile/control_weakness_rating", ""),
+          fetchData("profile/control_weakness_rating", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__business_process__"],
+        queryKey: ["__business_process__", entityId],
         queryFn: async (): Promise<BusinessProcessResponse[]> =>
-          fetchData("profile/business_process", ""),
+          fetchData("profile/business_process", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__root_cause__"],
+        queryKey: ["__root_cause__", entityId],
         queryFn: async (): Promise<RootCauseResponse[]> =>
-          fetchData("profile/root_cause_category", ""),
+          fetchData("profile/root_cause_category", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__risk_category__"],
+        queryKey: ["__risk_category__", entityId],
         queryFn: async (): Promise<RiskCategoryResponse[]> =>
-          fetchData("profile/risk_category", ""),
+          fetchData("profile/risk_category", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["__impact_category__"],
+        queryKey: ["__impact_category__", entityId],
         queryFn: async (): Promise<ImpactCategoryResponse[]> =>
-          fetchData("profile/impact_category", ""),
+          fetchData("profile/impact_category", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
+        enabled: !!entityId,
       },
       {
         queryKey: ["__users__"],
@@ -239,8 +253,34 @@ export const IssueForm = ({
     setValue,
     watch,
     control,
+    getValues,
+    setError,
+    clearErrors,
     formState: { errors },
   } = methods;
+
+  const regulatory_ = watch("regulatory");
+  const lod2Compliance = watch("lod2_compliance_officer");
+
+  useEffect(() => {
+    console.log("rg");
+    if (regulatory_) {
+      if (
+        !lod2Compliance ||
+        lod2Compliance.length === 0 ||
+        lod2Compliance.some((officer) => !officer?.name?.trim())
+      ) {
+        setError("lod2_compliance_officer", {
+          type: "manual",
+          message: "Compliance officer is required",
+        });
+      } else {
+        clearErrors("lod2_compliance_officer");
+      }
+    } else {
+      clearErrors("lod2_compliance_officer");
+    }
+  }, [regulatory_, lod2Compliance, setError, clearErrors]);
 
   const handleToggle = (
     select:
@@ -281,7 +321,7 @@ export const IssueForm = ({
           date_issued: new Date().toISOString(),
         };
       }),
-      lod2_compliance_officer: data.lod2_compliance_officer.map((user) => {
+      lod2_compliance_officer: data?.lod2_compliance_officer?.map((user) => {
         return {
           ...user,
           date_issued: new Date().toISOString(),
@@ -299,7 +339,6 @@ export const IssueForm = ({
           date_issued: new Date().toISOString(),
         };
       }),
-      regulatory: regulatory,
       recurring_status: recurring,
     };
 
@@ -378,7 +417,7 @@ export const IssueForm = ({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 
-        <AlertDialogContent className="p-0 max-w-[1000px] flex flex-col dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[100vw] bg-white flex flex-col dark:bg-black">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col h-full mx-2">
@@ -391,685 +430,700 @@ export const IssueForm = ({
 
             <Separator className="" />
 
-            <main className="px-4 py-3 flex flex-col flex-1 overflow-auto gap-2">
-              <ScrollArea className="max-h-[430px] h-auto overflow-auto">
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="title"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Title <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="title"
-                    placeholder="Title"
-                    {...register("title")}
-                  />
-                  <div className="h-[6]">
-                    <FormError error={errors.title} />
-                  </div>
+            <main className="px-4 py-3 flex flex-col h-[calc(100vh-98px)] overflow-auto gap-2">
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="title"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Title <span className="text-destructive">*</span>
+                </Label>
+                <Input id="title" placeholder="Title" {...register("title")} />
+                <div className="h-[6]">
+                  <FormError error={errors.title} />
                 </div>
-                <section className="flex items-center gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Issue Source
-                    </Label>
-                    <Controller
-                      name="source"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "source"}
-                          onOpenChange={() => handleToggle("source")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select issue source" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[0]?.data?.values?.map(
-                                (source, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={source ?? ""}>
-                                    {source}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors.source} />
-                    </div>
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Risk Level
-                    </Label>
-                    <Controller
-                      name="risk_rating"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "risk_rating"}
-                          onOpenChange={() => handleToggle("risk_rating")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select risk level" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[1]?.data?.values?.map(
-                                (rating, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={rating ?? ""}>
-                                    {rating}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors.risk_rating} />
-                    </div>
-                  </div>
-                </section>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="criteria"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Criteria
-                  </Label>
-                  <Textarea
-                    id="criteria"
-                    placeholder="Criteria here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("criteria")}
-                  />
-                  <FormError error={errors.criteria} />
-                </div>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="finding"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Finding Weakness
-                  </Label>
-                  <Textarea
-                    id="finding"
-                    placeholder="Finding weakness here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("finding")}
-                  />
-                  <FormError error={errors.finding} />
-                </div>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label
-                      htmlFor="_process_"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Process<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="process"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "dept"}
-                          onOpenChange={() => handleToggle("dept")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setValue("sub_process", "");
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select process" />
-                          </SelectTrigger>
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[2]?.data?.map(
-                                (process, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={process.process_name ?? "0"}>
-                                    {process.process_name}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <FormError error={errors?.process} />
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Sub Process<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="sub_process"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "sub_process"}
-                          onOpenChange={() => handleToggle("sub_process")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select sub process" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {subProcesses?.map(
-                                (sub_process, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={sub_process ?? "0"}>
-                                    {sub_process}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <FormError error={errors.sub_process} />
-                  </div>
-                </section>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="root_cause_description"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Root Cause Description
-                  </Label>
-                  <Textarea
-                    id="root_cause_description"
-                    placeholder="Root cause description here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("root_cause_description")}
-                  />
-                  <FormError error={errors.root_cause_description} />
-                </div>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Root Cause<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="root_cause"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "root_cause"}
-                          onOpenChange={() => handleToggle("root_cause")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setValue("sub_root_cause", "");
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select root cause" />
-                          </SelectTrigger>
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[3]?.data?.map(
-                                (root_cause, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={root_cause.root_cause ?? "0"}>
-                                    {root_cause.root_cause}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors?.root_cause} />
-                    </div>
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Sub Root Cause<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="sub_root_cause"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "sub_root_cause"}
-                          onOpenChange={() => handleToggle("sub_root_cause")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select sub root cause" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {subRootCause?.map(
-                                (sub_root_cause, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={sub_root_cause ?? "0"}>
-                                    {sub_root_cause}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors.sub_root_cause} />
-                    </div>
-                  </div>
-                </section>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Risk Category<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="risk_category"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "risk_category"}
-                          onOpenChange={() => handleToggle("risk_category")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setValue("sub_risk_category", "");
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select risk category" />
-                          </SelectTrigger>
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[4]?.data?.map(
-                                (risk_category, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={risk_category.risk_category ?? "0"}>
-                                    {risk_category.risk_category}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors?.root_cause} />
-                    </div>
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Sub Root Cause<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="sub_risk_category"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "sub_risk_category"}
-                          onOpenChange={() => handleToggle("sub_risk_category")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select sub risk category" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {subRiskCategory?.map(
-                                (sub_risk_category, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={sub_risk_category ?? "0"}>
-                                    {sub_risk_category}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors.sub_risk_category} />
-                    </div>
-                  </div>
-                </section>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="impact_description"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Impact Description
-                  </Label>
-                  <Textarea
-                    id="impact_description"
-                    placeholder="Impact description here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("impact_description")}
-                  />
-                  <FormError error={errors.impact_description} />
-                </div>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Impact Category<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="impact_category"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "impact_category"}
-                          onOpenChange={() => handleToggle("impact_category")}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setValue("impact_sub_category", "");
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select impact category" />
-                          </SelectTrigger>
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[5]?.data?.map(
-                                (impact_category, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={
-                                      impact_category.impact_category ?? "0"
-                                    }>
-                                    {impact_category.impact_category}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors?.impact_category} />
-                    </div>
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Impact Sub Category
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="impact_sub_category"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "impact_sub_category"}
-                          onOpenChange={() =>
-                            handleToggle("impact_sub_category")
-                          }
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select sub impact category" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {subImpactCategory?.map(
-                                (sub_impact_category, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={sub_impact_category ?? "0"}>
-                                    {sub_impact_category}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-4">
-                      <FormError error={errors.impact_sub_category} />
-                    </div>
-                  </div>
-                </section>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="recommendation"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Recommendation
-                  </Label>
-                  <Textarea
-                    id="recommendation"
-                    placeholder="recommendation here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("recommendation")}
-                  />
-                  <FormError error={errors.recommendation} />
-                </div>
-                <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="management_action_plan"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Management Action Plan
-                  </Label>
-                  <Textarea
-                    id="management_action_plan"
-                    placeholder="Management action plan here"
-                    className="min-h-[100px] max-h-[120px]"
-                    {...register("management_action_plan")}
-                  />
-                  <FormError error={errors.management_action_plan} />
-                </div>
-                <div className="*:not-first:mt-2 flex-1 flex flex-col">
-                  <Label className="ml-[2px] font-table pb-[3px]">
-                    Estimated Implementation Date
+              </div>
+              <section className="flex items-center gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Issue Source
                   </Label>
                   <Controller
-                    name="estimated_implementation_date"
+                    name="source"
                     control={control}
                     render={({ field }) => (
-                      <DatePicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(date) => {
-                          field.onChange(date);
+                      <Select
+                        open={openSelect === "source"}
+                        onOpenChange={() => handleToggle("source")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
                         }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select issue source" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[0]?.data?.values?.map(
+                              (source, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={source ?? ""}>
+                                  {source}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors.source} />
+                  </div>
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Risk Level
+                  </Label>
+                  <Controller
+                    name="risk_rating"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "risk_rating"}
+                        onOpenChange={() => handleToggle("risk_rating")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select risk level" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[1]?.data?.values?.map(
+                              (rating, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={rating ?? ""}>
+                                  {rating}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors.risk_rating} />
+                  </div>
+                </div>
+              </section>
+              {getValues("source") === "Self Disclosed" ? (
+                <div className="*:not-first:mt-2 px-1 mb-2">
+                  <Label
+                    htmlFor="sdi"
+                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                    SDI Name <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="sdi_name"
+                    placeholder="SDI name"
+                    {...register("sdi_name")}
+                  />
+                  <div className="h-[6]">
+                    <FormError error={errors.sdi_name} />
+                  </div>
+                </div>
+              ) : null}
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="criteria"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Criteria
+                </Label>
+                <Textarea
+                  id="criteria"
+                  placeholder="Criteria here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("criteria")}
+                />
+                <FormError error={errors.criteria} />
+              </div>
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="finding"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Finding Weakness
+                </Label>
+                <Textarea
+                  id="finding"
+                  placeholder="Finding weakness here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("finding")}
+                />
+                <FormError error={errors.finding} />
+              </div>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label
+                    htmlFor="_process_"
+                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Process<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="process"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "dept"}
+                        onOpenChange={() => handleToggle("dept")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setValue("sub_process", "");
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select process" />
+                        </SelectTrigger>
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[2]?.data?.map((process, index: number) => (
+                              <SelectItem
+                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                key={index}
+                                value={process.process_name ?? "0"}>
+                                {process.process_name}
+                              </SelectItem>
+                            ))}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormError error={errors?.process} />
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Sub Process<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="sub_process"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "sub_process"}
+                        onOpenChange={() => handleToggle("sub_process")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select sub process" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {subProcesses?.map((sub_process, index: number) => (
+                              <SelectItem
+                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                key={index}
+                                value={sub_process ?? "0"}>
+                                {sub_process}
+                              </SelectItem>
+                            ))}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FormError error={errors.sub_process} />
+                </div>
+              </section>
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="root_cause_description"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Root Cause Description
+                </Label>
+                <Textarea
+                  id="root_cause_description"
+                  placeholder="Root cause description here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("root_cause_description")}
+                />
+                <FormError error={errors.root_cause_description} />
+              </div>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Root Cause<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="root_cause"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "root_cause"}
+                        onOpenChange={() => handleToggle("root_cause")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setValue("sub_root_cause", "");
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select root cause" />
+                        </SelectTrigger>
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[3]?.data?.map(
+                              (root_cause, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={root_cause.root_cause ?? "0"}>
+                                  {root_cause.root_cause}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors?.root_cause} />
+                  </div>
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Sub Root Cause<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="sub_root_cause"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "sub_root_cause"}
+                        onOpenChange={() => handleToggle("sub_root_cause")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select sub root cause" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {subRootCause?.map(
+                              (sub_root_cause, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={sub_root_cause ?? "0"}>
+                                  {sub_root_cause}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors.sub_root_cause} />
+                  </div>
+                </div>
+              </section>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Risk Category<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="risk_category"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "risk_category"}
+                        onOpenChange={() => handleToggle("risk_category")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setValue("sub_risk_category", "");
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select risk category" />
+                        </SelectTrigger>
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[4]?.data?.map(
+                              (risk_category, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={risk_category.risk_category ?? "0"}>
+                                  {risk_category.risk_category}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors?.root_cause} />
+                  </div>
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Sub Root Cause<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="sub_risk_category"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "sub_risk_category"}
+                        onOpenChange={() => handleToggle("sub_risk_category")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select sub risk category" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {subRiskCategory?.map(
+                              (sub_risk_category, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={sub_risk_category ?? "0"}>
+                                  {sub_risk_category}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors.sub_risk_category} />
+                  </div>
+                </div>
+              </section>
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="impact_description"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Impact Description
+                </Label>
+                <Textarea
+                  id="impact_description"
+                  placeholder="Impact description here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("impact_description")}
+                />
+                <FormError error={errors.impact_description} />
+              </div>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Impact Category<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="impact_category"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "impact_category"}
+                        onOpenChange={() => handleToggle("impact_category")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setValue("impact_sub_category", "");
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select impact category" />
+                        </SelectTrigger>
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[5]?.data?.map(
+                              (impact_category, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={
+                                    impact_category.impact_category ?? "0"
+                                  }>
+                                  {impact_category.impact_category}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors?.impact_category} />
+                  </div>
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Impact Sub Category
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="impact_sub_category"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "impact_sub_category"}
+                        onOpenChange={() => handleToggle("impact_sub_category")}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select sub impact category" />
+                        </SelectTrigger>
+
+                        <SelectContent className="">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {subImpactCategory?.map(
+                              (sub_impact_category, index: number) => (
+                                <SelectItem
+                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  key={index}
+                                  value={sub_impact_category ?? "0"}>
+                                  {sub_impact_category}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-4">
+                    <FormError error={errors.impact_sub_category} />
+                  </div>
+                </div>
+              </section>
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="recommendation"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Recommendation
+                </Label>
+                <Textarea
+                  id="recommendation"
+                  placeholder="recommendation here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("recommendation")}
+                />
+                <FormError error={errors.recommendation} />
+              </div>
+              <div className="*:not-first:mt-2 px-1 mb-2">
+                <Label
+                  htmlFor="management_action_plan"
+                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  Management Action Plan
+                </Label>
+                <Textarea
+                  id="management_action_plan"
+                  placeholder="Management action plan here"
+                  className="min-h-[100px] max-h-[120px]"
+                  {...register("management_action_plan")}
+                />
+                <FormError error={errors.management_action_plan} />
+              </div>
+              <div className="*:not-first:mt-2 flex-1 flex flex-col">
+                <Label className="ml-[2px] font-table pb-[3px]">
+                  Estimated Implementation Date
+                </Label>
+                <Controller
+                  name="estimated_implementation_date"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      side="left"
+                      offset={-450}
+                      value={field.value ? new Date(field.value) : undefined}
+                      onChange={(date) => {
+                        field.onChange(date);
+                      }}
+                    />
+                  )}
+                />
+                <FormError error={errors.estimated_implementation_date} />
+              </div>
+              <section className="flex items-center h-[30px] justify-center mb-2 py-5 gap-1">
+                <section className="border-r border-r-neutral-600 justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
+                  <Checkbox
+                    id="recurring"
+                    checked={recurring}
+                    onCheckedChange={(value) => setRecurring(value === true)}
+                  />
+                  <Label id="recurring" htmlFor="recurring">
+                    Recurring
+                  </Label>
+                </section>
+                <section className="justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
+                  <Controller
+                    name="regulatory"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="regulatory"
+                        checked={field.value}
+                        onCheckedChange={(value) =>
+                          field.onChange(value === true)
+                        }
                       />
                     )}
                   />
-                  <FormError error={errors.estimated_implementation_date} />
+                  <Label id="regulatory" htmlFor="regulatory">
+                    Regulatory
+                  </Label>
+                </section>
+              </section>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    LOD1 Owner
+                  </Label>
+                  <Controller
+                    name="lod1_owner"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select LOD1 Owner"
+                        users={businessUsers}
+                        title="LOD1 Owner"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.lod1_owner} />
                 </div>
-                <section className="flex items-center h-[30px] justify-center mb-2 py-5 gap-1">
-                  <section className="border-r border-r-neutral-600 justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
-                    <Checkbox
-                      id="recurring"
-                      checked={recurring}
-                      onCheckedChange={(value) => setRecurring(value === true)}
-                    />
-                    <Label id="recurring" htmlFor="recurring">
-                      Recurring
-                    </Label>
-                  </section>
-                  <section className="justify-center flex items-center gap-2 font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] flex-1">
-                    <Checkbox
-                      id="compliance"
-                      checked={regulatory}
-                      onCheckedChange={(value) => setRegulatory(value === true)}
-                    />
-                    <Label id="compliance" htmlFor="compliance">
-                      Compliance
-                    </Label>
-                  </section>
-                </section>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      LOD1 Owner
-                    </Label>
-                    <Controller
-                      name="lod1_owner"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select LOD1 Owner"
-                          users={businessUsers}
-                          title="LOD1 Owner"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.lod1_owner} />
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      LOD1 Implementer
-                    </Label>
-                    <Controller
-                      name="lod1_implementer"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select LOD1 Implementer"
-                          users={businessUsers}
-                          title="LOD1 Implementer"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.lod1_implementer} />
-                  </div>
-                </section>
-                <section className="flex gap-2 px-1 mb-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Risk Officer
-                    </Label>
-                    <Controller
-                      name="lod2_risk_manager"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select Risk Manager"
-                          users={businessUsers}
-                          title="Risk Manager"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.lod2_risk_manager} />
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Compliance Officer
-                    </Label>
-                    <Controller
-                      name="lod2_compliance_officer"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select Compliance Offiecer"
-                          users={businessUsers}
-                          title="Select Compliance Offiecer"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.lod2_compliance_officer} />
-                  </div>
-                </section>
-                <section className="flex gap-2 px-1 mb-3">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Audit Manager
-                    </Label>
-                    <Controller
-                      name="lod3_audit_manager"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select Audit Manager"
-                          users={auditUsers}
-                          title="Audit Manager"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.lod3_audit_manager} />
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Observers
-                    </Label>
-                    <Controller
-                      name="observers"
-                      control={control}
-                      render={({ field }) => (
-                        <UserMultiSelector
-                          trigger="Select Observers"
-                          users={businessUsers}
-                          title="Select Observers"
-                          value={field.value || []}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <FormError error={errors.observers} />
-                  </div>
-                </section>
-              </ScrollArea>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    LOD1 Implementer
+                  </Label>
+                  <Controller
+                    name="lod1_implementer"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select LOD1 Implementer"
+                        users={businessUsers}
+                        title="LOD1 Implementer"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.lod1_implementer} />
+                </div>
+              </section>
+              <section className="flex gap-2 px-1 mb-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Risk Officer
+                  </Label>
+                  <Controller
+                    name="lod2_risk_manager"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select Risk Manager"
+                        users={businessUsers}
+                        title="Risk Manager"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.lod2_risk_manager} />
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Compliance Officer
+                  </Label>
+                  <Controller
+                    name="lod2_compliance_officer"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select Compliance Offiecer"
+                        users={businessUsers}
+                        title="Select Compliance Offiecer"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.lod2_compliance_officer} />
+                </div>
+              </section>
+              <section className="flex gap-2 px-1 mb-3">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Audit Manager
+                  </Label>
+                  <Controller
+                    name="lod3_audit_manager"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select Audit Manager"
+                        users={auditUsers}
+                        title="Audit Manager"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.lod3_audit_manager} />
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                    Observers
+                  </Label>
+                  <Controller
+                    name="observers"
+                    control={control}
+                    render={({ field }) => (
+                      <UserMultiSelector
+                        trigger="Select Observers"
+                        users={businessUsers}
+                        title="Select Observers"
+                        value={field.value || []}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <FormError error={errors.observers} />
+                </div>
+              </section>
             </main>
 
             <Separator />
-            <footer className="flex justify-center gap-2 p-4">
+            <footer className="flex justify-center gap-2 px-4 py-2">
               <Button
                 type="button"
                 variant="ghost"

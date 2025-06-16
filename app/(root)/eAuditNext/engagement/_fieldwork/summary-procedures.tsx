@@ -1,11 +1,14 @@
 import { SummaryProceduresTable } from "@/components/data-table/summary-procedures-table";
+import { Loader } from "@/components/shared/loader";
+import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const SummaryProcedure = () => {
   const params = useSearchParams();
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_summary_procedures_"],
     queryFn: async () => {
       const response = await fetch(
@@ -35,6 +38,20 @@ export const SummaryProcedure = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Summary of procedures" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-[calc(100vw-320px)]">

@@ -10,7 +10,9 @@ import { useTheme } from "next-themes";
 import { NotificationCenter } from "@/app/(root)/_notifications/notification-center";
 import {
   Activity,
+  AlertTriangle,
   Bell,
+  LoaderCircle,
   Moon,
   Package,
   Settings,
@@ -20,6 +22,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type SystemOptionsProps = {
@@ -49,7 +52,7 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
     setOrgId(storedOrgId);
   }, []);
 
-  const { data } = useQuery({
+  const { data, isError, error, isLoading } = useQuery({
     queryKey: ["_modules_", orgId],
     queryFn: async (): Promise<ModuleResponse[]> => {
       const response = await fetch(`${BASE_URL}/modules/${orgId}`, {
@@ -74,6 +77,12 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
     refetchOnReconnect: true,
     enabled: !!orgId,
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [error, isError]);
 
   const handleMouseEnter = () => {
     if (leaveTimeout.current) clearTimeout(leaveTimeout.current);
@@ -112,9 +121,15 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
             onMouseLeave={handleModuleMouseLeave}
             variant="ghost"
             className="bg-black relative hover:bg-neutral-800 hover:text-neutral-200 text-neutral-200 h-8 px-3 py-1 w-full font-table flex items-center justify-start gap-1">
-            <Package size={16} strokeWidth={3} />
+            {isLoading ? (
+              <LoaderCircle className="animate-spin" size={16} />
+            ) : isError ? (
+              <AlertTriangle className="text-red-700" size={16} />
+            ) : (
+              <Package size={16} strokeWidth={3} />
+            )}
             Modules
-            {showModules && (
+            {showModules && !isLoading && data && (
               <section
                 className={`p-1 absolute top-[0px] right-full divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
                 {data?.map((module) => (
@@ -124,7 +139,7 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
                     key={module.id}
                     href={{
                       pathname: `/${module.name}`,
-                      query: { id: module.id },
+                      query: { id: module.id, organizationId: orgId },
                     }}>
                     {module.name === "eAuditNext" ? (
                       <Activity size={16} />

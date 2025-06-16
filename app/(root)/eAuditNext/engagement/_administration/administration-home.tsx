@@ -42,6 +42,9 @@ import { showToast } from "@/components/shared/toast";
 import JsonTextEditor from "@/components/shared/json-text-editor";
 import { ListMultiSelector } from "@/components/shared/list-multi-select";
 import { EngagementContacts } from "./contacts";
+import { Loader } from "@/components/shared/loader";
+import { ErrorMessage } from "@/lib/utils";
+import { ErrorQuery } from "@/components/shared/error-query";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type EngagementProfileValues = z.infer<typeof EngagementProfileSchema>;
@@ -341,16 +344,25 @@ const TemplateWrapper = forwardRef<TemplateWrapperHandle>((_, ref) => {
   const [scopeExclusion, setScopeExclusion] = useState({});
   const [coreRisk, setCoreRisk] = useState<Array<string>>([]);
 
+  const [entityId, setEntityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const entityId = localStorage.getItem("entity_id");
+    if (entityId) {
+      setEntityId(entityId);
+    }
+  }, []);
+
   const results = useQueries({
     queries: [
       {
-        queryKey: ["_risk_category_"],
+        queryKey: ["_risk_category_", entityId],
         queryFn: async (): Promise<RiskCategory[]> =>
-          fetchData("profile/risk_category", ""),
+          fetchData("profile/risk_category", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!params.get("id"),
+        enabled: !!entityId,
       },
       {
         queryKey: ["_engagement_profile_", params.get("id")],
@@ -433,6 +445,23 @@ const TemplateWrapper = forwardRef<TemplateWrapperHandle>((_, ref) => {
     onSaveProfile,
     saveProfilePending,
   }));
+
+  if (results[0].isLoading || results[1].isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Administration" />
+      </div>
+    );
+  }
+
+  if (results[0].isError || results[1].isError) {
+    ErrorMessage(results[0].error);
+    return (
+      <div className="w-full h-full relative">
+        <ErrorQuery />
+      </div>
+    );
+  }
 
   return (
     <section className="flex flex-1 py-3 flex-col gap-2">

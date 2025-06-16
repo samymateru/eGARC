@@ -121,50 +121,48 @@ export const EauditDashboard = () => {
     );
   }
 
-  if (isSuccess && data) {
-    return (
-      <section className="w-full flex flex-col h-[100vh]">
-        <section className="py-2">
-          <Label className="font-[helvetica] font-bold text-[24px] tracking-wide scroll-m-0 pl-3">
-            eAuditNext Dashboard
-          </Label>
-          <Separator />
-        </section>
-        <section className="w-full flex-1 overflow-auto">
-          <section className="flex flex-col">
-            <section className="flex items-center gap-1 w-full">
-              <AuditSummaryDonutChart data={auditSummary} />
-              <EngagementSummaryDonutChart data={engagementSummary} />
-            </section>
-            <section className="flex items-center gap-1">
-              <IssueStatusDonutChart data={issueStatus} />
-              <IssueRecurringDonutChart data={recurring} />
-            </section>
-            <section className="flex items-center gap-1">
-              <GradientBarChart
-                title="Root Cause Insights"
-                description=""
-                color="#1e40af"
-                data={rootCause}
-              />
-              <GradientBarChart
-                title="Impact Category Insights"
-                description=""
-                color="#1e40af"
-                data={impactCategory}
-              />
-            </section>
-            <section className="flex items-center gap-1">
-              <GradientBarChart
-                title="Top Rated Processes"
-                description=""
-                color="#1e40af"
-                data={process}
-              />
-            </section>
+  return (
+    <section className="w-full flex flex-col h-[100vh]">
+      <section className="py-2">
+        <Label className="font-[helvetica] font-bold text-[24px] tracking-wide scroll-m-0 pl-3">
+          eAuditNext Dashboard
+        </Label>
+        <Separator />
+      </section>
+      <section className="w-full flex-1 overflow-auto">
+        <section className="flex flex-col">
+          <section className="flex items-center gap-1 w-full">
+            <AuditSummaryDonutChart data={auditSummary} />
+            <EngagementSummaryDonutChart data={engagementSummary} />
+          </section>
+          <section className="flex items-center gap-1">
+            <IssueStatusDonutChart data={issueStatus} />
+            <IssueRecurringDonutChart data={recurring} />
+          </section>
+          <section className="flex items-center gap-1">
+            <GradientBarChart
+              title="Root Cause Insights"
+              description=""
+              color="#1e40af"
+              data={rootCause}
+            />
+            <GradientBarChart
+              title="Impact Category Insights"
+              description=""
+              color="#1e40af"
+              data={impactCategory}
+            />
+          </section>
+          <section className="flex items-center gap-1">
+            <GradientBarChart
+              title="Top Rated Processes"
+              description=""
+              color="#1e40af"
+              data={process}
+            />
           </section>
         </section>
       </section>
-    );
-  }
+    </section>
+  );
 };

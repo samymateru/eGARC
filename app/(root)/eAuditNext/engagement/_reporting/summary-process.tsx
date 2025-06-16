@@ -4,12 +4,16 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { SummaryAuditProcessSchema } from "@/lib/types";
 import { z } from "zod";
 import { SummaryAuditProcessTable } from "@/components/data-table/summary-processes-table";
+import { Loader } from "@/components/shared/loader";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
 
 type SummaryAuditProcessValue = z.infer<typeof SummaryAuditProcessSchema>;
 
 export const SummaryProcess = () => {
   const params = useSearchParams();
-  const { data } = useQuery({
+
+  const { data, isError, isLoading, error } = useQuery({
     queryKey: ["_summary_procedures_", params.get("id")],
     queryFn: async (): Promise<SummaryAuditProcessValue[]> => {
       const response = await fetch(
@@ -37,6 +41,18 @@ export const SummaryProcess = () => {
     refetchOnReconnect: true,
     enabled: !!params.get("id"),
   });
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    <div className="w-full h-full relative">
+      <Loader title="Findings" />
+    </div>;
+  }
 
   return (
     <div className="w-[calc(100vw-320px)]">

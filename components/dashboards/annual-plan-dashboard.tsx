@@ -1,6 +1,8 @@
 import { useSearchParams } from "next/navigation";
 import { Label } from "../ui/label";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface AnnuaPlanDashboardProps {
@@ -17,7 +19,7 @@ type DashBoard = {
 export const AnnuaPlanDashboard = ({}: AnnuaPlanDashboardProps) => {
   const params = useSearchParams();
 
-  const { data, isSuccess } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["_eaudit_plan_details_", params.get("id")],
     queryFn: async (): Promise<DashBoard> => {
       const response = await fetch(
@@ -46,49 +48,63 @@ export const AnnuaPlanDashboard = ({}: AnnuaPlanDashboardProps) => {
     enabled: !!params.get("id"),
   });
 
-  if (isSuccess && data) {
-    return (
-      <section className="flex items-center justify-center w-[100vw] px-[100px] gap-2 relative">
-        <section className=" w-[250px] h-[150px] rounded-md relative bg-green-700">
-          <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
-            Completed
-          </header>
-          <main className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-1 justify-center items-center">
-            <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
-              {data?.completed}
-            </Label>
-            <Label className="text-xs italic font-semibold text-black bg-green-400 p-1 rounded-md">
-              {(data?.completed / data?.total) * 100}%
-            </Label>
-          </main>
-        </section>
-        <section className=" w-[250px] h-[150px] rounded-md relative bg-blue-700">
-          <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
-            Ongoing
-          </header>
-          <main className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-1 justify-center items-center">
-            <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
-              {data?.ongoing}
-            </Label>
-            <Label className="text-xs italic font-semibold text-black bg-blue-400 p-1 rounded-md">
-              {(data?.ongoing / data?.total) * 100}%
-            </Label>
-          </main>
-        </section>
-        <section className=" w-[250px] h-[150px] rounded-md relative bg-red-700">
-          <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
-            Pending
-          </header>
-          <main className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-1 justify-center items-center">
-            <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
-              {data?.pending}
-            </Label>
-            <Label className="text-xs italic font-semibold text-black bg-red-400 p-1 rounded-md">
-              {(data?.pending / data?.total) * 100}%
-            </Label>
-          </main>
-        </section>
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  return (
+    <section className="flex items-center justify-center w-[100vw] px-[100px] gap-2 relative">
+      <section className="w-[250px] h-[90px] rounded-md relative bg-neutral-600">
+        <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
+          Total
+        </header>
+        <main className="flex flex-col gap-1 justify-center items-center">
+          <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
+            {data?.total}
+          </Label>
+        </main>
       </section>
-    );
-  }
+      <section className="flex flex-col w-[250px] h-[90px] rounded-md bg-green-700">
+        <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
+          Completed
+        </header>
+        <main className="flex  gap-2 justify-center items-center">
+          <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
+            {data?.completed}
+          </Label>
+          <Label className="text-xs italic font-semibold text-black bg-green-400 p-1 rounded-md">
+            {((data?.completed ?? 0) / (data?.total ?? 0)) * 100}%
+          </Label>
+        </main>
+      </section>
+      <section className="flex flex-col w-[250px] h-[90px] rounded-md relative bg-blue-700">
+        <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
+          Ongoing
+        </header>
+        <main className="flex gap-2 justify-center items-center">
+          <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
+            {data?.ongoing}
+          </Label>
+          <Label className="text-xs italic font-semibold text-black bg-blue-400 p-1 rounded-md">
+            {((data?.ongoing ?? 0) / (data?.total ?? 0)) * 100}%
+          </Label>
+        </main>
+      </section>
+      <section className="flex flex-col w-[250px] h-[90px] rounded-md relative bg-red-700">
+        <header className="text-black font-[helvetica] font-bold text-[30px] text-center text-nowrap">
+          Pending
+        </header>
+        <main className="flex gap-2 justify-center items-center">
+          <Label className="text-[20px] font-mono font-bold tracking-normal text-black text-nowrap">
+            {data?.pending}
+          </Label>
+          <Label className="text-xs italic font-semibold text-black bg-red-400 p-1 rounded-md">
+            {((data?.pending ?? 0) / (data?.total ?? 0)) * 100}%
+          </Label>
+        </main>
+      </section>
+    </section>
+  );
 };

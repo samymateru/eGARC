@@ -1,10 +1,13 @@
 "use client";
 import { ActionContactsForm } from "@/components/forms/action-business-contacts";
 import { InformationContactsForm } from "@/components/forms/information-business-contact";
+import { ErrorQuery } from "@/components/shared/error-query";
+import { Loader } from "@/components/shared/loader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { BusinessContactSchema, UserSchema } from "@/lib/types";
+import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Contact, Dot, User } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -34,7 +37,7 @@ export const EngagementContacts = () => {
     }
   }, []);
 
-  const { data, isLoading, isSuccess } = useQuery({
+  const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["_teams_", moduleId],
     queryFn: async (): Promise<UsersValues[]> => {
       const response = await fetch(`${BASE_URL}/users/module/${moduleId}`, {
@@ -64,6 +67,8 @@ export const EngagementContacts = () => {
     data: businessContacts,
     isLoading: businessContactsLoading,
     isSuccess: businessContactsSuccess,
+    error: businessContactsError,
+    isError: businessContactsIsError,
   } = useQuery({
     queryKey: ["_business_contacts_", params.get("id")],
     queryFn: async (): Promise<BusinessContactsValues[]> => {
@@ -96,7 +101,8 @@ export const EngagementContacts = () => {
   useEffect(() => {
     if (!isLoading && isSuccess) {
       const headOfAudit = data?.filter(
-        (user) => user?.title === "Head of Audit"
+        (user) =>
+          user?.title === "Head of Audit" || user.role === "Head of Audit"
       );
 
       const business = data.filter((user) => user?.type === "business");
@@ -120,6 +126,27 @@ export const EngagementContacts = () => {
       setInformationContacts(information);
     }
   }, [businessContacts, businessContactsLoading, businessContactsSuccess]);
+
+  if (isError) {
+    ErrorMessage(error);
+  }
+
+  if (businessContactsLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="Business Contacts" />
+      </div>
+    );
+  }
+
+  if (businessContactsIsError) {
+    ErrorMessage(businessContactsError);
+    return (
+      <div className="w-full h-full relative">
+        <ErrorQuery />
+      </div>
+    );
+  }
 
   return (
     <section className="pb-2">

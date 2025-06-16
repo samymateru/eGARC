@@ -124,7 +124,7 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
                     key={module.id}
                     href={{
                       pathname: `/${module.name}`,
-                      query: { id: module.id },
+                      query: { id: module.id, organizationId: orgId },
                     }}>
                     {module.name === "eAuditNext" ? (
                       <Activity size={16} />

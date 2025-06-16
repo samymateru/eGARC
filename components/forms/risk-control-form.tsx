@@ -6,7 +6,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -62,7 +62,7 @@ type BusinessProcessResponse = {
   sub_process_name: Array<string>;
 };
 
-const fetchData = async (endpont: string, id?: string) => {
+const fetchData = async (endpont: string, id?: string | null) => {
   const response = await fetch(`${BASE_URL}/${endpont}/${id}`, {
     headers: {
       "Content-Type": "application/json",
@@ -92,7 +92,16 @@ export const RiskControlForm = ({
 
   const query_client = useQueryClient();
 
+  const [entityId, setEntityId] = useState<string | null>(null);
+
   const params = useSearchParams();
+
+  useEffect(() => {
+    const entityId = localStorage.getItem("entity_id");
+    if (entityId) {
+      setEntityId(entityId);
+    }
+  }, []);
 
   const methods = useForm<RiskControlFormValues>({
     resolver: zodResolver(RiskControlSchema),
@@ -102,38 +111,38 @@ export const RiskControlForm = ({
   const results = useQueries({
     queries: [
       {
-        queryKey: ["_process_"],
+        queryKey: ["_process_", entityId],
         queryFn: async (): Promise<BusinessProcessResponse[]> =>
-          fetchData("profile/business_process", ""),
+          fetchData("profile/business_process", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["_risk_rating_"],
+        queryKey: ["_risk_rating_", entityId],
         queryFn: async (): Promise<RiskRatingResponse> =>
-          fetchData("profile/risk_rating", ""),
+          fetchData("profile/risk_rating", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
       {
-        queryKey: ["_control_type_"],
+        queryKey: ["_control_type_", entityId],
         queryFn: async (): Promise<ControlTypeResponse> =>
-          fetchData("profile/control_type", ""),
+          fetchData("profile/control_type", entityId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!entityId,
       },
     ],
   });
 
   const { mutate: createRiskControl, isPending: createRiskControlLoading } =
     useMutation({
-      mutationKey: ["_create_prcm_"],
+      mutationKey: ["_create_risk_control_", id],
       mutationFn: async (data: RiskControlFormValues): Promise<Response> => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",

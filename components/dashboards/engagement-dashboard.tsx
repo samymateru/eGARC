@@ -7,6 +7,9 @@ import { ProcedureStatusPieChart } from "../shared/procedure-status-pie-chart";
 import { ColoredBarChart } from "../shared/colored-bar-chart";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { Loader } from "../shared/loader";
+import { ErrorQuery } from "../shared/error-query";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allRootCauses = [
@@ -38,11 +41,10 @@ export const EngagementDashboard = () => {
   const params = useSearchParams();
   const [rootCause, setRootCause] = useState<Record<string, number>>();
   const [findingRating, setFindingRating] = useState<Record<string, number>>();
-
   const [procedure, setProcedure] = useState<Record<string, number>>();
   const [reviewComment, setReviewComment] = useState<Record<string, number>>();
 
-  const { data, isSuccess } = useQuery({
+  const { data, isSuccess, isError, error, isLoading } = useQuery({
     queryKey: ["_engagement_dashboard_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
@@ -103,6 +105,28 @@ export const EngagementDashboard = () => {
       setReviewComment(reviewCommentsStatus);
     }
   }, [data, isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full relative">
+        <Loader title="eAudit Next Dashboard" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full h-full flex item-center justify-center relative">
+        <ErrorQuery />
+      </div>
+    );
+  }
 
   if (isSuccess) {
     return (

@@ -128,6 +128,18 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
     },
   },
   {
+    id: "rating",
+    header: () => <Label className="font-table">Rating</Label>,
+    accessorKey: "rating",
+    cell: () => {
+      return (
+        <Label className="ml-10 font-table truncate overflow-hidden">
+          {"N/A"}
+        </Label>
+      );
+    },
+  },
+  {
     id: "actions",
     header: () => <Label className="font-table">Actions</Label>,
     cell: () => (
