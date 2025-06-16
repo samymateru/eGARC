@@ -6,6 +6,8 @@ const ACCEPTED_FILE_TYPES = [
   "application/pdf",
 ];
 
+const isBrowser = typeof window !== "undefined";
+
 export type Response = {
   detail?: string;
 };
@@ -30,14 +32,16 @@ export const PlanSchema = z.object({
   status: z.enum(["Not Started", "In Progress", "Completed"]).optional(),
   start: z.date({ required_error: "Start date is required" }),
   end: z.date({ required_error: "End date is required" }),
-  attachment: z
-    .instanceof(File, { message: "Provide attachment" })
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
-      message: "File size must be less than 5MB",
-    })
-    .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
-      message: "Unsupported file type",
-    }),
+  attachment: isBrowser
+    ? z
+        .instanceof(File, { message: "Provide attachment" })
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+          message: "File size must be less than 5MB",
+        })
+        .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+          message: "Unsupported file type",
+        })
+    : z.any().optional(),
   created_at: z.string().datetime().optional(),
 });
 
@@ -99,14 +103,16 @@ export const PolicySchema = z.object({
   name: z.string().min(1, "Please provide policy name"),
   version: z.string().min(1, "Please provide policy version"),
   key_areas: z.string().min(1, "Provide keys areas"),
-  attachment: z
-    .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
-      message: "File size must be less than 5MB",
-    })
-    .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
-      message: "Unsupported file type",
-    }),
+  attachment: isBrowser
+    ? z
+        .instanceof(File)
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+          message: "File size must be less than 5MB",
+        })
+        .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+          message: "Unsupported file type",
+        })
+    : z.any().optional(),
 });
 
 export const ControlSchema = z.object({
@@ -188,14 +194,16 @@ export const RegulationSchema = z.object({
   name: z.string().min(1, "Please provide policy name"),
   issue_date: z.date({ required_error: "Issue date is required" }),
   key_areas: z.string().min(1, "Provide keys areas"),
-  attachment: z
-    .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
-      message: "File size must be less than 5MB",
-    })
-    .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
-      message: "Unsupported file type",
-    }),
+  attachment: isBrowser
+    ? z
+        .instanceof(File)
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+          message: "File size must be less than 5MB",
+        })
+        .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
+          message: "Unsupported file type",
+        })
+    : z.any().optional(),
 });
 
 export const RoleSchema = z.object({
