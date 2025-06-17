@@ -126,7 +126,7 @@ export default function EntityForm() {
     {
       mutationKey: ["create-entity"],
       mutationFn: async (data: EntityValues) => {
-        const response = await fetch(`${BASE_URL}/entity`, {
+        const response = await fetch(`${BASE_URL}/entity/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
