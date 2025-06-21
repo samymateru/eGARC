@@ -70,13 +70,16 @@ export function DatePicker({
     <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
           className={cn(
-            "justify-start text-left font-normal",
+            "justify-start text-left font-helvetica-13 bg-neutral-200 text-black hover:bg-neutral-300",
             !value && "text-muted-foreground"
           )}>
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "PPP") : <span>Pick a date</span>}
+          <CalendarIcon className="mr-2 h-4 w-4 text-black" />
+          {value ? (
+            format(value, "PPP")
+          ) : (
+            <span className="text-black">Pick a date</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent

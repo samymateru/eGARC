@@ -63,6 +63,9 @@ export const StaffForm = ({
   mode,
 }: StaffFormProps) => {
   const [open, setOpen] = useState(false);
+
+  const [openSelect, setOpenSelect] = useState<"user" | "role" | null>(null);
+
   const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
 
   const params = useSearchParams();
@@ -221,22 +224,20 @@ export const StaffForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
-            <main className="px-5 py-3 flex flex-col gap-2">
+            <Separator className="bg-neutral-600" />
+            <main className="px-5 py-3 flex flex-col gap-3">
               {mode === "create" ? (
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label
-                    htmlFor="name"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="name" className="font-helvetica-13">
                     Name<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -244,19 +245,26 @@ export const StaffForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        open={openSelect === "user"}
+                        onOpenChange={(isOpen) =>
+                          setOpenSelect(isOpen ? "user" : null)
+                        }
                         onValueChange={(value) => {
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select User" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select User"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {auditUsers?.map((user, index: number) => (
                               <SelectItem
-                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                 key={index}
                                 value={user?.name ?? ""}>
                                 {user?.name}
@@ -272,9 +280,7 @@ export const StaffForm = ({
               ) : null}
 
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="name"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="name" className="font-helvetica-13">
                   Role<span className="text-destructive">*</span>
                 </Label>
                 <Controller
@@ -282,21 +288,27 @@ export const StaffForm = ({
                   control={control}
                   render={({ field }) => (
                     <Select
+                      open={openSelect === "role"}
+                      onOpenChange={(isOpen) =>
+                        setOpenSelect(isOpen ? "role" : null)
+                      }
                       onValueChange={(value) => {
                         field.onChange(value);
                       }}
                       value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role">
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                        <SelectValue
+                          placeholder="Select Role"
+                          className="placeholder:font-helvetica-13">
                           {field.value}
                         </SelectValue>
                       </SelectTrigger>
 
-                      <SelectContent className="">
+                      <SelectContent className="bg-neutral-100">
                         <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                           {engagementRole?.map((role, index: number) => (
                             <SelectItem
-                              className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                              className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                               key={index}
                               value={role}>
                               {role}
@@ -313,7 +325,7 @@ export const StaffForm = ({
                 <div className="*:not-first:mt-2 flex-1 flex flex-col">
                   <Label
                     htmlFor="year"
-                    className="ml-[2px] font-table pb-[3px]">
+                    className="ml-[2px] font-helvetica-13 pb-[3px]">
                     Start
                   </Label>
                   <Controller
@@ -337,7 +349,7 @@ export const StaffForm = ({
                 <div className="*:not-first:mt-2 flex-1 flex flex-col">
                   <Label
                     htmlFor="year"
-                    className="ml-[2px] font-table pb-[3px]">
+                    className="ml-[2px] font-helvetica-13 pb-[3px]">
                     End
                   </Label>
                   <Controller
@@ -361,21 +373,19 @@ export const StaffForm = ({
               </section>
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createStaffLoading || updateStaffLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

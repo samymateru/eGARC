@@ -56,7 +56,7 @@ const EntitySchema = z.object({
   owner: z.string().min(1, "Owner is required"),
   email: z.string().email("Provide a valid email"),
   telephone: z.string().min(1, "Telephone is required"),
-  website: z.string().min(1, "Provide a valid URL"),
+  website: z.string().optional(),
   type: z
     .string({ required_error: "Type is required" })
     .min(1, "Type is required"),
@@ -122,28 +122,26 @@ export default function EntityForm() {
     formState: { errors },
   } = methods;
 
-  const { mutate: createEntity, isPending: createControlLoading } = useMutation(
-    {
-      mutationKey: ["create-entity"],
-      mutationFn: async (data: EntityValues) => {
-        const response = await fetch(`${BASE_URL}/entity/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({}));
-          throw {
-            status: response.status,
-            body: errorBody,
-          };
-        }
-        return await response.json();
-      },
-    }
-  );
+  const { mutate: createEntity, isPending: createEntityLoading } = useMutation({
+    mutationKey: ["create-entity"],
+    mutationFn: async (data: EntityValues) => {
+      const response = await fetch(`${BASE_URL}/entity/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+  });
 
   const onSubmit = (data: EntityValues) => {
     console.log("Form data:", data);
@@ -166,43 +164,39 @@ export default function EntityForm() {
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex justify-center items-center h-[calc(100vh-10px)] py-2 overflow-auto flex-col gap-1">
-        <section className="flex flex-col items-center text-center mt-4">
-          <Label className="text-white font-[helvetica] font-semibold text-2xl">
-            eGARC System
+        className="flex justify-center items-center h-[calc(100vh-10px)] py-2 overflow-auto flex-col gap-1 bg-white">
+        <section className="flex flex-col items-center text-center mt-2 gap-2">
+          <Label className="font-helvetica-large text-black">
+            eGARC Management System
           </Label>
-          <Label className="text-white font-[helvetica] font-semibold text-[16px]">
-            Create Entity
-          </Label>
+          <Label className="font-helvetica-14 text-black">Create Entity</Label>
         </section>
 
         <section className="py-2 px-5 flex flex-col gap-1 min-w-[700px] text-white">
           <section className="flex justify-between items-center gap-2">
             <div className="*:not-first:mt-2 flex-1">
-              <Label
-                htmlFor="name"
-                className="font-table tracking-wide scroll-m-1 font-semibold">
+              <Label htmlFor="name" className="font-helvetica-13 text-black">
                 Entity Name<span className="text-destructive">*</span>
               </Label>
               <Input
                 id="name"
                 placeholder="Entity name"
                 {...register("name")}
+                className="font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
               />
               <div className="h-4">
                 <FormError error={errors.name} />
               </div>
             </div>
             <div className="*:not-first:mt-2 flex-1">
-              <Label
-                htmlFor="owner"
-                className="font-table tracking-wide scroll-m-1 font-semibold">
+              <Label htmlFor="owner" className="font-helvetica-13 text-black">
                 Entity Owner<span className="text-destructive">*</span>
               </Label>
               <Input
                 id="owner"
                 placeholder="Entity owner"
                 {...register("owner")}
+                className="font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
               />
               <div className="h-4">
                 <FormError error={errors.owner} />
@@ -212,12 +206,15 @@ export default function EntityForm() {
 
           <section className="flex justify-between items-center gap-2">
             <div className="*:not-first:mt-2 flex-1">
-              <Label
-                htmlFor="email"
-                className="font-table tracking-wide scroll-m-1 font-semibold">
+              <Label htmlFor="email" className="font-helvetica-13 text-black">
                 Email<span className="text-destructive">*</span>
               </Label>
-              <Input id="email" placeholder="Email" {...register("email")} />
+              <Input
+                id="email"
+                placeholder="Email"
+                {...register("email")}
+                className="font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
+              />
               <div className="h-4">
                 <FormError error={errors.email} />
               </div>
@@ -225,13 +222,14 @@ export default function EntityForm() {
             <div className="*:not-first:mt-2 flex-1">
               <Label
                 htmlFor="telephone"
-                className="font-table tracking-wide scroll-m-1 font-semibold">
+                className="font-helvetica-13 text-black">
                 Telephone<span className="text-destructive">*</span>
               </Label>
               <Input
                 id="telephone"
                 placeholder="Phone"
                 {...register("telephone")}
+                className="font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
               />
               <div className="h-4">
                 <FormError error={errors.telephone} />
@@ -241,24 +239,21 @@ export default function EntityForm() {
 
           <section className="flex justify-between items-center gap-2">
             <div className="*:not-first:mt-2 flex-1">
-              <Label
-                htmlFor="website"
-                className="font-table tracking-wide scroll-m-1 font-semibold">
+              <Label htmlFor="website" className="font-helvetica-13 text-black">
                 Website<span className="text-destructive">*</span>
               </Label>
               <Input
                 id="website"
                 placeholder="Website"
                 {...register("website")}
+                className="font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
               />
               <div className="h-4">
                 <FormError error={errors.website} />
               </div>
             </div>
             <div className="*:not-first:mt-2 flex-1">
-              <Label
-                htmlFor="type"
-                className="font-serif tracking-wide scroll-m-1 font-semibold">
+              <Label htmlFor="type" className="font-helvetica-13 text-black">
                 Type <span className="text-destructive">*</span>
               </Label>
               <Controller
@@ -266,15 +261,18 @@ export default function EntityForm() {
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select control type" />
+                    <SelectTrigger className="border border-neutral-500 font-helvetica-13 text-black">
+                      <SelectValue
+                        placeholder="Select control type"
+                        className="placeholder:font-helvetica-13 text-black"
+                      />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-neutral-100 h-[270px] overflow-hidden">
                       {organization_types.map((item, index) => (
                         <SelectItem
                           key={index}
                           value={item.value}
-                          className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                          className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                           {item.label}
                         </SelectItem>
                       ))}
@@ -288,13 +286,14 @@ export default function EntityForm() {
             </div>
           </section>
           <div>
-            {/* Password input field with toggle visibility button */}
             <div className="*:not-first:mt-2">
-              <Label htmlFor={id}>Input with password strength indicator</Label>
+              <Label htmlFor={id} className="text-black font-helvetica-13">
+                Password
+              </Label>
               <div className="relative">
                 <Input
                   id={id}
-                  className="pe-9"
+                  className="pe-9 font-helvetica-input-13 placeholder:font-helvetica-13 text-black"
                   placeholder="Password"
                   type={isVisible ? "text" : "password"}
                   value={password}
@@ -310,13 +309,22 @@ export default function EntityForm() {
                   aria-pressed={isVisible}
                   aria-controls="password">
                   {isVisible ? (
-                    <EyeOffIcon size={16} aria-hidden="true" />
+                    <EyeOffIcon
+                      size={16}
+                      aria-hidden="true"
+                      className="text-black"
+                    />
                   ) : (
-                    <EyeIcon size={16} aria-hidden="true" />
+                    <EyeIcon
+                      size={16}
+                      aria-hidden="true"
+                      className="text-black"
+                    />
                   )}
                 </button>
               </div>
             </div>
+            <FormError error={errors.password} />
 
             {/* Password strength indicator */}
             <div
@@ -336,7 +344,7 @@ export default function EntityForm() {
             {/* Password strength description */}
             <p
               id={`${id}-description`}
-              className="text-foreground mb-2 text-sm font-medium">
+              className="text-black font-[helvetica] mb-2 text-sm font-medium">
               {getStrengthText(strengthScore)}. Must contain:
             </p>
 
@@ -374,21 +382,18 @@ export default function EntityForm() {
           </div>
         </section>
 
-        <footer className="rounded-br rounded-bl flex px-4 py-2 gap-2 min-w-[450px]">
+        <footer className="rounded-br rounded-bl flex px-4 py-2 gap-2 w-[700px]">
           <Button
             onClick={() => router.push("/signin")}
-            disabled={createControlLoading}
-            variant="ghost"
             type="button"
-            className="bg-red-800 font-serif font-semibold flex-1">
+            className="bg-black font-helvetica-13 flex-1">
             <LogIn size={16} strokeWidth={3} />
             Login
           </Button>
           <Button
-            variant="ghost"
-            disabled={createControlLoading}
+            disabled={createEntityLoading}
             type="submit"
-            className="bg-green-800 font-serif font-semibold flex-1">
+            className="bg-green-900 font-helvetica-13 flex-1">
             <Send size={16} strokeWidth={3} />
             {"Submit"}
           </Button>

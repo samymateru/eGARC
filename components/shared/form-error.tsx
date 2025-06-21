@@ -6,7 +6,7 @@ type ErrorProps = {
 export function FormError({ error }: ErrorProps) {
   return (
     <p
-      className={`text-red-500 font-medium font-serif text-[13px] pt-[2px] flex  items-center gap-1 ${
+      className={`text-red-700 font-helvetica-13 pt-[2px] flex  items-center gap-1 ${
         error ? "flex" : "hidden"
       }`}>
       <CircleX size={13} />

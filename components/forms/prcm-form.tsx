@@ -90,6 +90,10 @@ export const PRCMForm = ({
 }: PRCMFormPros) => {
   const [open, setOpen] = useState(false);
 
+  const [openSelect, setOpenSelect] = useState<
+    "process" | "rating" | "type" | null
+  >(null);
+
   const query_client = useQueryClient();
 
   const params = useSearchParams();
@@ -190,32 +194,24 @@ export const PRCMForm = ({
     });
   };
 
-  if (results[0].isLoading || results[1].isLoading || results[2].isLoading) {
-    return <div>loading</div>;
-  }
-  if (results[0].isError || results[1].isError || results[2].isError) {
-    return <div>Error</div>;
-  }
   return (
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[550px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[550px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
+            <Separator className="bg-neutral-600" />
             <ScrollArea className="max-h-[450px] h-auto overflow-y-auto">
               <main className="px-5 py-3 flex flex-col gap-2">
                 <div className="*:not-first:mt-2">
-                  <Label
-                    htmlFor="process"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="process" className="font-helvetica-13">
                     Process<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -223,17 +219,24 @@ export const PRCMForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        open={openSelect === "process"}
+                        onOpenChange={(isOpen) =>
+                          setOpenSelect(isOpen ? "process" : null)
+                        }
                         onValueChange={field.onChange}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select control type" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select control type"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[300px] h-auto overflow-auto">
                             {results[0].data?.map((process, index: number) => (
                               <SelectItem
-                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                 key={index}
                                 value={process.process_name ?? ""}>
                                 {process.process_name}
@@ -247,22 +250,19 @@ export const PRCMForm = ({
                   <FormError error={errors.process} />
                 </div>
                 <div className="*:not-first:mt-2">
-                  <Label
-                    htmlFor="risk"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="risk" className="font-helvetica-13">
                     Risk name<span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="risk"
                     placeholder="Risk name"
                     {...register("risk")}
+                    className="font-helvetica-input-13 placeholder:font-helvetica-13"
                   />
                   <FormError error={errors.risk} />
                 </div>
                 <div className="*:not-first:mt-2">
-                  <Label
-                    htmlFor="risk_rating"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="risk_rating" className="font-helvetica-13">
                     Risk rating<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -270,19 +270,26 @@ export const PRCMForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        open={openSelect === "rating"}
+                        onOpenChange={(isOpen) =>
+                          setOpenSelect(isOpen ? "rating" : null)
+                        }
                         onValueChange={field.onChange}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select control type" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select control type"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[300px] h-auto overflow-auto">
                             {results[1].data?.values?.map(
                               (risk, index: number) => (
                                 <SelectItem
                                   key={index}
                                   value={risk.name ?? ""}
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer">
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                                   {risk.name}
                                 </SelectItem>
                               )
@@ -295,35 +302,33 @@ export const PRCMForm = ({
                   <FormError error={errors.risk_rating} />
                 </div>
                 <div className="*:not-first:mt-2">
-                  <Label
-                    htmlFor="control"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="control" className="font-helvetica-13">
                     Control name<span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="control"
                     placeholder="Control name"
                     {...register("control")}
+                    className="font-helvetica-input-13 placeholder:font-helvetica-13"
                   />
                   <FormError error={errors.control} />
                 </div>
                 <div className="*:not-first:mt-2">
                   <Label
                     htmlFor="control_objective"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                    className="font-helvetica-13">
                     Control objective<span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="control_objective"
                     placeholder="Control objective"
                     {...register("control_objective")}
+                    className="font-helvetica-input-13 placeholder:font-helvetica-13"
                   />
                   <FormError error={errors.control_objective} />
                 </div>
                 <div className="*:not-first:mt-2">
-                  <Label
-                    htmlFor="control_type"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="control_type" className="font-helvetica-13">
                     Control type<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -331,19 +336,26 @@ export const PRCMForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        open={openSelect === "type"}
+                        onOpenChange={(isOpen) =>
+                          setOpenSelect(isOpen ? "type" : null)
+                        }
                         onValueChange={field.onChange}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select control type" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select control type"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[300px] h-auto overflow-auto">
                             {results[2].data?.values?.map(
                               (control, index: number) => (
                                 <SelectItem
                                   key={index}
                                   value={control ?? ""}
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer">
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                                   {control}
                                 </SelectItem>
                               )
@@ -358,21 +370,19 @@ export const PRCMForm = ({
               </main>
             </ScrollArea>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createPRCMLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

@@ -1,7 +1,9 @@
-import { EngagementNavbar } from "@/components/top-navbars/engagement-navbar";
 import "@/app/globals.css";
 import { EngagementSidebarMenu } from "@/components/menus/engagement-sidebar-menu";
 import { Separator } from "@/components/ui/separator";
+import { EauditNavbar } from "@/components/top-navbars/eaudit-navbar";
+import { BreadCrumbNavbar } from "@/components/shared/breadcrum-nav";
+import BreadcrumbTracker from "@/components/shared/breadcrumb-tracker";
 
 export const metadata = {
   title: "eGARC Client",
@@ -14,18 +16,24 @@ export default function EngagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col w-[100vw] h-[100vh]">
-      <header className="py-2 pl-1">
-        <EngagementNavbar />
-        <Separator />
-      </header>
-      <main className="flex-1 flex">
-        <section className="min-w-[320px] h-[100vh] px-1 pt-1">
-          <EngagementSidebarMenu />
-        </section>
-        <Separator orientation="vertical" />
-        <section className="flex-1 flex h-[100vh]">{children}</section>
-      </main>
-    </div>
+    <>
+      <div className="flex flex-col w-[100vw] h-[100vh]">
+        <header className="py-2 pl-1 flex flex-col gap-4">
+          <EauditNavbar />
+          <section className="px-4">
+            <BreadCrumbNavbar />
+          </section>
+        </header>
+        <Separator className="mt-4 bg-neutral-500" />
+        <main className="flex-1 flex">
+          <section className="w-[320px] px-1 pt-2">
+            <EngagementSidebarMenu />
+          </section>
+          <Separator orientation="vertical" className="bg-neutral-500 mx-1" />
+          <section className="flex-1 flex h-[100vh]">{children}</section>
+        </main>
+      </div>
+      <BreadcrumbTracker />
+    </>
   );
 }

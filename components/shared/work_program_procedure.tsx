@@ -2,6 +2,8 @@ import z from "zod";
 import { Button } from "../ui/button";
 import {
   CircleAlert,
+  FileText,
+  Info,
   Menu,
   PanelLeft,
   Save,
@@ -18,27 +20,26 @@ import {
   useId,
   MouseEvent,
 } from "react";
-
-type SaveWorkProgramProcedure = {
-  brief_description?: string;
-  audit_objective?: string;
-  test_description?: string;
-  test_type?: string;
-  sampling_approach?: string;
-  results_of_test?: string;
-  observation?: string;
-  extended_testing?: boolean;
-  extended_procedure?: string;
-  extended_results?: string;
-  effectiveness?: string;
-  conclusion?: string;
-};
-
-type PreparedReviewedBy = {
-  name: string;
-  email: string;
-  date_issued: string;
-};
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { Separator } from "../ui/separator";
+import { Label } from "../ui/label";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { SubProgramSchema_ } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { ProcedureAction } from "./procedure-action";
+import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
+import { showToast } from "./toast";
+import { ProcedureRiskControlMatrix } from "./procedure-risk-control-matrix";
+import PreparedReviewedBy from "./prepared_reviewed_by";
+import { useSaveWorkProgramProcedure } from "@/hooks/use-save-workprogram-procedure";
+import { useWorkProgramProcedurePrepare } from "@/hooks/use-edit-workprogram-prepared";
+import { useWorkProgramProcedureReview } from "@/hooks/use-edit-workprogram-reviewed";
 
 const items = [
   {
@@ -91,29 +92,28 @@ const items = [
   },
 ];
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
-import { ScrollArea } from "../ui/scroll-area";
-import { Separator } from "../ui/separator";
-import { Label } from "../ui/label";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-import { SubProgramSchema_ } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
-import { ProcedureAction } from "./procedure-action";
-import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
-import { showToast } from "./toast";
-import { ProcedureRiskControlMatrix } from "./procedure-risk-control-matrix";
-import PreparedReviewedBy from "./prepared_reviewed_by";
-import { useSaveWorkProgramProcedure } from "@/hooks/use-save-workprogram-procedure";
-import { useWorkProgramProcedurePrepare } from "@/hooks/use-edit-workprogram-prepared";
-import { useWorkProgramProcedureReview } from "@/hooks/use-edit-workprogram-reviewed";
-
 type SubProgramValues = z.infer<typeof SubProgramSchema_>;
+
+type SaveWorkProgramProcedure = {
+  brief_description?: string;
+  audit_objective?: string;
+  test_description?: string;
+  test_type?: string;
+  sampling_approach?: string;
+  results_of_test?: string;
+  observation?: string;
+  extended_testing?: boolean;
+  extended_procedure?: string;
+  extended_results?: string;
+  effectiveness?: string;
+  conclusion?: string;
+};
+
+type PreparedReviewedBy = {
+  name: string;
+  email: string;
+  date_issued: string;
+};
 
 interface WorkProgramProcedureProps {
   id?: string;
@@ -308,21 +308,25 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
           </div>
         </div>
       ) : (
-        <section className="flex flex-col w-[calc(100vw-320px)]">
-          <header className="flex justify-between w-full px-2">
-            <section className="flex items-center justify-end gap-1 py-2">
-              <Button
-                variant={"ghost"}
-                className=" dark:bg-neutral-800 w-[30px] flex justify-center items-center font-table h-[30px] mr-2">
+        <section className="flex flex-col w-[calc(100vw-332px)]">
+          <header className="flex justify-between items-center px-2">
+            <section className="flex items-center justify-end gap-1 pt-[3px]">
+              <Button className=" dark:bg-neutral-800 w-[30px] flex justify-center items-center font-table h-[30px]">
                 <PanelLeft size={16} strokeWidth={3} />
               </Button>
-              <Separator orientation="vertical" />
-              <section className="flex items-center gap-1 font-table font-medium h-full">
-                <Label className="font-semibold font-[helvetica] text-[15px] scroll-m-0 px-2 truncate">
+              <Separator
+                orientation="vertical"
+                className="bg-neutral-400 mx-2 h-[28px]"
+              />
+              <section className="flex items-center gap-1 h-full max-w-[500px]">
+                <Label className="font-helvetica-14 truncate">
                   {data?.title}
                 </Label>
-                <Separator orientation="vertical" />
-                <Label className="font-semibold font-[helvetica] text-xs scroll-m-0 truncate">
+                <Separator
+                  orientation="vertical"
+                  className="mx-2 bg-neutral-400 h-[28px]"
+                />
+                <Label className="font-helvetica-13 truncate">
                   {data?.reference}
                 </Label>
               </section>
@@ -331,95 +335,92 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
               <div className="px-2">
                 <ToggleProcedureVisibility />
               </div>
-              <Separator className="mx-1" orientation="vertical" />
+              <Separator
+                className="mx-1 bg-neutral-400"
+                orientation="vertical"
+              />
               <Button
                 disabled={saveProcedureLoading}
-                variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
                   onSubmit("manual");
                 }}
-                className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
+                className="w-[130px] text-white h-7 flex items-center justify-start font-helvetica-13 bg-black">
                 <Save size={16} />
                 Save
               </Button>
-              <Separator className="mx-1" orientation="vertical" />
+              <Separator
+                className="mx-1 bg-neutral-400"
+                orientation="vertical"
+              />
               <ProcedureAction
                 side="bottom"
                 subProgramTitle={data?.title ?? ""}>
                 <Button
-                  variant="ghost"
                   onClick={(e) => e.stopPropagation()}
-                  className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
+                  className="w-[130px] text-white h-7 flex items-center justify-start font-helvetica-13 bg-black">
                   <Menu size={16} />
                   Menu
                 </Button>
               </ProcedureAction>
             </section>
           </header>
-          <Separator />
-          <main className="flex-1 pt-3 w-[calc(100vw-320px)]">
-            <ScrollArea className="max-h-[500px] h-auto overflow-auto hide-scrollbar">
-              <ProcedureRiskControlMatrix />
-              <Separator />
-              <TemplateWrapper
-                briefDescription={briefDescription}
-                setBriefDescription={setBriefDescription}
-                objective={objective}
-                setObjective={setObjective}
-                testDescription={testDescription}
-                setTestDescription={setTestDescription}
-                testType={testType}
-                setTestType={setTestType}
-                samplingApproach={samplingApproach}
-                setSamplingApproach={setSamplingApproach}
-                results={results}
-                setResults={setResults}
-                observation={observation}
-                setObservation={setObservation}
-                extendedTesting={extendedTesting}
-                setExtendedTesting={setExtendedTesting}
-                extendedProcedure={extendedProcedure}
-                setExtendedProcedure={setExtendedProcedure}
-                extendedResults={extendedResults}
-                setExtendedResults={setExtendedResults}
-                effectiveness={effectiveness}
-                setEffectiveness={setEffectiveness}
-                conclusion={conclusion}
-                setConclusion={setConclusion}
+          <Separator className="bg-neutral-500 mt-1" />
+          <main className="pt-3 w-[calc(100vw-332px)] h-[calc(100vh-132px)] pb-2 overflow-y-auto overflow-x-hidden hide-scrollbar">
+            <ProcedureRiskControlMatrix />
+            <Separator className="bg-neutral-400 my-2" />
+            <TemplateWrapper
+              briefDescription={briefDescription}
+              setBriefDescription={setBriefDescription}
+              objective={objective}
+              setObjective={setObjective}
+              testDescription={testDescription}
+              setTestDescription={setTestDescription}
+              testType={testType}
+              setTestType={setTestType}
+              samplingApproach={samplingApproach}
+              setSamplingApproach={setSamplingApproach}
+              results={results}
+              setResults={setResults}
+              observation={observation}
+              setObservation={setObservation}
+              extendedTesting={extendedTesting}
+              setExtendedTesting={setExtendedTesting}
+              extendedProcedure={extendedProcedure}
+              setExtendedProcedure={setExtendedProcedure}
+              extendedResults={extendedResults}
+              setExtendedResults={setExtendedResults}
+              effectiveness={effectiveness}
+              setEffectiveness={setEffectiveness}
+              conclusion={conclusion}
+              setConclusion={setConclusion}
+            />
+            <section className="flex items-center gap-2 pt-3 pb-2 w-full px-2">
+              {!preparedBy ? (
+                <Button
+                  disabled={prepareLoading}
+                  onClick={onPrepare}
+                  className="w-[130px] font-helvetica-13 text-white h-7 flex items-center justify-start bg-black">
+                  <UserCog size={16} strokeWidth={3} />
+                  Prepare
+                </Button>
+              ) : null}
+              {!reviewedBy && !!preparedBy && userEmail !== preparedBy.email ? (
+                <Button
+                  onClick={onReview}
+                  disabled={reviewLoading}
+                  className="w-[130px] font-helvetica-13 text-white h-7 flex items-center justify-start bg-black">
+                  <UserCheck size={16} strokeWidth={3} />
+                  Review
+                </Button>
+              ) : null}
+            </section>
+            <div className=" pb-2 w-full px-2">
+              <PreparedReviewedBy
+                preparedBy={preparedBy}
+                reviewedBy={reviewedBy}
               />
-              <Separator />
-              <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-320px)] px-2">
-                {!preparedBy ? (
-                  <Button
-                    disabled={prepareLoading}
-                    onClick={onPrepare}
-                    variant="ghost"
-                    className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
-                    <UserCog size={16} strokeWidth={3} />
-                    Prepare
-                  </Button>
-                ) : null}
-                {!reviewedBy &&
-                !!preparedBy &&
-                userEmail !== preparedBy.email ? (
-                  <Button
-                    onClick={onReview}
-                    disabled={reviewLoading}
-                    variant="ghost"
-                    className="w-[130px] font-bold text-white h-7 flex items-center justify-start bg-blue-700">
-                    <UserCheck size={16} strokeWidth={3} />
-                    Review
-                  </Button>
-                ) : null}
-              </section>
-              <div className=" pb-2 w-[calc(100vw-320px)] px-2">
-                <PreparedReviewedBy
-                  preparedBy={preparedBy}
-                  reviewedBy={reviewedBy}
-                />
-              </div>
-            </ScrollArea>
+            </div>
           </main>
         </section>
       )}
@@ -516,8 +517,11 @@ const TemplateWrapper = ({
   };
 
   return (
-    <section className="flex py-3 flex-col gap-2 w-[calc(100vw-320px)] px-2">
-      <Label className="font-hel-heading-bold pl-2">Procedure Details</Label>
+    <section className="flex py-3 flex-col gap-2 w-full px-2">
+      <Label className="font-helvetica-medium pl-2 flex items-center gap-2">
+        <Info size={17} strokeWidth={3} className="mb-[2px]" />
+        Procedure Details
+      </Label>
       <Accordion type="multiple" className=" flex  flex-col gap-1">
         {items.map((item) => (
           <AccordionItem
@@ -528,7 +532,7 @@ const TemplateWrapper = ({
               <AccordionTrigger
                 suppressHydrationWarning
                 icon={item.id === "8" || item.id === "4" ? false : true}
-                className={`px-4 py-4 hover:no-underline h-9 rounded-md font-hel-heading ${
+                className={`px-4 py-4 hover:no-underline h-9 bg-neutral-200 font-helvetica-13 ${
                   item.id === "8" || item.id === "4"
                     ? "bg-transparent cursor-none pointer-events-none h-fit py-2"
                     : "dark:bg-neutral-800 dark:hover:bg-neutral-800"
@@ -538,7 +542,9 @@ const TemplateWrapper = ({
                     <section
                       onClick={(e) => console.log(e)}
                       className="flex flex-col  gap-2">
-                      <Label>Perform Extended Testing?</Label>
+                      <Label className="font-helvetica-13">
+                        Perform Extended Testing?
+                      </Label>
                       <div className="inline-flex items-center gap-2">
                         <div
                           tabIndex={0}
@@ -549,7 +555,7 @@ const TemplateWrapper = ({
                           aria-label="Toggle switch"
                           className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors pointer-events-auto
                           ${
-                            extendedTesting ? "bg-blue-950" : "bg-neutral-500"
+                            extendedTesting ? "bg-blue-800" : "bg-neutral-500"
                           }`}>
                           <div
                             className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform
@@ -560,14 +566,16 @@ const TemplateWrapper = ({
                         </div>
                         <Label
                           htmlFor={id}
-                          className="font-table hover:no-underline font-medium">
+                          className="font-helvetica-13 hover:no-underline">
                           {extendedTesting ? "Yes" : "No"}
                         </Label>
                       </div>
                     </section>
                   ) : item.id === "4" ? (
                     <section className="flex flex-col gap-2 py-2">
-                      <Label className="font-table">Audit Test Type</Label>
+                      <Label className="font-helvetica-13">
+                        Audit Test Type
+                      </Label>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center space-x-2">
                           <div
@@ -584,7 +592,7 @@ const TemplateWrapper = ({
                               }
                             }}
                             className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
-                              control ? "bg-blue-950" : "bg-white"
+                              control ? "bg-blue-800" : "bg-white"
                             }`}>
                             {control && (
                               <svg
@@ -600,7 +608,7 @@ const TemplateWrapper = ({
                           <Label
                             onClick={(e) => e.stopPropagation()}
                             htmlFor="control"
-                            className="pointer-events-auto font-table">
+                            className="pointer-events-auto font-helvetica-13">
                             Control
                           </Label>
                         </div>
@@ -620,7 +628,7 @@ const TemplateWrapper = ({
                               }
                             }}
                             className={`w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center cursor-pointer pointer-events-auto ${
-                              substantive ? "bg-blue-950" : "bg-white"
+                              substantive ? "bg-blue-800" : "bg-white"
                             }`}>
                             {substantive && (
                               <svg
@@ -636,14 +644,17 @@ const TemplateWrapper = ({
                           <Label
                             onClick={(e) => e.stopPropagation()}
                             htmlFor="substansive"
-                            className="pointer-events-auto font-table">
+                            className="pointer-events-auto font-helvetica-13">
                             Substansive
                           </Label>
                         </div>
                       </div>
                     </section>
                   ) : (
-                    <span>{item.title}</span>
+                    <span className="flex items-center gap-2">
+                      <FileText size={16} strokeWidth={2} className="mb-1" />{" "}
+                      {item.title}
+                    </span>
                   )}
                 </span>
               </AccordionTrigger>

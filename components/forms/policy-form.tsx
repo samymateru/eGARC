@@ -161,55 +161,58 @@ export const PolicyForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
+            <Separator className="bg-neutral-600" />
             <main className="px-5 py-3 flex flex-col gap-2">
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="name"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="name" className="font-helvetica-13">
                   Name<span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="name"
                   placeholder="Policy name"
                   {...register("name")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.name} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="version"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="version" className="font-helvetica-13">
                   Version<span className="text-destructive">*</span>
                 </Label>
-                <Input id="version" placeholder="" {...register("version")} />
+                <Input
+                  id="version"
+                  placeholder="Policy version"
+                  {...register("version")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
+                />
                 <FormError error={errors.version} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="key_areas"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="key_areas" className="font-helvetica-13">
                   Key areas <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="key_areas"
                   placeholder="Key areas"
                   {...register("key_areas")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.key_areas} />
               </div>
               {mode === "create" ? (
                 <div className="*:not-first:mt-2">
-                  <Label htmlFor="attachment" className="ml-[2px] font-table">
+                  <Label
+                    htmlFor="attachment"
+                    className="ml-[2px] font-helvetica-13">
                     Attachment
                   </Label>
 
@@ -236,6 +239,7 @@ export const PolicyForm = ({
                             field.onChange(file);
                           }}
                           ref={field.ref}
+                          className="font-helvetica-input-13 placeholder:font-helvetica-13"
                         />
                       </>
                     )}
@@ -245,21 +249,19 @@ export const PolicyForm = ({
               ) : null}
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createPolicyLoading || updatePolicyLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

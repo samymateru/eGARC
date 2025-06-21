@@ -35,24 +35,26 @@ const UserDetail: React.FC<UserDetailProps> = ({
 }) => {
   return (
     <div className="border border-neutral-800 flex flex-col items-start space-x-4 rounded-md shadow-md p-5 w-full md:w-1/2">
-      <div className="text-blue-700 mt-1">
+      <div className="text-black mt-1">
         <Icon size={24} />
       </div>
       <div className="flex-1 flex flex-col mt-2">
-        <Label className="font-hel-heading-bold mb-1">{title}</Label>
+        <Label className="font-helvetica-14 mb-1">{title}</Label>
         <div className="flex items-center font-table mt-1">
-          {name ? <User className="mr-1.5" size={16} strokeWidth={3} /> : null}
-          <Label className="font-table">{name}</Label>
+          {name ? <User className="mr-1.5" size={16} strokeWidth={2} /> : null}
+          <Label className="font-helvetica-13">{name}</Label>
         </div>
         <div className="flex items-center font-table mt-1">
-          {email ? <Mail className="mr-1.5" size={16} strokeWidth={3} /> : null}
-          <Link href={`mailto:${email}`} className="hover:underline">
+          {email ? <Mail className="mr-1.5" size={16} strokeWidth={2} /> : null}
+          <Link
+            href={`mailto:${email}`}
+            className="hover:underline font-helvetica-13">
             {email}
           </Link>
         </div>
-        <Label className="flex items-center font-table mt-1">
+        <Label className="flex items-center font-helvetica-13 mt-1">
           {email ? (
-            <CalendarDays className="mr-1.5" size={16} strokeWidth={3} />
+            <CalendarDays className="mr-1.5" size={16} strokeWidth={2} />
           ) : null}
           {date_issued
             ? new Intl.DateTimeFormat("en-US", {

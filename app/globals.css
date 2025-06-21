@@ -14,7 +14,7 @@ body {
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-  color: #585858;
+  color: #e97c7c;
   content: attr(data-placeholder);
   float: left;
   height: 0;
@@ -22,10 +22,24 @@ body {
   
 }
 
+
+/* 
+.tiptap{
+  border-color: #000000;
+  background-color:#464141;
+  color: white
+} */
+
 .ProseMirror-focused{
-    border: none !important;
-  outline: none !important;
+  border-width: 1px !important;
+  outline-width: 1px !important;
   box-shadow: none !important;
+}
+
+.ProseMirror{
+  border-color: #000000;
+  border-width: 1px;
+  color: #000000;
 }
 
 /* Add this to your global CSS or a specific component style file */
@@ -83,6 +97,34 @@ select:-webkit-autofill {
   .text-balance {
     text-wrap: balance;
   }
+
+  .font-helvetica-select-content-13 {
+    font-family: Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    width: calc(100% - 4px);
+    transition: background-color 0.2s;
+  }
+
+  .font-helvetica-select-content-13:hover {
+    background-color: #60a5fa;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: white;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 4px;
 }
 
 @layer base {

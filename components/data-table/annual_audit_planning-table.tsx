@@ -25,7 +25,7 @@ import {
   CirclePlus,
   Edit,
   Ellipsis,
-  SendHorizonal,
+  Eye,
   Trash2,
 } from "lucide-react";
 
@@ -58,32 +58,51 @@ type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
 
 const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   {
+    id: "reference",
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    accessorKey: "reference",
+    cell: ({ row }) => (
+      <Link
+        href={"#"}
+        replace
+        className="ml-2 font-helvetica-table-13 text-blue-700 cursor-pointer hover:underline w-full text-center">
+        {row?.original?.reference}
+      </Link>
+    ),
+  },
+  {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.name}
+      </Label>
     ),
   },
   {
     id: "year",
-    header: () => <Label className="font-table">Year</Label>,
+    header: () => <Label className="font-helvetica-table-14">Year</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.year}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.year}
+      </Label>
     ),
     accessorKey: "year",
   },
   {
     id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    header: () => <Label className="font-helvetica-table-14">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.status}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.status}
+      </Label>
     ),
     accessorKey: "status",
   },
   {
     id: "start",
-    header: () => <Label className="font-table">Start</Label>,
+    header: () => <Label className="font-helvetica-table-14">Start</Label>,
     accessorKey: "start",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -91,12 +110,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("start")));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
+      return (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {formatted}
+        </Label>
+      );
     },
   },
   {
     id: "end",
-    header: () => <Label className="font-table">End</Label>,
+    header: () => <Label className="font-helvetica-table-14">End</Label>,
     accessorKey: "end",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -104,19 +127,23 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("end")));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
+      return (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {formatted}
+        </Label>
+      );
     },
   },
   {
     id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
+    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
         href={row.getValue("attachment")}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-table">
+        className="text-blue-500 hover:underline font-helvetica-table-13">
         View Attachment
       </a>
     ),
@@ -124,20 +151,22 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">Actions</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        Actions
+      </Label>
     ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+              className="flex justify-center items-center p-1 w-[30px] h-[30px] hover:bg-blue-400 bg-neutral-200 text-black"
               variant="ghost">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
-            <div className="flex flex-col divide-y">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+            <div className="flex flex-col gap-1">
               <Link
                 onClick={() => {
                   saveSearchToLocalStorage({
@@ -150,9 +179,9 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
                   pathname: "/eAuditNext/engagements",
                   query: { id: row.original.id, plan: row.original.name },
                 }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <SendHorizonal size={16} strokeWidth={3} />
-                Engage
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Eye size={16} strokeWidth={2} />
+                View
               </Link>
               <PlanningForm
                 data={{
@@ -167,15 +196,15 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
                 company_module_id={row.original.id}>
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                  <Edit size={16} strokeWidth={3} />
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Edit size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </PlanningForm>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash2 className="text-red-800" size={16} strokeWidth={2} />
                 Delete
               </Button>
             </div>
@@ -195,9 +224,9 @@ interface AnnualAuditPlanningTableProps {
 export default function AnnualAuditPlanningTable({
   data,
 }: AnnualAuditPlanningTableProps) {
+  const params = useSearchParams();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const params = useSearchParams();
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
@@ -256,7 +285,7 @@ export default function AnnualAuditPlanningTable({
 
   return (
     <div className="">
-      <div className="flex justify-between items-center  pb-1 px-2">
+      <div className="flex justify-between items-center  py-3 px-2">
         <section className="flex items-center gap-3">
           <SearchInput
             placeholder="Plan name"
@@ -279,9 +308,7 @@ export default function AnnualAuditPlanningTable({
             title="Audit Plan"
             mode="create"
             company_module_id={params.get("id") ?? undefined}>
-            <Button
-              variant="ghost"
-              className="bg-blue-700 text-white flex items-center gap-2 h-[30px] w-[130px] justify-start font-[helvetica] font-bold tracking-wide scroll-m-0">
+            <Button className="bg-black text-white flex items-center gap-2 h-[30px] w-[130px] justify-start font-helvetica-13">
               <CirclePlus size={16} strokeWidth={3} />
               Plan
             </Button>
@@ -289,18 +316,18 @@ export default function AnnualAuditPlanningTable({
         </section>
       </div>
       <Table
-        className="table-fixed"
+        className="table-fixed mx-auto"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border- border-x border-x-neutral-500 select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y border-y-neutral-500 text-black"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -373,7 +400,7 @@ export default function AnnualAuditPlanningTable({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -382,7 +409,7 @@ export default function AnnualAuditPlanningTable({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -390,7 +417,9 @@ export default function AnnualAuditPlanningTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

@@ -52,19 +52,19 @@ type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   {
     id: "process",
-    header: () => <Label className="font-table">Process</Label>,
+    header: () => <Label className="font-helvetica-table-14">Process</Label>,
     accessorKey: "process",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.process}
       </Label>
     ),
   },
   {
     id: "risk",
-    header: () => <Label className="font-table">Risk</Label>,
+    header: () => <Label className="font-helvetica-table-14">Risk</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.risk}
       </Label>
     ),
@@ -72,9 +72,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "control",
-    header: () => <Label className="font-table">Control</Label>,
+    header: () => <Label className="font-helvetica-table-14">Control</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control}
       </Label>
     ),
@@ -82,9 +82,11 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "control_type",
-    header: () => <Label className="font-table">Control Type</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Control Type</Label>
+    ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control_type}
       </Label>
     ),
@@ -92,9 +94,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "program",
-    header: () => <Label className="font-table">Program</Label>,
+    header: () => <Label className="font-helvetica-table-14">Program</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.program}
       </Label>
     ),
@@ -102,9 +104,9 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "procedure",
-    header: () => <Label className="font-table">Procedure</Label>,
+    header: () => <Label className="font-helvetica-table-14">Procedure</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.procedure}
       </Label>
     ),
@@ -113,24 +115,26 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">More</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        More
+      </Label>
     ),
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+              className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400"
               variant="ghost">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+            <div className="flex flex-col gap-1">
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
+                className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash size={16} strokeWidth={2} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -189,16 +193,16 @@ export const SummaryAuditProgramTable = ({
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500  border-t-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -271,7 +275,7 @@ export const SummaryAuditProgramTable = ({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500 border-b border-b-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -280,7 +284,7 @@ export const SummaryAuditProgramTable = ({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -288,7 +292,9 @@ export const SummaryAuditProgramTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

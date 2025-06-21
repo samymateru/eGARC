@@ -8,6 +8,8 @@ import OrganizationTable from "@/components/data-table/organization-table";
 import { useEffect, useState } from "react";
 import { Loader } from "@/components/shared/loader";
 import { ErrorMessage } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -57,12 +59,20 @@ export default function HomePage() {
   }, [isLoading, isSuccess, isError, error, data]);
 
   return (
-    <section className="w-full h-screen flex flex-col">
-      <h1 className="text-2xl font-bold mb-4 text-center">Organizations</h1>
-      <section className="flex flex-col h-full gap-1 px-2">
-        <p className="text-center text-xs">
-          These are organization that you were added on
-        </p>
+    <section className="w-[100vw] h-[100vh] flex flex-col bg-neutral-50">
+      <section className="py-3 px-3">
+        <section className="flex flex-col gap-2">
+          <Label className="font-serif text-2xl font-bold">
+            Your Organizations
+          </Label>
+          <p className="font-helvetica-13 text-neutral-800 w-1/2 text-balance">
+            Welcome these are organization that some you own and other you were
+            invited on. you can select on of them them start your journey
+          </p>
+        </section>
+      </section>
+      <Separator className="bg-neutral-400 my-2" />
+      <section className="flex flex-col h-full gap-1  flex-1 px-2">
         <div>
           {isLoading ? (
             <Loader title="Organizations" />

@@ -113,10 +113,10 @@ export const ModuleForm = ({
     <FormProvider {...methods}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="p-0 gap-0 max-w-[500px]">
+        <DialogContent className="p-0 gap-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader className="rounded-tl rounded-tr  py-2">
-              <DialogTitle className="font-serif text-[20px] pl-3 tracking-wide scroll-m-0 font-bold text-xl">
+              <DialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </DialogTitle>
               <DialogDescription className="hidden" />
@@ -126,9 +126,7 @@ export const ModuleForm = ({
 
             <section className="py-5 px-5 flex flex-col gap-3">
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="name"
-                  className="font-serif tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="name" className="font-helvetica-table-13">
                   Module name<span className="text-destructive">*</span>
                 </Label>
 
@@ -137,15 +135,18 @@ export const ModuleForm = ({
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
+                      <SelectTrigger className="font-helvetica-13 border border-neutral-600">
+                        <SelectValue
+                          placeholder="Choose module"
+                          className="placeholder:font-helvetica-13"
+                        />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-neutral-200">
                         {moduleName.map((item, index) => (
                           <SelectItem
                             key={index}
                             value={item}
-                            className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                            className="font-helvetica-13 cursor-pointer hover:bg-neutral-400">
                             {item}
                           </SelectItem>
                         ))}

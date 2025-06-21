@@ -50,12 +50,12 @@ export const SummaryProcess = () => {
 
   if (isLoading) {
     <div className="w-full h-full relative">
-      <Loader title="Findings" />
+      <Loader title="Summary of Process" />
     </div>;
   }
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="w-[calc(100vw-332px)]">
       <SummaryAuditProcessTable data={data ?? []} />
     </div>
   );

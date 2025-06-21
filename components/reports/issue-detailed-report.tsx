@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import IssueDetailedTable from "../data-table/issue-detailed-table";
-import { Separator } from "../ui/separator";
 import { useEffect } from "react";
 import { ErrorMessage } from "@/lib/utils";
 import { Loader } from "../shared/loader";
@@ -55,8 +54,7 @@ export const IssueDetailedReport = () => {
   }
 
   return (
-    <section className="w-full">
-      <Separator className="my-2" />
+    <section className="w-[calc(100vw-310px)]">
       <IssueDetailedTable data={data ?? []} />
     </section>
   );

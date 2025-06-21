@@ -34,7 +34,7 @@ export default function SearchInput({
       <div className="relative">
         <Input
           id={id}
-          className="peer ps-9 pe-9 h-[31px] w-[270px]"
+          className="peer ps-9 pe-9 h-[31px] w-[270px] border border-neutral-600 placeholder:font-helvetica-13"
           placeholder={placeholder}
           type="search"
           value={value}
@@ -49,7 +49,7 @@ export default function SearchInput({
               aria-label="Loading..."
             />
           ) : (
-            <SearchIcon size={16} aria-hidden="true" />
+            <SearchIcon size={16} aria-hidden="true" className="text-black" />
           )}
         </div>
       </div>

@@ -31,10 +31,10 @@ const labelMap: Record<string, string> = {
 const allFindings = Object.keys(labelMap);
 
 const findingColors = {
-  Acceptable: "#15803d",
-  ImprovementRequired: "rgb(234, 179, 8)",
-  SignificantImprovementRequired: "#b45309",
-  Unacceptable: "#dc2626",
+  Acceptable: "#22c55e",
+  ImprovementRequired: "#fde047",
+  SignificantImprovementRequired: "#f59e0b",
+  Unacceptable: "#ef4444",
 };
 
 export const EngagementDashboard = () => {
@@ -130,39 +130,39 @@ export const EngagementDashboard = () => {
 
   if (isSuccess) {
     return (
-      <div className="w-full h-[calc(100vh-50px)] overflow-auto flex flex-col gap-2 pt-2">
+      <section className="w-full flex flex-col bg-neutral-200 pt-2">
         <section>
-          <Label className="text-[25px] font-semibold font-[helvetica] tracking-wide scroll-m-0 mx-2">
+          <Label className="text-black font-helvetica-medium pl-2">
             Engagement Dashboard
           </Label>
         </section>
-        <Separator />
-        <section className="flex items-center gap-1">
-          <GradientBarChart
-            color="blue"
-            data={rootCause}
-            title="Root Cause Summary"
-            description="cause"
-          />
-          <Separator orientation="vertical" />
-          <ColoredBarChart
-            colors={findingColors}
-            data={findingRating}
-            title="Audit Findings Rating"
-            description="cause"
-          />
-        </section>
+        <Separator className="bg-neutral-400 mt-1" />
+        <div className="w-full flex flex-col gap-2 pt-2 h-[calc(100vh-148px)] pb-2 overflow-auto ">
+          <section className="flex items-center gap-1 px-2">
+            <GradientBarChart
+              color="#3b82f6"
+              data={rootCause}
+              title="Root Cause Summary"
+              description="Display the review comments status and their corresponding percentage"
+            />
+            <ColoredBarChart
+              colors={findingColors}
+              data={findingRating}
+              title="Audit Findings Rating"
+              description="cause"
+            />
+          </section>
 
-        <section className="flex items-center gap-1 mb-2">
-          <section className="flex-1">
-            <ReviewCommentsStatusPieChart data={reviewComment} />
+          <section className="flex items-center gap-1 px-2">
+            <section className="flex-1">
+              <ReviewCommentsStatusPieChart data={reviewComment} />
+            </section>
+            <section className="flex-1">
+              <ProcedureStatusPieChart data={procedure} />
+            </section>
           </section>
-          <Separator orientation="vertical" />
-          <section className="flex-1">
-            <ProcedureStatusPieChart data={procedure} />
-          </section>
-        </section>
-      </div>
+        </div>
+      </section>
     );
   }
 };

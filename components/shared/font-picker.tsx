@@ -24,14 +24,34 @@ export const FontFamilyPicker = ({ editor }: FontFamilyPickerProps) => {
         onValueChange={(font) =>
           editor.chain().focus().setFontFamily(font).run()
         }>
-        <SelectTrigger id={id} className="min-w-[150px] h-[32px]">
-          <SelectValue placeholder="Select framework" />
+        <SelectTrigger
+          id={id}
+          className="w-[150px] h-[32px] text-editor-action font-helvetica-13">
+          <SelectValue placeholder="Choose font" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Helvetica">Helvetica</SelectItem>
-          <SelectItem value="Inter">Inter</SelectItem>
-          <SelectItem value="Monospace">Monospace</SelectItem>
-          <SelectItem value="Serif">Serif</SelectItem>
+        <SelectContent className="bg-neutral-200 w-[200px]">
+          <section className="flex flex-col gap-1">
+            <SelectItem
+              value="Helvetica"
+              className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
+              Helvetica
+            </SelectItem>
+            <SelectItem
+              value="Inter"
+              className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
+              Inter
+            </SelectItem>
+            <SelectItem
+              value="Monospace"
+              className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
+              Monospace
+            </SelectItem>
+            <SelectItem
+              value="Serif"
+              className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
+              Serif
+            </SelectItem>
+          </section>
         </SelectContent>
       </Select>
     </div>

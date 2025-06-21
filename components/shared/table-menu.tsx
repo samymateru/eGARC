@@ -21,16 +21,13 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="dark:bg-black p-2">
-        <Label className="font-bold text-[20px] font-[helvetica]">
-          Table Actions
-        </Label>
-        <Separator />
+      <PopoverContent className="w-[280px] bg-neutral-200 p-2">
+        <Label className="font-helvetica-14">Table Actions</Label>
+        <Separator className="my-1 bg-neutral-500" />
         <div className="flex flex-col py-2">
           <Button
             type="button"
-            variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() =>
               editor
                 .chain()
@@ -44,7 +41,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().addColumnBefore().run()}
             disabled={!editor.can().addColumnBefore()}>
             Add Column Before
@@ -53,7 +50,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().addColumnAfter().run()}
             disabled={!editor.can().addColumnAfter()}>
             Add Column After
@@ -62,7 +59,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().deleteColumn().run()}
             disabled={!editor.can().deleteColumn()}>
             Delete Column
@@ -71,7 +68,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().addRowBefore().run()}
             disabled={!editor.can().addRowBefore()}>
             Add Row Before
@@ -80,7 +77,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().addRowAfter().run()}
             disabled={!editor.can().addRowAfter()}>
             Add Row After
@@ -89,7 +86,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().deleteRow().run()}
             disabled={!editor.can().deleteRow()}>
             Delete Row
@@ -98,7 +95,7 @@ export const TableMenu = ({ editor, children }: TableMenuProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]"
+            className="font-helvetica-13 flex bg-inherit text-black shadow-none hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
             onClick={() => editor.chain().focus().deleteTable().run()}
             disabled={!editor.can().deleteTable()}>
             Delete Table

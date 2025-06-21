@@ -15,9 +15,7 @@ export const TextColorPicker = ({ editor }: TextColorPickerProps) => {
   };
 
   return (
-    <Button
-      variant="ghost"
-      className="w-[30px] h-[30px] rounded-md relative p-0">
+    <Button className="w-[30px] h-[30px] rounded-md text-editor-action relative p-0">
       <PipetteIcon size={16} />
       {/* Invisible input on top of button */}
       <Input

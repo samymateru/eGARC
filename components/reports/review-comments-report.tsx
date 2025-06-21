@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { Separator } from "../ui/separator";
 import ReviewCommentsReportTable from "../data-table/review-comments-report-table";
 import { useEffect } from "react";
 import { ErrorMessage } from "@/lib/utils";
@@ -48,15 +47,14 @@ export const ReviewCommentReport = () => {
 
   if (isLoading) {
     return (
-      <div className="w-[calc(100vw-300px)] h-[100vh] relative">
+      <div className="w-[calc(100vw-310px)] h-[100vh] relative">
         <Loader title="Issue Reports" />
       </div>
     );
   }
 
   return (
-    <section className="w-full">
-      <Separator className="my-2" />
+    <section className="w-[calc(100vw-310px)]">
       <ReviewCommentsReportTable data={data ?? []} />
     </section>
   );

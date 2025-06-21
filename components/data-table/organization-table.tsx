@@ -50,19 +50,19 @@ type OrganizationValues = z.infer<typeof OrganizationSchema>;
 const columns: ColumnDef<OrganizationValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.name}
       </Label>
     ),
   },
   {
     id: "email",
-    header: () => <Label className="font-table">Email</Label>,
+    header: () => <Label className="font-helvetica-table-14">Email</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.email}
       </Label>
     ),
@@ -70,9 +70,9 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "telephone",
-    header: () => <Label className="font-table">Phone</Label>,
+    header: () => <Label className="font-helvetica-table-14">Phone</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.telephone}
       </Label>
     ),
@@ -80,9 +80,9 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "default",
-    header: () => <Label className="font-table">Default</Label>,
+    header: () => <Label className="font-helvetica-table-14">Default</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.default ? "Yes" : "No"}
       </Label>
     ),
@@ -90,9 +90,9 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "type",
-    header: () => <Label className="font-table">Type</Label>,
+    header: () => <Label className="font-helvetica-table-14">Type</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.type}
       </Label>
     ),
@@ -100,9 +100,9 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "mode",
-    header: () => <Label className="font-table">Mode</Label>,
+    header: () => <Label className="font-helvetica-table-14">Mode</Label>,
     cell: () => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2  truncate font-helvetica-table-13">
         {typeof window === "undefined"
           ? ""
           : localStorage.getItem("user_email") ===
@@ -114,9 +114,9 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    header: () => <Label className="font-helvetica-table-14">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden text-center w-full">
+      <Label className="ml-2  truncate font-helvetica-table-13 text-center w-full">
         {row.original.status}
       </Label>
     ),
@@ -125,19 +125,20 @@ const columns: ColumnDef<OrganizationValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">Actions</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        Actions
+      </Label>
     ),
     cell: ({ row }) => (
       <div className="w-full flex justify-center">
         <ModuleSelect
           id={row.original.id ?? ""}
           organizationTelephone={row.original.telephone}
+          organizationId={row.original.id ?? ""}
           organizationEmail={row.original.email}
           organizationName={row.original.name}
           organizationType={row.original.type}>
-          <Button
-            className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-            variant="ghost">
+          <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
             <Ellipsis />
           </Button>
         </ModuleSelect>
@@ -168,7 +169,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 9,
+    pageSize: 10,
   });
 
   const [tableWidth, setTableWidth] = useState<number | null>(null);
@@ -225,16 +226,18 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
 
   useLayoutEffect(() => {
     if (typeof window !== "undefined" && table?.getCenterTotalSize) {
-      setTableWidth(Math.max(table.getCenterTotalSize(), window.innerWidth));
+      setTableWidth(
+        Math.max(table.getCenterTotalSize(), window.innerWidth - 16)
+      );
     }
   }, [table]);
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between pr-2 pb-1 ">
-        <section className="flex items-center gap-3 pl-2">
+      <div className="flex items-center justify-between my-3">
+        <section className="flex items-center gap-3">
           <SearchInput
-            placeholder="Plan name"
+            placeholder="Search organization..."
             value={searchName}
             onChange={setSearchName}
           />
@@ -258,7 +261,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             id={localStorage.getItem("entity_id") ?? ""}>
             <Button
               variant="ghost"
-              className="bg-blue-950 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[150px] justify-start font-serif tracking-wide scroll-m-0">
+              className="bg-neutral-800 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[150px] justify-start font-serif tracking-wide scroll-m-0">
               <CirclePlus size={16} strokeWidth={3} />
               Organization
             </Button>
@@ -270,14 +273,14 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
         style={{
           width: tableWidth ?? "100%",
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-x border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-x-neutral-500 border-y-neutral-500 text-black"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -350,7 +353,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -359,7 +362,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -367,7 +370,9 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>
@@ -381,7 +386,6 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             <PaginationItem>
               <Button
                 size="icon"
-                variant="outline"
                 className="disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
@@ -405,7 +409,8 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
                 <PaginationItem key={page}>
                   <Button
                     size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
+                    variant="ghost"
+                    className="bg-neutral-200 hover:bg-blue-400"
                     onClick={() => table.setPageIndex(page - 1)}
                     aria-current={isActive ? "page" : undefined}>
                     {page}
@@ -425,7 +430,6 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             <PaginationItem>
               <Button
                 size="icon"
-                variant="outline"
                 className="disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}

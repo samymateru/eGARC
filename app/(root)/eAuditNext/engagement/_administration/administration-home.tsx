@@ -5,6 +5,7 @@ import {
   Briefcase,
   Cog,
   Contact,
+  FileText,
   MonitorUp,
   Save,
   Shield,
@@ -140,12 +141,12 @@ export const Administration = () => {
       defaultValue="profile"
       className="flex-1 flex flex-col"
       onValueChange={handleTabChage}>
-      <TabsList className="flex justify-between  items-center bg-background rounded-none px-2">
+      <TabsList className="flex justify-between  items-center bg-white rounded-none px-2">
         <section className="flex-1 flex items-center gap-1">
           <TabsTrigger
             value="profile"
-            className="flex dark:hover:bg-neutral-900 items-center gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
-            <Briefcase size={16} />
+            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+            <Briefcase size={16} strokeWidth={3} />
             Profile
           </TabsTrigger>
           <div
@@ -153,29 +154,29 @@ export const Administration = () => {
             tabIndex={0}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="rounded-md py-1 relative flex dark:hover:dark:bg-slate-900 items-center gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] h-[29px] px-3 dark:text-neutral-400">
+            className="rounded-md py-1 px-2 relative h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Cog size={16} />
             Contexts
             {isClient && showSubmenu && (
-              <section className="p-2 flex flex-col gap-1 absolute top-[calc(100%+3px)] right-[-30px] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[250px] z-10">
+              <section className="bg-neutral-300 px-2 py-3 flex flex-col gap-1 absolute top-[calc(100%+3px)] right-[-30px] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[250px] z-10">
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="policies"
-                  className="flex dark:hover:bg-neutral-900 items-center gap-2 justify-start dark:bg-neutral-800 w-full font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <Shield size={16} />
                   Policies
                 </TabsTrigger>
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="regulations"
-                  className="flex items-center dark:hover:bg-neutral-900 gap-2 justify-start dark:bg-neutral-800 w-full font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <Book size={16} />
                   Regulations
                 </TabsTrigger>
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="engagement_processes"
-                  className="flex items-center gap-2 dark:hover:bg-neutral-900 justify-start dark:bg-neutral-800 w-full font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <MonitorUp size={16} />
                   Processes
                 </TabsTrigger>
@@ -185,13 +186,13 @@ export const Administration = () => {
 
           <TabsTrigger
             value="business_contacts"
-            className="flex items-center dark:hover:bg-neutral-900 gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Contact size={16} />
             Contacts
           </TabsTrigger>
           <TabsTrigger
             value="staffing"
-            className="flex items-center dark:hover:bg-neutral-900 gap-2 justify-start dark:bg-neutral-800 w-[150px] font-serif tracking-wide scroll-m-1 font-bold text-[14px] data-[state=active]:dark:bg-orange-800">
+            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Users size={16} />
             Staffing
           </TabsTrigger>
@@ -200,8 +201,7 @@ export const Administration = () => {
           {tab === "profile" ? (
             <Button
               onClick={() => templateRef.current?.onSaveProfile()}
-              className="w-[130px] h-[30px] flex items-center justify-start bg-blue-800 text-white"
-              variant="ghost">
+              className="w-[130px] h-[30px] flex items-center justify-start bg-black font-helvetica-13 text-white">
               <Save size={16} strokeWidth={3} />
               Save
             </Button>
@@ -218,9 +218,7 @@ export const Administration = () => {
               title="New Policy"
               id={params.get("id")}
               endpoint="engagements/context/policies">
-              <Button
-                variant="ghost"
-                className="w-[130px] flex items-center justify-start h-[30px] bg-blue-800 text-white">
+              <Button className="w-[130px] flex items-center justify-start h-[30px] bg-black font-helvetica-13 text-white mr-2">
                 <Shield size={16} />
                 Policy
               </Button>
@@ -237,9 +235,7 @@ export const Administration = () => {
               mode="create"
               id={params.get("id")}
               endpoint="engagements/context/regulations">
-              <Button
-                variant="ghost"
-                className="w-[130px] flex items-center justify-start h-[30px] bg-blue-800 text-white">
+              <Button className="w-[130px] flex items-center justify-start h-[30px] bg-black font-helvetica-13 text-white mr-2">
                 <Book size={16} />
                 Regulation
               </Button>
@@ -258,9 +254,7 @@ export const Administration = () => {
               title="Engagement Process"
               id={params.get("id")}
               endpoint="engagements/context/engagement_process">
-              <Button
-                variant="ghost"
-                className="w-[130px] flex items-center justify-start h-[30px] bg-blue-800 text-white">
+              <Button className="w-[130px] flex items-center justify-start h-[30px] bg-black font-helvetica-13 text-white mr-2">
                 <MonitorUp size={16} strokeWidth={3} />
                 Process
               </Button>
@@ -276,9 +270,7 @@ export const Administration = () => {
               title="Staffing"
               id={params.get("id")}
               endpoint="engagements/staff">
-              <Button
-                variant="ghost"
-                className="w-[130px] flex items-center justify-start h-[30px] bg-blue-800 text-white">
+              <Button className="mr-2 w-[130px] flex items-center justify-start h-[30px] bg-black font-helvetica-13 text-white">
                 <Users size={16} />
                 Staffing
               </Button>
@@ -286,10 +278,10 @@ export const Administration = () => {
           ) : null}
         </section>
       </TabsList>
-      <Separator className="my-1" />
+      <Separator className="bg-neutral-500" />
       <TabsContent
         value="profile"
-        className="mt-0 overflow-auto  h-[calc(100vh-98px)]">
+        className="mt-0 overflow-auto  h-[calc(100vh-124px)] pb-[10px] hide-scrollbar">
         <TemplateWrapper ref={templateRef} />
       </TabsContent>
       <TabsContent
@@ -465,7 +457,9 @@ const TemplateWrapper = forwardRef<TemplateWrapperHandle>((_, ref) => {
 
   return (
     <section className="flex flex-1 py-3 flex-col gap-2">
-      <Label className="font-hel-heading-bold pl-2">Engagement Profile</Label>
+      <Label className="font-helvetica-medium pl-2 text-black">
+        Engagement Profile
+      </Label>
       <Accordion type="multiple" className="flex flex-col gap-1">
         {items.map((item) => (
           <AccordionItem
@@ -474,8 +468,9 @@ const TemplateWrapper = forwardRef<TemplateWrapperHandle>((_, ref) => {
             className="flex flex-col border-none w-full overflow-auto px-2">
             <AccordionTrigger
               suppressHydrationWarning
-              className={`px-4 py-4 hover:no-underline h-9 rounded-md font-hel-heading dark:bg-neutral-800 dark:hover:bg-neutral-800`}>
-              <span className="flex items-center gap-3">
+              className="px-4 py-4 h-9 rounded-md leading-6 hover:no-underline w-full font-helvetica-13 bg-neutral-200">
+              <span className="flex items-center gap-3 text-black">
+                <FileText size={17} strokeWidth={2} />
                 <span>{item.title}</span>
               </span>
             </AccordionTrigger>
@@ -522,12 +517,10 @@ const TemplateWrapper = forwardRef<TemplateWrapperHandle>((_, ref) => {
         ))}
       </Accordion>
       <section className="px-2">
-        <Label className="font-semibold text-[14px] font-[helvetica]">
-          Core Risks
-        </Label>
+        <Label className="font-helvetica-14 text-black">Core Risks</Label>
         <ListMultiSelector
-          title="Select Audit Processes"
-          trigger="Select processes"
+          title="Core Risks"
+          trigger="Select core risks"
           processes={
             results[0]?.data
               ?.map((item) => item.risk_category)

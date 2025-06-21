@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   ColumnDef,
@@ -23,6 +23,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  CirclePlus,
   Ellipsis,
   Pencil,
   Trash,
@@ -48,68 +49,86 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { UserSchema } from "@/lib/types";
 import { UsersForm } from "../forms/user-form";
+import SearchInput from "../shared/search-input";
+import MultiStatusFilter from "../shared/multi-status-filter";
+import { useSearchParams } from "next/navigation";
 
 type UsersValues = z.infer<typeof UserSchema>;
 
 const columns: ColumnDef<UsersValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.name}
+      </Label>
     ),
   },
   {
     id: "email",
-    header: () => <Label className="font-table">Email</Label>,
+    header: () => <Label className="font-helvetica-table-14">Email</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.email}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.email}
+      </Label>
     ),
     accessorKey: "email",
   },
   {
     id: "title",
-    header: () => <Label className="font-table">Title</Label>,
+    header: () => <Label className="font-helvetica-table-14">Title</Label>,
     accessorKey: "title",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.title}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.title}
+      </Label>
     ),
   },
   {
     id: "role",
-    header: () => <Label className="font-table">Role</Label>,
+    header: () => <Label className="font-helvetica-table-14">Role</Label>,
     accessorKey: "role",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.role}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.role}
+      </Label>
     ),
   },
   {
     id: "telephone",
-    header: () => <Label className="font-table">Telephone</Label>,
+    header: () => <Label className="font-helvetica-table-14">Telephone</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.telephone}
       </Label>
     ),
     accessorKey: "telephone",
   },
-
+  {
+    id: "type",
+    header: () => <Label className="font-helvetica-table-14">Type</Label>,
+    cell: ({ row }) => (
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.type === "audit" ? "Audit" : "Business"}
+      </Label>
+    ),
+    accessorKey: "type",
+  },
   {
     id: "actions",
-    header: () => <Label className="font-table">More</Label>,
+    header: () => <Label className="font-helvetica-table-14">More</Label>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
+            <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+            <div className="flex flex-col gap-1">
               <UsersForm
                 data={{
                   title: row.original.title,
@@ -127,17 +146,15 @@ const columns: ColumnDef<UsersValues>[] = [
                 }
                 endpoint="users"
                 id={row.original.id ?? null}>
-                <Button
-                  variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                  <Pencil size={16} strokeWidth={3} />
+                <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Pencil size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </UsersForm>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash size={16} strokeWidth={2} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -145,18 +162,31 @@ const columns: ColumnDef<UsersValues>[] = [
         </Popover>
       </div>
     ),
+    maxSize: 70,
+    size: 100,
   },
 ];
 
 interface TeamsTableProps {
   data: UsersValues[];
+  type: "audit" | "business";
 }
 
-export const TeamsTable = ({ data }: TeamsTableProps) => {
+export const TeamsTable = ({ data, type }: TeamsTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>(
     columns.map((column) => column.id as string)
   );
+
+  const params = useSearchParams();
+
+  const [searchName, setSearchName] = useState("");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<UsersValues[]>([]);
+
+  const roleOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item.role))));
+  }, [data]);
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -164,7 +194,7 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
   });
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -181,6 +211,21 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
     enableSortingRemoval: false,
   });
 
+  useEffect(() => {
+    const filtered = data.filter((row) => {
+      const matchesName = row.name
+        .toLowerCase()
+        .includes(searchName.toLowerCase());
+
+      const matchesRoles =
+        selectedStatuses.length === 0 ||
+        selectedStatuses.includes(row.role ?? "");
+
+      return matchesName && matchesRoles;
+    });
+    setTableData(filtered);
+  }, [data, searchName, selectedStatuses]);
+
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage: table.getState().pagination.pageIndex + 1,
     totalPages: table.getPageCount(),
@@ -189,19 +234,52 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
 
   return (
     <div className="w-full">
+      <div className="flex justify-between items-center  py-3 px-2 mt-2">
+        <section className="flex items-center gap-3">
+          <SearchInput
+            placeholder="Search team member"
+            value={searchName}
+            onChange={setSearchName}
+          />
+          <MultiStatusFilter
+            options={roleOptions}
+            value={selectedStatuses}
+            onChange={setSelectedStatuses}
+          />
+        </section>
+        <section className="flex-1 flex items-center justify-end">
+          <UsersForm
+            data={{
+              title: "",
+              name: "",
+              email: "",
+              role: "",
+            }}
+            mode="create"
+            member={type}
+            title={type === "audit" ? "Audit Member" : "Business Member"}
+            endpoint="users"
+            id={params.get("organizationId")}>
+            <Button className="h-8 px-2 flex items-center justify-start bg-black w-[130px] font-helvetica-13">
+              <CirclePlus size={16} strokeWidth={2} />
+              Member
+            </Button>
+          </UsersForm>
+        </section>
+      </div>
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 310),
         }}>
-        <TableHeader>
+        <TableHeader className="border-r border-r-neutral-500 text-black">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -274,14 +352,16 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="border-r border-r-neutral-500 border-b border-b-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -289,7 +369,9 @@ export const TeamsTable = ({ data }: TeamsTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

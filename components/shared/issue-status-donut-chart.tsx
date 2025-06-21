@@ -70,9 +70,9 @@ export function IssueStatusDonutChart({ data }: IssueStatusDonutChartProps) {
   }, [data]);
 
   return (
-    <Card className="flex flex-col flex-1 border-none gap-2">
+    <Card className="flex flex-col flex-1 border-none gap-2 bg-neutral-100">
       <CardHeader className="items-center pb-2">
-        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide">
+        <CardTitle className="font-helvetica-medium">
           Findings Status Details
         </CardTitle>
         <CardDescription />
@@ -91,8 +91,8 @@ export function IssueStatusDonutChart({ data }: IssueStatusDonutChartProps) {
               data={chartData}
               dataKey="value"
               nameKey="state"
-              innerRadius={60}
-              strokeWidth={5}>
+              innerRadius={53}
+              strokeWidth={3}>
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -105,13 +105,13 @@ export function IssueStatusDonutChart({ data }: IssueStatusDonutChartProps) {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold">
+                          className="fill-foreground text-2xl font-[helvetica] font-bold">
                           {totalVisitors.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground">
+                          className="font-helvetica-13">
                           Findings
                         </tspan>
                       </text>
@@ -162,12 +162,12 @@ export function ChartLegendContent({
           <div key={idx} className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center gap-1">
               <span
-                className="inline-block h-2 w-2 rounded-full"
+                className="inline-block h-[10px] w-[10px]"
                 style={{ backgroundColor: entry.color }}
               />
-              <span>{label}</span>
+              <span className="font-helvetica-13">{label}</span>
             </div>
-            <span className="text-muted-foreground text-xs">{percentage}%</span>
+            <span className="font-helvetica-13">{percentage}%</span>
           </div>
         );
       })}

@@ -181,20 +181,20 @@ export const SummaryAuditProgramForm = ({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
         <AlertDialogContent
-          className="p-0 max-w-[500px] dark:bg-black"
+          className="p-0 max-w-[500px] bg-white"
           onClick={(e) => e.stopPropagation()}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
-            <main className="px-5 py-3 flex flex-col gap-2">
+            <Separator className="bg-neutral-600" />
+            <main className="px-5 py-3 flex flex-col gap-3">
               <div className="*:not-first:mt-2">
-                <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label className="font-helvetica-13">
                   Program<span className="text-destructive">*</span>
                 </Label>
                 <Controller
@@ -214,16 +214,19 @@ export const SummaryAuditProgramForm = ({
                         setProgramOpen(open);
                         if (open) setSubProcedureOpen(false);
                       }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                        <SelectValue
+                          placeholder="Select control type"
+                          className="placeholder:font-helvetica-13"
+                        />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-neutral-100">
                         <ScrollArea className="max-h-[300px] h-auto overflow-auto">
                           {data?.map((program) => (
                             <SelectItem
                               key={program.id}
                               value={program.name ?? ""}
-                              className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer">
+                              className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                               {program.name}
                             </SelectItem>
                           ))}
@@ -235,9 +238,7 @@ export const SummaryAuditProgramForm = ({
                 <FormError error={errors.program} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="procedure"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="procedure" className="font-helvetica-13">
                   Procedure<span className="text-destructive">*</span>
                 </Label>
                 <Controller
@@ -252,10 +253,13 @@ export const SummaryAuditProgramForm = ({
                         setSubProcedureOpen(open);
                         if (open) setProgramOpen(false);
                       }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                        <SelectValue
+                          placeholder="Select control type"
+                          className="placeholder:font-helvetica-13"
+                        />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-neutral-100">
                         <ScrollArea className="max-h-[300px] h-auto overflow-auto">
                           {data
                             ?.find((p) => p.id === programId)
@@ -266,7 +270,7 @@ export const SummaryAuditProgramForm = ({
                               <SelectItem
                                 key={index}
                                 value={procedure.procedure_title ?? ""}
-                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer">
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                                 {procedure.procedure_title}
                               </SelectItem>
                             ))}
@@ -283,12 +287,11 @@ export const SummaryAuditProgramForm = ({
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={(e) => {
                   setOpen(false);
                   e.stopPropagation();
                 }}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
@@ -296,8 +299,7 @@ export const SummaryAuditProgramForm = ({
                 onClick={(e) => e.stopPropagation()}
                 disabled={createSummaryAuditProgramLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

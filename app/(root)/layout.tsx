@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/providers/ThemeProvider";
+import BreadcrumbTracker from "@/components/shared/breadcrumb-tracker";
 import "../globals.css";
 import { TanstackProvider } from "@/providers/TanstackProvider";
 import { Toaster } from "sonner";
@@ -16,16 +16,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="w-[100vw] h-[100vh] bg-white dark:bg-background">
         <TanstackProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange>
-            <main className="flex w-[100vw] h-[100vh]">{children}</main>
-          </ThemeProvider>
+          <main className="flex w-[100vw] h-[100vh]">{children}</main>
         </TanstackProvider>
         <Toaster />
+        <BreadcrumbTracker />
       </body>
     </html>
   );
 }
+
+// <ThemeProvider
+//   attribute="class"
+//   defaultTheme="light"
+//   enableSystem
+//   disableTransitionOnChange>
+//   <main className="flex w-[100vw] h-[100vh]">{children}</main>
+// </ThemeProvider>

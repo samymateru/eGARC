@@ -7,28 +7,24 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EngagementSchema } from "@/lib/types";
 import EngagementTable from "@/components/data-table/engagement-table";
-import { EngagementNavbar } from "@/components/top-navbars/engagement-navbar";
-import { EngagementForm } from "@/components/forms/engagement-form";
-import { Button } from "@/components/ui/button";
-import { CirclePlus } from "lucide-react";
 import { AnnuaPlanDashboard } from "@/components/dashboards/annual-plan-dashboard";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { ErrorMessage } from "@/lib/utils";
 import { Loader } from "@/components/shared/loader";
 import { ErrorQuery } from "@/components/shared/error-query";
+import { EauditNavbar } from "@/components/top-navbars/eaudit-navbar";
+import { BreadCrumbNavbar } from "@/components/shared/breadcrum-nav";
+import { Separator } from "@/components/ui/separator";
 
 type EngagementsValues = z.infer<typeof EngagementSchema>;
 
 export default function EngagementPage() {
-  const searchParams = useSearchParams();
   const [engagements, setEngagements] = useState<EngagementsValues[]>([]);
   const params = useSearchParams();
   const { data, isLoading, isSuccess, isError, error } = useQuery({
-    queryKey: ["_engagements_", searchParams.get("id")],
+    queryKey: ["_engagements_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
-        `${BASE_URL}/engagements/${searchParams.get("id")}`,
+        `${BASE_URL}/engagements/${params.get("id")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +42,7 @@ export default function EngagementPage() {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
-    enabled: !!searchParams.get("id"),
+    enabled: !!params.get("id"),
   });
 
   useEffect(() => {
@@ -84,47 +80,15 @@ export default function EngagementPage() {
   if (isSuccess && data) {
     return (
       <Tabs
-        className="w-full dark:bg-background flex flex-col gap-[6px]"
+        className="w-[100vw] h-[100vh] flex flex-col gap-[6px]"
         defaultValue="engagements">
-        <TabsList className="w-full rounded-none flex gap-1 justify-start py-5 pl-1 bg-background">
-          <section className="flex items-center justify-between w-full">
-            <section className="flex-1">
-              <Label className="text-white font-bold text-[25px] pl-2">
-                {params.get("plan")}
-              </Label>
-            </section>
-            <section className="flex items-center gap-2 justify-end">
-              <EngagementForm
-                endpoint="engagements"
-                title="Engagement"
-                mode="create"
-                data={{
-                  name: "",
-                  type: "",
-                  leads: [],
-                  department: {
-                    name: "",
-                    code: "",
-                  },
-                  sub_departments: [],
-                  risk: {
-                    name: "",
-                    magnitude: 0,
-                  },
-                }}
-                id={searchParams.get("id") ?? undefined}>
-                <Button
-                  variant="ghost"
-                  className="bg-blue-700 font-[helvetica] font-bold text-white flex items-center gap-2 h-[28px] w-fit justify-start">
-                  <CirclePlus size={16} strokeWidth={3} />
-                  Engagement
-                </Button>
-              </EngagementForm>
-              <EngagementNavbar />
-            </section>
+        <TabsList className="w-ful h-fit bg-white rounded-none flex flex-col gap-4 my-1">
+          <EauditNavbar />
+          <section className="self-start pl-4">
+            <BreadCrumbNavbar />
           </section>
         </TabsList>
-        <Separator className="my-1" />
+        <Separator className="my-1 bg-neutral-800" />
         <TabsContent
           value="engagements"
           className="w-[100vw] px-2 flex flex-col gap-2 flex-1 mt-0">

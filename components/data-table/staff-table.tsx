@@ -54,31 +54,29 @@ type StaffValues = z.infer<typeof StaffSchema>;
 const columns: ColumnDef<StaffValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.name}
       </Label>
     ),
-    size: 250,
   },
   {
     id: "email",
-    header: () => <Label className="font-table">Email</Label>,
+    header: () => <Label className="font-helvetica-table-14">Email</Label>,
     accessorKey: "email",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.email}
       </Label>
     ),
-    size: 200,
   },
   {
     id: "role",
-    header: () => <Label className="font-table">Role</Label>,
+    header: () => <Label className="font-helvetica-table-14">Role</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.role}
       </Label>
     ),
@@ -86,20 +84,24 @@ const columns: ColumnDef<StaffValues>[] = [
   },
   {
     id: "start_date",
-    header: () => <Label className="font-table">Start</Label>,
+    header: () => <Label className="font-helvetica-table-14">Start</Label>,
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
       }).format(new Date(row?.original?.start_date));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
+      return (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {formatted}
+        </Label>
+      );
     },
     accessorKey: "start_date",
   },
   {
     id: "end_date",
-    header: () => <Label className="font-table">End</Label>,
+    header: () => <Label className="font-helvetica-table-14">End</Label>,
     accessorKey: "end_date",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -107,26 +109,30 @@ const columns: ColumnDef<StaffValues>[] = [
         month: "long",
         day: "numeric",
       }).format(new Date(row.getValue("end_date")));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
+      return (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {formatted}
+        </Label>
+      );
     },
   },
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">Actions</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        Actions
+      </Label>
     ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
+            <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black pop-bg">
-            <div className="flex flex-col divide-y">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+            <div className="flex flex-col gap-1">
               <StaffForm
                 defaultValue={{
                   name: "sam",
@@ -140,15 +146,15 @@ const columns: ColumnDef<StaffValues>[] = [
                 endpoint="engagements/context/staff">
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                  <Edit size={16} strokeWidth={3} />
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Edit size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </StaffForm>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash2 className="text-red-800" size={16} strokeWidth={2} />
                 Delete
               </Button>
             </div>
@@ -206,9 +212,9 @@ export default function StaffTable({ data }: StaffTableProps) {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-800 text-black">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
@@ -297,7 +303,7 @@ export default function StaffTable({ data }: StaffTableProps) {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-800 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -305,7 +311,9 @@ export default function StaffTable({ data }: StaffTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

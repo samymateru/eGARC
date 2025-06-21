@@ -92,6 +92,7 @@ export const UsersForm = ({
   mode,
 }: UsersProps) => {
   const [open, setOpen] = useState(false);
+  const [openSelect, setOpenSelect] = useState<"title" | "role" | null>(null);
 
   const methods = useForm<UsersValues>({
     resolver: zodResolver(UserSchema),
@@ -207,94 +208,93 @@ export const UsersForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
+            <Separator className="bg-neutral-600" />
             <main className="px-5 py-3 flex flex-col gap-2">
               {mode === "create" ? (
                 <>
                   <div className="*:not-first:mt-2">
-                    <Label
-                      htmlFor="name"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                    <Label htmlFor="name" className="font-helvetica-13">
                       Name <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="name"
                       placeholder="Team member name"
                       {...register("name")}
+                      className="font-helvetica-input-13 placeholder:font-helvetica-13"
                     />
                     <FormError error={errors.name} />
                   </div>
                   <div className="*:not-first:mt-2">
-                    <Label
-                      htmlFor="email"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                    <Label htmlFor="email" className="font-helvetica-13">
                       Email <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="email"
                       placeholder="Team member email"
                       {...register("email")}
+                      className="font-helvetica-input-13 placeholder:font-helvetica-13"
                     />
                     <FormError error={errors.email} />
                   </div>
                   <div className="*:not-first:mt-2">
-                    <Label
-                      htmlFor="telephone"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
+                    <Label htmlFor="telephone" className="font-helvetica-13">
                       Telephone <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="telephone"
                       placeholder="+255 787306314"
                       {...register("telephone")}
+                      className="font-helvetica-input-13 placeholder:font-helvetica-13"
                     />
                     <FormError error={errors.telephone} />
                   </div>
                 </>
               ) : null}
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="title"
-                  className="font-serif tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="title" className="font-helvetica-13">
                   Title <span className="text-destructive">*</span>
                 </Label>
                 <Controller
                   name="title"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
+                    <Select
+                      open={openSelect === "title"}
+                      onOpenChange={(isOpen) =>
+                        setOpenSelect(isOpen ? "title" : null)
+                      }
+                      onValueChange={field.onChange}
+                      value={field.value}>
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
                         <SelectValue placeholder="Select Member Title" />
                       </SelectTrigger>
-                      <SelectContent className="">
-                        <div className="h-[300px] overflow-auto">
-                          {member === "audit"
-                            ? titles.map((item, index) => (
-                                <SelectItem
-                                  key={index}
-                                  value={item}
-                                  className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
-                                  {item}
-                                </SelectItem>
-                              ))
-                            : business.map((item, index) => (
-                                <SelectItem
-                                  key={index}
-                                  value={item}
-                                  className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
-                                  {item}
-                                </SelectItem>
-                              ))}
-                        </div>
+                      <SelectContent className="bg-neutral-200">
+                        {member === "audit"
+                          ? titles.map((item, index) => (
+                              <SelectItem
+                                key={index}
+                                value={item}
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                                {item}
+                              </SelectItem>
+                            ))
+                          : business.map((item, index) => (
+                              <SelectItem
+                                key={index}
+                                value={item}
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                                {item}
+                              </SelectItem>
+                            ))}
                       </SelectContent>
                     </Select>
                   )}
@@ -302,26 +302,30 @@ export const UsersForm = ({
                 <FormError error={errors.title} />
               </div>
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="role"
-                  className="font-serif tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="role" className="font-helvetica-13">
                   Role <span className="text-destructive">*</span>
                 </Label>
                 <Controller
                   name="role"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
+                    <Select
+                      open={openSelect === "role"}
+                      onOpenChange={(isOpen) =>
+                        setOpenSelect(isOpen ? "role" : null)
+                      }
+                      onValueChange={field.onChange}
+                      value={field.value}>
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
                         <SelectValue placeholder="Select Member Role" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-neutral-200 z-50 pointer-events-auto">
                         {member === "audit"
                           ? auditRoles.map((item, index) => (
                               <SelectItem
                                 key={index}
                                 value={item}
-                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                                 {item}
                               </SelectItem>
                             ))
@@ -329,7 +333,7 @@ export const UsersForm = ({
                               <SelectItem
                                 key={index}
                                 value={item}
-                                className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
                                 {item}
                               </SelectItem>
                             ))}
@@ -345,17 +349,15 @@ export const UsersForm = ({
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createUserLoading || updateUserLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

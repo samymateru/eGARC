@@ -84,3 +84,53 @@ export const ErrorMessage = (error: unknown) => {
       showToast("Service Down", "error");
     }
 }
+
+export const pushBreadcrumb = (label: string, href: string) => {
+  if (typeof window === 'undefined') return;
+
+  let existing: { label: string; href: string }[] = JSON.parse(
+    localStorage.getItem('breadcrumbs') || '[]'
+  );
+
+  // ✅ Prevent adding duplicate label+href
+  const alreadyExists = existing.some(
+    (b) => b.label === label && b.href === href
+  );
+  if (alreadyExists) return;
+
+  existing = existing.filter((b) => b.label !== label); // optional if you want to remove same-label entries
+  existing.push({ label, href });
+
+  localStorage.setItem('breadcrumbs', JSON.stringify(existing));
+  window.dispatchEvent(new Event('breadcrumbChange'))
+};
+
+
+export const removeBreadcrumbByLabel = (label: string) => {
+  if (typeof window === 'undefined') return;
+
+  const existing: {label?: string, href?: string}[] = JSON.parse(localStorage.getItem('breadcrumbs') || '[]');
+
+  const filtered = existing.filter((b) => b.label !== label);
+
+  localStorage.setItem('breadcrumbs', JSON.stringify(filtered));
+  window.dispatchEvent(new Event('breadcrumbChange'));
+};
+
+export const removeLastBreadcrumb = () => {
+  if (typeof window === 'undefined') return;
+
+  const breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs') || '[]');
+  breadcrumbs.pop(); // Remove the last one
+  localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
+
+  // Notify breadcrumb UI to update
+  window.dispatchEvent(new Event('breadcrumbChange'));
+};
+
+export function capitalizeWords(input: string): string {
+  return input
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}

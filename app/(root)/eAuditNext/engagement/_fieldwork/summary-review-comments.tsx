@@ -54,7 +54,7 @@ export const SummaryReviewComments = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="w-[calc(100vw-332px)]">
       <ReviewCommentsTable data={data ?? []} />
     </div>
   );

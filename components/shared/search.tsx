@@ -85,8 +85,7 @@ export default function SearchBar({ className }: SearchBarProps) {
           className={cn(
             "w-full justify-between h-[30px] px-3 border border-neutral-800",
             className
-          )}
-          variant="ghost">
+          )}>
           <span className="flex items-center gap-1">
             <Search size={6} strokeWidth={3} />
             Search...

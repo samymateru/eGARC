@@ -1,14 +1,42 @@
 {
-  "editor.formatOnPaste": true,
+  // Formatting behavior
   "editor.formatOnSave": true,
-  "editor.formatOnType": true,
-  "diffEditor.experimental.showMoves": true,
+  "editor.formatOnPaste": false, // ✅ Often not needed, can cause double-formatting
+  "editor.formatOnType": false, // ✅ Disable to prevent lag when typing
   "editor.formatOnSaveMode": "file",
+
+  // Git performance
   "git.autorefresh": false,
   "git.enabled": true,
+
+  // Exclude unnecessary folders from file watching (boosts speed)
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/dist/**": true,
     "**/.next/**": true
-  }
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true
+  },
+
+  // TypeScript/JS performance
+  "typescript.tsserver.log": "off",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "typescript.tsserver.maxTsServerMemory": 4096, // If you have 8GB+ RAM
+
+  // ESLint + Prettier (if using)
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+
+  // Disable automatic type acquisition for JS (optional)
+  "typescript.disableAutomaticTypeAcquisition": true
 }

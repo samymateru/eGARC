@@ -1,6 +1,7 @@
-import { PreferencesNavbar } from "@/components/top-navbars/preferences-navbar";
 import "@/app/globals.css";
 import { Separator } from "@/components/ui/separator";
+import { EauditNavbar } from "@/components/top-navbars/eaudit-navbar";
+import { BreadCrumbNavbar } from "@/components/shared/breadcrum-nav";
 
 export const metadata = {
   title: "eGARC Client",
@@ -14,10 +15,17 @@ export default function PreferencesLayout({
 }) {
   return (
     <section className="flex flex-col w-[100vw] h-[100vh]">
-      <header className="py-2 pl-1">
-        <PreferencesNavbar />
-        <Separator />
+      <header className="py-2">
+        <section className="flex flex-col gap-3">
+          <div>
+            <EauditNavbar />
+          </div>
+          <div className="pl-5 pr-3">
+            <BreadCrumbNavbar />
+          </div>
+        </section>
       </header>
+      <Separator className="bg-neutral-500 mt-2" />
       <main className="flex-1 flex h-full">
         <section className="flex-1 flex">{children}</section>
       </main>

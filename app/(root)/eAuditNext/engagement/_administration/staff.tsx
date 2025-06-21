@@ -62,8 +62,8 @@ export const Staff = () => {
     );
   }
   return (
-    <div className="w-[calc(100vw-320px)] flex flex-col gap-2">
-      <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[18px] pl-2 pt-1">
+    <div className="w-[calc(100vw-330px)] flex flex-col gap-2">
+      <Label className="font-helvetica-large text-black pl-2 py-2">
         Engagement Staffs
       </Label>
       <StaffTable data={data ?? []} />

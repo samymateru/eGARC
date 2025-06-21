@@ -6,15 +6,16 @@ import {
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { NotificationCenter } from "@/app/(root)/_notifications/notification-center";
 import {
   Activity,
   Bell,
-  Moon,
+  CircleCheck,
+  Flag,
+  LogOut,
   Package,
   Settings,
-  Sun,
+  Shield,
   TriangleAlert,
   X,
 } from "lucide-react";
@@ -33,14 +34,10 @@ type ModuleResponse = {
 };
 
 export const SystemOptions = ({ children }: SystemOptionsProps) => {
-  const [showSubmenu, setShowSubmenu] = useState(false);
   const [showModules, setShowModules] = useState(false);
-  const leaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const enterTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const moduleLeaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const moduleEnterTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { setTheme } = useTheme();
   const router = useRouter();
   const [orgId, setOrgId] = useState<string | null>(null);
 
@@ -75,20 +72,6 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
     enabled: !!orgId,
   });
 
-  const handleMouseEnter = () => {
-    if (leaveTimeout.current) clearTimeout(leaveTimeout.current);
-    enterTimeout.current = setTimeout(() => {
-      setShowSubmenu(true);
-    }, 200);
-  };
-
-  const handleMouseLeave = () => {
-    if (enterTimeout.current) clearTimeout(enterTimeout.current);
-    leaveTimeout.current = setTimeout(() => {
-      setShowSubmenu(false);
-    }, 200);
-  };
-
   const handleModuleMouseEnter = () => {
     if (moduleLeaveTimeout.current) clearTimeout(moduleLeaveTimeout.current);
     moduleEnterTimeout.current = setTimeout(() => {
@@ -105,22 +88,20 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="px-2 py-1 border-none min-w-[280px]">
-        <ul className="text-sm divide-y flex flex-col gap-[1px]">
+      <PopoverContent className="px-2 py-1 border-none min-w-[280px] bg-neutral-200">
+        <ul className="text-sm flex flex-col gap-[1px]">
           <Button
             onMouseEnter={handleModuleMouseEnter}
             onMouseLeave={handleModuleMouseLeave}
-            variant="ghost"
-            className="bg-black relative hover:bg-neutral-800 hover:text-neutral-200 text-neutral-200 h-8 px-3 py-1 w-full font-table flex items-center justify-start gap-1">
-            <Package size={16} strokeWidth={3} />
+            className="relative px-3 shadow-none text-black bg-neutral-200 py-1 h-8 w-full  font-helvetica-13 hover:bg-blue-400 flex justify-start gap-1">
+            <Package size={16} strokeWidth={2} />
             Modules
             {showModules && (
-              <section
-                className={`p-1 absolute top-[-30px] left-[calc(100%+12px)] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
+              <section className="px-2 py-2 absolute top-[-30px] left-[calc(100%+12px)] mr-1 rounded-md border w-[290px] z-10 bg-neutral-200">
                 {data?.map((module) => (
                   <Link
                     onClick={() => setShowModules(false)}
-                    className="font-[helvetica] text-[15px] font-medium tracking-wide w-full dark:hover:bg-neutral-800 h-8 rounded-md pl-2 flex items-center gap-2"
+                    className="font-helvetica-13 w-full h-8 rounded-md pl-2 flex items-center gap-2 hover:bg-blue-400"
                     key={module.id}
                     href={{
                       pathname: `/${module.name}`,
@@ -130,7 +111,15 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
                       <Activity size={16} />
                     ) : module.name === "eRisk" ? (
                       <TriangleAlert size={16} />
-                    ) : null}
+                    ) : module.name === "eFraud" ? (
+                      <Shield size={16} />
+                    ) : module.name === "eGovernance" ? (
+                      <Flag size={16} />
+                    ) : module.name === "eCompliance" ? (
+                      <CircleCheck size={16} />
+                    ) : (
+                      <Package size={16} />
+                    )}
 
                     {module.name}
                   </Link>
@@ -148,66 +137,30 @@ export const SystemOptions = ({ children }: SystemOptionsProps) => {
               )
             }
             variant="ghost"
-            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1">
-            <Settings size={16} strokeWidth={3} />
+            className="px-3 py-1 h-8 w-full  font-helvetica-13 hover:bg-blue-400 flex justify-start gap-1">
+            <Settings size={16} strokeWidth={2} />
             Preferences
           </Button>
           <NotificationCenter>
             <Button
               variant="ghost"
-              className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1">
-              <Bell size={16} strokeWidth={3} />
+              className="px-3 py-1 h-8 w-full  font-helvetica-13 hover:bg-blue-400 flex justify-start gap-1">
+              <Bell size={16} strokeWidth={2} />
               Notification
             </Button>
           </NotificationCenter>
-          <li
-            className="cursor-pointer hover:bg-white rounded-md relative p-2 flex justify-start gap-1 dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full dark:bg-black dark:text-neutral-300 font-hel-heading"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}>
-            <Moon size={16} strokeWidth={3} />
-            Theme
-            {showSubmenu && (
-              <section
-                className={`p-1 absolute top-[-35px] left-[calc(100%+12px)] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[200px] z-10 pop-bg`}>
-                <Button
-                  variant="ghost"
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
-                  onClick={() => {
-                    setShowSubmenu(false);
-                    setTheme("light");
-                  }}>
-                  <Sun size={16} strokeWidth={3} />
-                  Light
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
-                  onClick={() => {
-                    setShowSubmenu(false);
-                    setTheme("dark");
-                  }}>
-                  <Moon size={16} strokeWidth={3} />
-                  Dark
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
-                  onClick={() => {
-                    setShowSubmenu(false);
-                    setTheme("system");
-                  }}>
-                  <Settings size={16} strokeWidth={3} />
-                  System
-                </Button>
-              </section>
-            )}
-          </li>
           <Button
             variant="ghost"
-            className="dark:hover:bg-neutral-800 px-3 py-1 h-8 w-full  dark:bg-black dark:text-neutral-300 font-hel-heading flex justify-start gap-1"
+            className="px-3 py-1 h-8 w-full  font-helvetica-13 hover:bg-blue-400 flex justify-start gap-1"
             onClick={() => router.push("/")}>
-            <X size={16} strokeWidth={3} />
+            <X size={16} strokeWidth={2} />
             Quit
+          </Button>
+          <Button
+            variant="ghost"
+            className="px-3 py-1 h-8 w-full  font-helvetica-13 hover:bg-blue-400 flex justify-start gap-1">
+            <LogOut size={16} strokeWidth={2} />
+            Logout
           </Button>
         </ul>
       </PopoverContent>

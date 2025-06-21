@@ -1,14 +1,12 @@
 "use client";
 import { TeamsTable } from "@/components/data-table/teams-table";
-import { UsersForm } from "@/components/forms/user-form";
-import { Button } from "@/components/ui/button";
+
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
-  CirclePlus,
   LoaderCircle,
   Settings,
   Shield,
@@ -41,20 +39,21 @@ export default function PreferencesPage() {
 
   return (
     <Tabs defaultValue="account" className="flex-1 flex h-full">
-      <TabsList className="bg-neutral-300 flex flex-col gap-[3px] justify-start min-w-[300px] pb-2 h-[100vh] rounded-none">
-        <Label className="flex items-center gap-1 text-xl text-black font-bold tracking-tight scroll-m-0 self-start pt-1 pb-2">
-          <Settings size={20} />
+      <TabsList className="bg-white flex flex-col gap-[3px] justify-start min-w-[300px] pb-2 h-[100vh] rounded-none">
+        <Label className="pl-1 flex items-center gap-1 font-helvetica-medium self-start pt-1 pb-2 text-black">
+          <Settings size={16} strokeWidth={2} className="mb-[2px]" />
           Preferences
         </Label>
+        <Separator className="bg-neutral-500" />
         <TabsTrigger
-          value="account "
-          className="h-[30px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
-          <User size={16} strokeWidth={3} />
+          value="account"
+          className="mt-1 h-8 action text-white data-[state=active]:text-white data-[state=active]:border-l-[6px] data-[state=active]:border-l-blue-800 w-full flex justify-start gap-2 items-center font-helvetica-13">
+          <User size={16} strokeWidth={2} className="mb-1" />
           Account
         </TabsTrigger>
         <TabsTrigger
           value="teams"
-          className="h-[30px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica]  rounded-none tracking-wide scroll-m-0 font-semibold">
+          className="h-8 action text-white data-[state=active]:text-white data-[state=active]:border-l-[6px] data-[state=active]:border-l-blue-800 w-full flex justify-start gap-2 items-center font-helvetica-13">
           {teamStatus.isLoading ? (
             <LoaderCircle size={16} strokeWidth={3} className="animate-spin" />
           ) : teamStatus.isError ? (
@@ -66,12 +65,12 @@ export default function PreferencesPage() {
         </TabsTrigger>
         <TabsTrigger
           value="roles"
-          className="h-[30px] text-black data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-900 w-full flex justify-start gap-2 items-center font-[helvetica] rounded-none tracking-wide scroll-m-0 font-semibold">
+          className="h-8 action text-white data-[state=active]:text-white data-[state=active]:border-l-[6px] data-[state=active]:border-l-blue-800 w-full flex justify-start gap-2 items-center font-helvetica-13">
           <Shield size={16} strokeWidth={3} />
           Roles
         </TabsTrigger>
       </TabsList>
-      <Separator orientation="vertical" className="" />
+      <Separator orientation="vertical" className="bg-neutral-500 h-full" />
       <TabsContent value="account" className="mt-0 flex-1 flex">
         Account
       </TabsContent>
@@ -150,9 +149,10 @@ const Teams = ({ onStatusChange }: TeamsProps) => {
       className="flex-1 flex flex-col h-full"
       value={tab}
       onValueChange={(tab) => setTab(tab)}>
-      <TabsList className="flex justify-between items-center gap-2 w-full dark:bg-background rounded-none">
+      <TabsList className="flex justify-between items-center gap-2 w-full bg-white rounded-none">
         <section>
-          <Label className="text-[16px] font-[helvetica] font-bold">
+          <Label className="font-helvetica-medium text-black flex items-center gap-2">
+            <User size={16} strokeWidth={2} className="mb-1" />
             {tab === "audit" ? "Audit Members" : "Business Members"}
           </Label>
         </section>
@@ -160,46 +160,25 @@ const Teams = ({ onStatusChange }: TeamsProps) => {
           <section className="flex items-center gap-2">
             <TabsTrigger
               value="audit"
-              className="h-[30px] data-[state=active]:border-l-[5px] rounded-none data-[state=active]:border-l-blue-900 dark:hover:bg-neutral-800 w-[130px] flex justify-start gap-2 items-center font-[helvetica] tracking-wide scroll-m-0">
+              className="h-[30px] action data-[state=active]:text-white text-white data-[state=active]:border-l-[6px] rounded-none data-[state=active]:border-l-blue-800  w-[130px] flex justify-start gap-2 items-center font-helvetica-13">
               <User size={16} strokeWidth={3} />
               Audit
             </TabsTrigger>
             <TabsTrigger
               value="business"
-              className="h-[30px] data-[state=active]:border-l-[5px] rounded-none data-[state=active]:border-l-blue-900 dark:hover:bg-neutral-800 w-[130px] flex justify-start gap-2 items-center font-[helvetica] tracking-wide scroll-m-0">
+              className="h-[30px] action data-[state=active]:text-white text-white data-[state=active]:border-l-[6px] rounded-none data-[state=active]:border-l-blue-800 w-[130px] flex justify-start gap-2 items-center font-helvetica-13">
               <User size={16} strokeWidth={3} />
               Business
             </TabsTrigger>
           </section>
-          <section className="border-l border-l-neutral-700 pl-2">
-            <UsersForm
-              data={{
-                title: "",
-                name: "",
-                email: "",
-                role: "",
-              }}
-              mode="create"
-              member={tab}
-              title={tab === "audit" ? "Audit Member" : "Business Member"}
-              endpoint="users"
-              id={params.get("organizationId")}>
-              <Button
-                variant="ghost"
-                className="h-8 w-fit px-2 flex items-center justify-start">
-                <CirclePlus size={16} className="opacity-80" />
-                Member
-              </Button>
-            </UsersForm>
-          </section>
         </section>
       </TabsList>
-      <Separator />
-      <TabsContent value="business" className="mt-0  w-[calc(100vw-300px)]">
-        <TeamsTable data={businessUsers ?? []} />
+      <Separator className="bg-neutral-500" />
+      <TabsContent value="business" className="mt-0  w-[calc(100vw-310px)]">
+        <TeamsTable data={businessUsers ?? []} type="business" />
       </TabsContent>
-      <TabsContent value="audit" className="mt-0 w-[calc(100vw-300px)]">
-        <TeamsTable data={auditUsers ?? []} />
+      <TabsContent value="audit" className="mt-0 w-[calc(100vw-310px)]">
+        <TeamsTable data={auditUsers ?? []} type="audit" />
       </TabsContent>
     </Tabs>
   );

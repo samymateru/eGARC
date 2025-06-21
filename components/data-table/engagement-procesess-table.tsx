@@ -53,19 +53,23 @@ type EngagementProcessesValues = z.infer<typeof EngagementProcessSchema>;
 const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "process",
-    header: () => <Label className="font-table truncate">Process</Label>,
+    header: () => (
+      <Label className="ml-2 font-helvetica-table-14">Process</Label>
+    ),
     accessorKey: "process",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.process}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.process}
+      </Label>
     ),
   },
   {
     id: "sub_process",
     header: () => (
-      <Label className="font-table flex truncate">Sub Process</Label>
+      <Label className="ml-2 font-helvetica-table-14">Sub Process</Label>
     ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.sub_process[0]}
       </Label>
     ),
@@ -74,10 +78,10 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "description",
     header: () => (
-      <Label className="ml-2 font-table truncate">Description</Label>
+      <Label className="ml-2 font-helvetica-table-14">Description</Label>
     ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.description}
       </Label>
     ),
@@ -85,10 +89,12 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   },
   {
     id: "business_unit",
-    header: () => <Label className="font-table">Business Unit</Label>,
+    header: () => (
+      <Label className="ml-2 font-helvetica-table-14">Business Unit</Label>
+    ),
     accessorKey: "business_unit",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.business_unit}
       </Label>
     ),
@@ -96,21 +102,17 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
 
   {
     id: "actions",
-    header: () => (
-      <Label className="font-table flex justify-center">More</Label>
-    ),
+    header: () => <Label className="ml-2 font-helvetica-table-14">More</Label>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
+            <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+            <div className="flex flex-col gap-1">
               <EngagementProcessForm
                 data={{
                   process: row.original.process,
@@ -124,16 +126,16 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
                 endpoint="engagements/context/engagement_process">
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                  <Pencil size={16} strokeWidth={3} />
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Pencil size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </EngagementProcessForm>
 
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-serif tracking-wide scroll-m-0">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash size={16} strokeWidth={2} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -192,16 +194,16 @@ export const EngagementProcessesTable = ({
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500 text-black">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -283,7 +285,7 @@ export const EngagementProcessesTable = ({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -291,7 +293,9 @@ export const EngagementProcessesTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

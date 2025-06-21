@@ -59,74 +59,77 @@ export const Attachments = () => {
   if (!isLoading && isSuccess && data) {
     return (
       <section className="flex flex-col gap-5">
-        <Separator className="mt-2" />
+        <Separator className="mt-2 bg-neutral-400" />
         {data
           ?.filter((letter) => letter.type === "scoped")
           .map((letter, index: number) => {
             const { type, name, size, extension } = letter;
             if (letter.type !== "") {
               return (
-                <section key={index} className="flex flex-col gap-1">
+                <section key={index} className="flex flex-col gap-2">
                   <section className="flex items-center justify-between px-2">
-                    <Label className="font-[helvetica] font-bold scroll-m-1 tracking-normal">
+                    <Label className="font-helvetica-13">
                       {letter.type === "final"
                         ? "Signed Engagement Letter"
                         : "Scoped Engagement Letter"}
                     </Label>
-                    {type === "final" ? <UploadDialog /> : null}
+                    {type === "final" ? (
+                      <UploadDialog />
+                    ) : (
+                      <Button className="flex items-center justify-start gap-2 w-[130px] h-[28px] action text-white font-helvetica-13">
+                        <File size={16} strokeWidth={3} />
+                        Generate
+                      </Button>
+                    )}
                   </section>
                   <section
                     key={index}
-                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-800">
+                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-200">
                     <section className="flex-1 flex items-center gap-2">
                       <section>
                         {extension === "pdf" ? (
-                          <FaFilePdf size={24} />
+                          <FaFilePdf size={20} />
                         ) : extension === "xls" ? (
-                          <FaFileExcel size={24} />
+                          <FaFileExcel size={20} />
                         ) : extension === "docx" ? (
-                          <FaFileWord size={24} />
+                          <FaFileWord size={20} />
                         ) : extension === "image/png" ? (
-                          <FaFileImage size={24} />
+                          <FaFileImage size={20} />
                         ) : extension === "image/jpeg" ? (
-                          <FaFileImage size={24} />
+                          <FaFileImage size={20} />
                         ) : (
-                          <FileText size={24} />
+                          <FileText size={20} />
                         )}
                       </section>
                       <section>
-                        <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 truncate text-[15px]">
+                        <Label className="font-helvetica-13 text-black">
                           {name}
                         </Label>
                       </section>
                     </section>
                     <section className="flex items-center gap-1 h-[20px]">
                       <section>
-                        <Label className="font-[helvetica] font-semibold italic">
+                        <Label className="font-helvetica-13 text-black italic">
                           {size}MB
                         </Label>
                       </section>
                       <Separator
                         orientation="vertical"
-                        className="mx-2 bg-white"
+                        className="mx-2 bg-neutral-400"
                       />
                       <section>
-                        <Label className="font-[helvetica] font-semibold">
-                          {extension}
-                        </Label>
+                        <Label className="font-helvetica-13">{extension}</Label>
                       </section>
                       <Separator
                         orientation="vertical"
-                        className="mx-2 bg-white"
+                        className="mx-2 bg-neutral-400"
                       />
                       <section>
-                        <Button
-                          className="w-[30px] h-[30px] hover:bg-black"
-                          variant="ghost">
+                        <Button className="w-[30px] h-[30px] bg-black">
                           <Trash2
                             size={16}
-                            className="text-red-700"
-                            strokeWidth={3}
+                            className="text-red-600"
+                            strokeWidth={2}
                           />
                         </Button>
                       </section>
@@ -142,9 +145,9 @@ export const Attachments = () => {
             const { type, name, size, extension } = letter;
             if (letter.type !== "") {
               return (
-                <section key={index} className="flex flex-col gap-1">
+                <section key={index} className="flex flex-col gap-2">
                   <section className="flex items-center justify-between px-2">
-                    <Label className="font-[helvetica] font-bold scroll-m-1 tracking-normal">
+                    <Label className="font-helvetica-13 text-black">
                       {letter.type === "final"
                         ? "Signed Engagement Letter"
                         : "Scoped Engagement Letter"}
@@ -153,56 +156,54 @@ export const Attachments = () => {
                   </section>
                   <section
                     key={index}
-                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-800">
+                    className=" px-2 py-2 rounded-md flex items-center bg-neutral-200">
                     <section className="flex-1 flex items-center gap-2">
                       <section>
                         {extension === "pdf" ? (
-                          <FaFilePdf size={24} />
+                          <FaFilePdf size={20} />
                         ) : extension === "xls" ? (
-                          <FaFileExcel size={24} />
+                          <FaFileExcel size={20} />
                         ) : extension === "docx" ? (
-                          <FaFileWord size={24} />
+                          <FaFileWord size={20} />
                         ) : extension === "image/png" ? (
-                          <FaFileImage size={24} />
+                          <FaFileImage size={20} />
                         ) : extension === "image/jpeg" ? (
-                          <FaFileImage size={24} />
+                          <FaFileImage size={20} />
                         ) : (
-                          <FileText size={24} />
+                          <FileText size={20} />
                         )}
                       </section>
                       <section>
-                        <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 truncate text-[15px]">
+                        <Label className="font-helvetica-13 text-black truncate">
                           {name}
                         </Label>
                       </section>
                     </section>
                     <section className="flex items-center gap-1 h-[20px]">
                       <section>
-                        <Label className="font-[helvetica] font-semibold italic">
+                        <Label className="font-helvetica-13 italic text-black">
                           {size}MB
                         </Label>
                       </section>
                       <Separator
                         orientation="vertical"
-                        className="mx-2 bg-white"
+                        className="mx-2 bg-neutral-400"
                       />
                       <section>
-                        <Label className="font-[helvetica] font-semibold">
+                        <Label className="font-helvetica-13 text-black">
                           {extension}
                         </Label>
                       </section>
                       <Separator
                         orientation="vertical"
-                        className="mx-2 bg-white"
+                        className="mx-2 bg-neutral-400"
                       />
                       <section>
-                        <Button
-                          className="w-[30px] h-[30px] hover:bg-black"
-                          variant="ghost">
+                        <Button className="w-[30px] h-[30px] bg-black text-white">
                           <Trash2
                             size={16}
-                            className="text-red-700"
-                            strokeWidth={3}
+                            className="text-red-600"
+                            strokeWidth={2}
                           />
                         </Button>
                       </section>
@@ -212,7 +213,7 @@ export const Attachments = () => {
               );
             }
           })}
-        <Separator className="mb-2" />
+        <Separator className="mb-2 bg-neutral-400" />
       </section>
     );
   }
@@ -223,7 +224,7 @@ const UploadDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <Button className="w-[130px] h-[28px] bg-blue-700" variant="ghost">
+        <Button className="w-[130px] h-[28px] action text-white font-helvetica-13 flex items-center justify-start gap-2">
           <File size={16} strokeWidth={3} />
           Attach
         </Button>
@@ -233,7 +234,7 @@ const UploadDialog = () => {
           onClick={() => setOpen(false)}
           className="w-[30px] h-[30px] absolute z-10 top-1 right-1"
           variant="ghost">
-          <X size={16} strokeWidth={3} />
+          <X size={16} strokeWidth={2} />
         </Button>
         <UploadFile />
       </DialogContent>

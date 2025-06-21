@@ -22,6 +22,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  CirclePlus,
   Edit,
   Ellipsis,
   SendHorizonal,
@@ -51,153 +52,172 @@ import Link from "next/link";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { EngagementForm } from "../forms/engagement-form";
+import { useSearchParams } from "next/navigation";
 
 type EngagementSchemaValues = z.infer<typeof EngagementSchema>;
-
-const columns: ColumnDef<EngagementSchemaValues>[] = [
-  {
-    id: "name",
-    header: () => <Label className="font-table">Name</Label>,
-    accessorKey: "name",
-    cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.name}</Label>
-    ),
-  },
-  {
-    id: "code",
-    header: () => <Label className="font-table">Code</Label>,
-    cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.code}</Label>
-    ),
-    accessorKey: "code",
-  },
-  {
-    id: "status",
-    header: () => <Label className="font-table">Status</Label>,
-    cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.status}</Label>
-    ),
-    accessorKey: "status",
-  },
-  {
-    id: "stage",
-    header: () => <Label className="font-table">Stage</Label>,
-    accessorKey: "stage",
-    cell: ({ row }) => (
-      <Label className="font-table truncate">{row.original.stage}</Label>
-    ),
-  },
-  {
-    id: "start_date",
-    header: () => <Label className="font-table">Start</Label>,
-    accessorKey: "start_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.original.start_date ?? ""));
-      return <Label className="ml-2 font-table truncate">{formatted}</Label>;
-    },
-  },
-  {
-    id: "end_date",
-    header: () => <Label className="font-table">End</Label>,
-    accessorKey: "end_date",
-    cell: ({ row }) => {
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(new Date(row.original.end_date ?? ""));
-      return <Label className="ml-2 font-table">{formatted}</Label>;
-    },
-  },
-  {
-    id: "actions",
-    header: () => (
-      <Label className="font-table flex justify-center">Actions</Label>
-    ),
-    cell: ({ row }) => (
-      <div className="flex justify-center items-center w-full h-full font-table">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
-              <Ellipsis />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-            <div className="flex flex-col divide-y">
-              <Link
-                onClick={() => {
-                  saveSearchToLocalStorage({
-                    name: row.original.name,
-                    value: `/eAuditNext/engagement/?id=${row.original.id}&stage=dashboard&name=${row.original.name}`,
-                    tag: "engagements",
-                  });
-                }}
-                href={{
-                  pathname: "/eAuditNext/engagement",
-                  query: {
-                    id: row.original.id,
-                    action: "dashboard",
-                    name: row.original.name,
-                  },
-                }}
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <SendHorizonal size={16} strokeWidth={3} />
-                Engage
-              </Link>
-
-              <EngagementForm
-                endpoint="engagements"
-                title="Engagement"
-                mode="update"
-                data={{
-                  name: row.original.name,
-                  type: row.original.type,
-                  leads: row.original.leads,
-                  department: {
-                    name: row.original.department.name,
-                    code: row.original.department.code,
-                  },
-                  sub_departments: row.original.sub_departments,
-                  risk: {
-                    name: row.original.risk.name,
-                    magnitude: row.original.risk.magnitude,
-                  },
-                }}
-                id={row.original.id}>
-                <Button
-                  variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                  <Edit size={16} strokeWidth={3} />
-                  Edit
-                </Button>
-              </EngagementForm>
-              <Button
-                variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash2 className="text-red-800" size={16} strokeWidth={3} />
-                Delete
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-    ),
-    maxSize: 70,
-    size: 100,
-  },
-];
 
 interface EngagementTableProps {
   data: EngagementSchemaValues[];
 }
 
 export default function EngagementTable({ data }: EngagementTableProps) {
+  const params = useSearchParams();
+
+  const columns: ColumnDef<EngagementSchemaValues>[] = [
+    {
+      id: "code",
+      header: () => <Label className="font-helvetica-table-14">Code</Label>,
+      cell: ({ row }) => (
+        <Link
+          href={"#"}
+          replace
+          className="ml-2 font-helvetica-table-13 text-blue-700 cursor-pointer hover:underline w-full text-center">
+          {row?.original?.code}
+        </Link>
+      ),
+      accessorKey: "code",
+    },
+    {
+      id: "name",
+      header: () => <Label className="font-helvetica-table-14">Name</Label>,
+      accessorKey: "name",
+      cell: ({ row }) => (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {row.original.name}
+        </Label>
+      ),
+    },
+    {
+      id: "status",
+      header: () => <Label className="font-helvetica-table-14">Status</Label>,
+      cell: ({ row }) => (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {row.original.status}
+        </Label>
+      ),
+      accessorKey: "status",
+    },
+    {
+      id: "stage",
+      header: () => <Label className="font-helvetica-table-14">Stage</Label>,
+      accessorKey: "stage",
+      cell: ({ row }) => (
+        <Label className="font-helvetica-table-13 truncate">
+          {row.original.stage}
+        </Label>
+      ),
+    },
+    {
+      id: "start_date",
+      header: () => <Label className="font-helvetica-table-14">Start</Label>,
+      accessorKey: "start_date",
+      cell: ({ row }) => {
+        const formatted = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(row.original.start_date ?? ""));
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">
+            {formatted}
+          </Label>
+        );
+      },
+    },
+    {
+      id: "end_date",
+      header: () => <Label className="font-helvetica-table-14">End</Label>,
+      accessorKey: "end_date",
+      cell: ({ row }) => {
+        const formatted = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(row.original.end_date ?? ""));
+        return (
+          <Label className="ml-2 font-helvetica-table-13">{formatted}</Label>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: () => (
+        <Label className="font-helvetica-table-14 flex justify-center">
+          Actions
+        </Label>
+      ),
+      cell: ({ row }) => (
+        <div className="flex justify-center items-center w-full h-full font-table">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] hover:bg-blue-400 bg-neutral-200 text-black">
+                <Ellipsis />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+              <div className="flex flex-col divide-y">
+                <Link
+                  onClick={() => {
+                    saveSearchToLocalStorage({
+                      name: row.original.name,
+                      value: `/eAuditNext/engagement/?id=${row.original.id}&stage=dashboard&name=${row.original.name}`,
+                      tag: "engagements",
+                    });
+                  }}
+                  href={{
+                    pathname: "/eAuditNext/engagement",
+                    query: {
+                      id: row.original.id,
+                      action: "dashboard",
+                      name: row.original.name,
+                    },
+                  }}
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <SendHorizonal size={16} strokeWidth={2} />
+                  Engage
+                </Link>
+
+                <EngagementForm
+                  endpoint="engagements"
+                  title="Engagement"
+                  mode="update"
+                  data={{
+                    name: row.original.name,
+                    type: row.original.type,
+                    leads: row.original.leads,
+                    department: {
+                      name: row.original.department.name,
+                      code: row.original.department.code,
+                    },
+                    sub_departments: row.original.sub_departments,
+                    risk: {
+                      name: row.original.risk.name,
+                      magnitude: row.original.risk.magnitude,
+                    },
+                  }}
+                  id={row.original.id}>
+                  <Button
+                    variant="ghost"
+                    className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                    <Edit size={16} strokeWidth={2} />
+                    Edit
+                  </Button>
+                </EngagementForm>
+                <Button
+                  variant="ghost"
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Trash2 className="text-red-800" size={16} strokeWidth={2} />
+                  Delete
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      ),
+      maxSize: 70,
+      size: 100,
+    },
+  ];
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const [columnOrder, setColumnOrder] = useState<string[]>(
@@ -279,6 +299,32 @@ export default function EngagementTable({ data }: EngagementTableProps) {
             onChange={setSelectedStatuses}
           />
         </section>
+        <section>
+          <EngagementForm
+            endpoint="engagements"
+            title="Engagement"
+            mode="create"
+            data={{
+              name: "",
+              type: "",
+              leads: [],
+              department: {
+                name: "",
+                code: "",
+              },
+              sub_departments: [],
+              risk: {
+                name: "",
+                magnitude: 0,
+              },
+            }}
+            id={params.get("id") ?? undefined}>
+            <Button className="bg-neutral-800 font-helvetica-13 text-neutral-300 flex px-3 items-center gap-2 h-[28px] w-fit justify-start">
+              <CirclePlus size={16} strokeWidth={3} />
+              Engagement
+            </Button>
+          </EngagementForm>
+        </section>
       </div>
       <div className="[&>div]:max-h-[calc(100vh-236px)]">
         <Table
@@ -286,14 +332,14 @@ export default function EngagementTable({ data }: EngagementTableProps) {
           style={{
             width: tableWidth ?? "100%",
           }}>
-          <TableHeader className="border-r border-r-neutral-800 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
+          <TableHeader className="border-r bg-neutral-100 border-r-neutral-800 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-muted/50">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
-                      className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                      className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
                       aria-sort={
                         header.column.getIsSorted() === "asc"
                           ? "ascending"
@@ -375,7 +421,7 @@ export default function EngagementTable({ data }: EngagementTableProps) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="truncate border-l border-l-neutral-800">
+                      className="truncate border-l border-l-neutral-500 font-helvetica-table-13">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -388,7 +434,7 @@ export default function EngagementTable({ data }: EngagementTableProps) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
+                  className="h-24 text-center text-black font-helvetica-13">
                   No results.
                 </TableCell>
               </TableRow>

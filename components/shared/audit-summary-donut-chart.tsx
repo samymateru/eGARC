@@ -63,10 +63,10 @@ export function AuditSummaryDonutChart({ data }: AuditSummaryDonutChartProps) {
   }, [data]);
 
   return (
-    <Card className="flex flex-col border-none flex-1">
+    <Card className="flex flex-col border-none flex-1 bg-neutral-100">
       <CardHeader className="items-center pb-3">
-        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide">
-          Audit Plans Status
+        <CardTitle className="font-helvetica-medium text-left">
+          Annual Audit Plans Status
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0 py-1">
@@ -83,8 +83,8 @@ export function AuditSummaryDonutChart({ data }: AuditSummaryDonutChartProps) {
               data={chartData}
               dataKey="value"
               nameKey="state"
-              innerRadius={60}
-              strokeWidth={5}>
+              innerRadius={53}
+              strokeWidth={3}>
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -97,13 +97,13 @@ export function AuditSummaryDonutChart({ data }: AuditSummaryDonutChartProps) {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold">
+                          className="fill-foreground text-2xl font-bold">
                           {totalVisitors.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground">
+                          className="font-helvetica-13">
                           Audits
                         </tspan>
                       </text>
@@ -154,12 +154,12 @@ export function ChartLegendContent({
           <div key={idx} className="flex flex-col items-center">
             <div className="flex items-center gap-1">
               <span
-                className="inline-block h-2 w-2 rounded-full"
+                className="inline-block h-[10px] w-[10px]"
                 style={{ backgroundColor: entry.color }}
               />
-              <span>{label}</span>
+              <span className="font-helvetica-13">{label}</span>
             </div>
-            <span className="text-muted-foreground text-xs">{percentage}%</span>
+            <span className="font-helvetica-13">{percentage}%</span>
           </div>
         );
       })}

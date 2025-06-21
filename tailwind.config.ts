@@ -163,7 +163,51 @@ const config: Config = {
 				".pop-bg": {
 					backgroundColor: '#334155',
 					color: "#d4d4d4"
-				}
+				},
+				".font-helvetica-13":{
+					fontFamily: 'Helvetica',
+					fontWeight: "700",
+					fontSize: "13px"
+				},
+				".font-helvetica-14":{
+					fontFamily: 'Helvetica',
+					fontWeight: "700",
+					fontSize: "14px"
+				},
+				".font-helvetica-medium":{
+					fontFamily: 'Helvetica',
+					fontWeight: "750",
+					fontSize: "16px"
+				},
+				".font-helvetica-table-13":{
+					fontFamily: 'Helvetica',
+					fontWeight: "700",
+					fontSize: "13px"
+				},
+				".font-helvetica-table-14":{
+					fontFamily: 'Helvetica',
+					fontWeight: "700",
+					fontSize: "14px",
+					color: "#262626"
+				},
+				".font-helvetica-input-13":{
+					fontFamily: 'Helvetica',
+					fontWeight: "650",
+					fontSize: "13px",
+					borderColor: "rgb(115 115 115 / var(--tw-border-opacity, 1))"
+				},
+				".font-helvetica-large":{
+					fontFamily: 'Helvetica',
+					fontWeight: "700",
+					fontSize: "18px",
+				},
+				".action":{
+					backgroundColor: "black"
+				}, 
+				".text-editor-action":{
+					backgroundColor: "#334155",
+					color: "white"
+				}        		
 			});
 		}),
 	],

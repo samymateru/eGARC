@@ -53,19 +53,19 @@ type PoliciesValues = z.infer<typeof PolicySchema>;
 const columns: ColumnDef<PoliciesValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.name}
       </Label>
     ),
   },
   {
     id: "key_areas",
-    header: () => <Label className="font-table">Key areas</Label>,
+    header: () => <Label className="font-helvetica-table-14">Key areas</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.key_areas}
       </Label>
     ),
@@ -73,9 +73,9 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "version",
-    header: () => <Label className="font-table">Version</Label>,
+    header: () => <Label className="font-helvetica-table-14">Version</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.version}
       </Label>
     ),
@@ -83,14 +83,14 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
+    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
         href={row.getValue("attachment")}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-table">
+        className="text-blue-500 hover:underline font-helvetica-table-13 truncate">
         View Attachment
       </a>
     ),
@@ -98,19 +98,19 @@ const columns: ColumnDef<PoliciesValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">More</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        More
+      </Label>
     ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
+            <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
             <div className="flex flex-col divide-y">
               <PolicyForm
                 data={{
@@ -130,15 +130,15 @@ const columns: ColumnDef<PoliciesValues>[] = [
                 endpoint="engagements/context/policies">
                 <Button
                   variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                  <Pencil size={16} strokeWidth={3} />
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Pencil size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </PolicyForm>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash size={16} strokeWidth={2} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -195,9 +195,9 @@ export const PoliciesTable = ({ data }: PoliciesTableProps) => {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-800 bg-neutral-500 text-black">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
@@ -286,7 +286,7 @@ export const PoliciesTable = ({ data }: PoliciesTableProps) => {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-800 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -294,7 +294,9 @@ export const PoliciesTable = ({ data }: PoliciesTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-helvetica-table-13 text-black">
                 No results.
               </TableCell>
             </TableRow>

@@ -52,7 +52,7 @@ export const SummaryTasks = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="w-[calc(100vw-332px)]">
       <TasksTable data={data ?? []} />
     </div>
   );

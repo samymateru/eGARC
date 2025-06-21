@@ -119,6 +119,7 @@ export const EngagementForm = ({
   mode,
 }: EngagementFormProps) => {
   const [open, setOpen] = useState(false);
+  const params = useSearchParams();
 
   const methods = useForm<EngagementValues>({
     resolver: zodResolver(EngagementSchema),
@@ -149,6 +150,7 @@ export const EngagementForm = ({
   );
 
   const [entityId, setEntityId] = useState<string | null>(null);
+  const [moduleId, setModuleId] = useState<string | null>(null);
 
   useEffect(() => {
     const userName = localStorage.getItem("user_name");
@@ -160,9 +162,14 @@ export const EngagementForm = ({
   }, []);
 
   useEffect(() => {
-    const entityId = localStorage.getItem("entity_id");
-    if (entityId) {
-      setEntityId(entityId);
+    if (typeof window !== undefined) {
+      const entityId = localStorage.getItem("entity_id");
+      const moduleId = localStorage.getItem("moduleId");
+
+      if (entityId && moduleId) {
+        setEntityId(entityId);
+        setModuleId(moduleId);
+      }
     }
   }, []);
 
@@ -196,13 +203,13 @@ export const EngagementForm = ({
         enabled: !!entityId,
       },
       {
-        queryKey: ["__leads__"],
+        queryKey: ["_teams_", moduleId],
         queryFn: async (): Promise<UserValuses[]> =>
-          fetchData("users/module", localStorage.getItem("moduleId")),
+          fetchData("users/module", moduleId),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
-        enabled: !!id,
+        enabled: !!moduleId,
       },
     ],
   });
@@ -214,11 +221,9 @@ export const EngagementForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results[3].data]);
 
-  const params = useSearchParams();
-
   const { mutate: createEngagement, isPending: createEngagementPending } =
     useMutation({
-      mutationKey: ["_create_engagement_"],
+      mutationKey: ["_create_engagement_", id],
       mutationFn: async (data: EngagementValues): Promise<Response> => {
         const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
           method: "POST",
@@ -345,249 +350,238 @@ export const EngagementForm = ({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 
-        <AlertDialogContent className="p-0 max-w-[700px] flex flex-col dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[700px] bg-white flex flex-col ">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col h-full">
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="text-[22px] font-bold font-[helvetica] tracking-wide scroll-m-1">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
+            <Separator className="bg-neutral-600" />
 
-            <main className="px-5 py-3 flex flex-col gap-2 flex-1 overflow-auto">
-              <ScrollArea className="max-h-[430px] h-auto overflow-auto">
-                <section className="flex flex-col gap-2">
+            <main className="px-5 py-3 flex flex-col gap-2 flex-1 overflow-auto ">
+              <section className="flex flex-col gap-3">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label htmlFor="_name_" className="font-helvetica-13">
+                    Title <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="_name_"
+                    placeholder="Engagement name"
+                    {...register("name")}
+                    className="font-helvetica-input-13"
+                  />
+                  <FormError error={errors.name} />
+                </div>
+                {mode === "create" ? (
                   <div className="*:not-first:mt-2 flex-1">
-                    <Label
-                      htmlFor="_name_"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Title <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="_name_"
-                      placeholder="Engagement name"
-                      {...register("name")}
-                    />
-                    <FormError error={errors.name} />
-                  </div>
-                  {mode === "create" ? (
-                    <div className="*:not-first:mt-2 flex-1">
-                      <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                        Leads
-                      </Label>
-                      <Controller
-                        name="leads"
-                        control={control}
-                        render={({ field }) => (
-                          <UserMultiSelector
-                            trigger="Select Team leads"
-                            users={auditUsers.filter(
-                              (user) =>
-                                user.role !== "Head of Audit" &&
-                                user.id !== userId
-                            )}
-                            title="Engagement leads"
-                            value={field.value || []}
-                            onChange={field.onChange}
-                          />
-                        )}
-                      />
-                      <FormError error={errors.leads} />
-                    </div>
-                  ) : null}
-                </section>
-                <section className="flex flex-col gap-2">
-                  <div className="*:not-first:mt-2">
-                    <Label
-                      htmlFor="_process_"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Department<span className="text-destructive">*</span>
-                    </Label>
+                    <Label className="font-helvetica-13">Leads</Label>
                     <Controller
-                      name="department"
+                      name="leads"
                       control={control}
                       render={({ field }) => (
-                        <Select
-                          open={openSelect === "dept"}
-                          onOpenChange={() => handleToggle("dept")}
-                          onValueChange={(value) => {
-                            setValue("sub_departments", []);
-                            const selected = results[2]?.data?.find(
-                              (r) => r.process_name === value
-                            );
-
-                            if (selected) {
-                              const { process_name, code } = selected;
-                              field.onChange({ name: process_name, code });
-                            }
-                          }}
-                          value={field.value?.name}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select control type" />
-                          </SelectTrigger>
-
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[2]?.data?.map(
-                                (department, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={department.process_name ?? "0"}>
-                                    {department.process_name}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <MultiErrorForm
-                      error={
-                        errors.department?.code?.message ||
-                        errors.department?.name?.message ||
-                        errors.department?.message
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Sub Departments
-                    </Label>
-                    <Controller
-                      name="sub_departments"
-                      control={control}
-                      render={({ field }) => (
-                        <ListMultiSelector
-                          trigger="Select sub processes"
-                          processes={subProcesses}
-                          title="Sub Departments"
+                        <UserMultiSelector
+                          trigger="Select Team leads"
+                          users={auditUsers.filter(
+                            (user) =>
+                              user.role !== "Head of Audit" &&
+                              user.id !== userId
+                          )}
+                          title="Engagement leads"
                           value={field.value || []}
                           onChange={field.onChange}
                         />
                       )}
                     />
-                    <FormError error={errors.sub_departments} />
+                    <FormError error={errors.leads} />
                   </div>
-                </section>
-                <section className=" flex items-center gap-2">
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label
-                      htmlFor="process"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Risk rating<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="risk"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "risk"}
-                          onOpenChange={() => handleToggle("risk")}
-                          onValueChange={(value) => {
-                            const selected = results[1]?.data?.values?.find(
-                              (r) => r.name === value
-                            );
-                            field.onChange(selected);
-                          }}
-                          value={field.value?.name}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select control type" />
-                          </SelectTrigger>
+                ) : null}
+              </section>
+              <section className="flex flex-col gap-2">
+                <div className="*:not-first:mt-2">
+                  <Label htmlFor="_process_" className="font-helvetica-13">
+                    Department<span className="text-destructive">*</span>
+                  </Label>
 
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[1]?.data?.values?.map(
-                                (rating, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={rating.name ?? ""}>
-                                    {rating.name}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <div className="h-6">
-                      <MultiErrorForm
-                        error={
-                          errors.risk?.name?.message ||
-                          errors.risk?.magnitude?.message ||
-                          errors.risk?.message
-                        }
+                  <Controller
+                    name="department"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "dept"}
+                        onOpenChange={() => handleToggle("dept")}
+                        onValueChange={(value) => {
+                          setValue("sub_departments", []);
+                          const selected = results[2]?.data?.find(
+                            (r) => r.process_name === value
+                          );
+
+                          if (selected) {
+                            const { process_name, code } = selected;
+                            field.onChange({ name: process_name, code });
+                          }
+                        }}
+                        value={field.value?.name}>
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue placeholder="Select department" />
+                        </SelectTrigger>
+
+                        <SelectContent className="bg-neutral-200">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[2]?.data?.map(
+                              (department, index: number) => (
+                                <SelectItem
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
+                                  key={index}
+                                  value={department.process_name ?? "0"}>
+                                  {department.process_name}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <MultiErrorForm
+                    error={
+                      errors.department?.code?.message ||
+                      errors.department?.name?.message ||
+                      errors.department?.message
+                    }
+                  />
+                </div>
+                <div>
+                  <Label className="font-helvetica-13">Sub Departments</Label>
+                  <Controller
+                    name="sub_departments"
+                    control={control}
+                    render={({ field }) => (
+                      <ListMultiSelector
+                        trigger="Select sub processes"
+                        processes={subProcesses}
+                        title="Sub Departments"
+                        value={field.value || []}
+                        onChange={field.onChange}
                       />
-                    </div>
-                  </div>
-                  <div className="*:not-first:mt-2 flex-1">
-                    <Label
-                      htmlFor="type"
-                      className="font-serif tracking-wide scroll-m-0 font-medium">
-                      Type<span className="text-destructive">*</span>
-                    </Label>
-                    <Controller
-                      name="type"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          open={openSelect === "type"}
-                          onOpenChange={() => handleToggle("type")}
-                          onValueChange={field.onChange}
-                          value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select control type" />
-                          </SelectTrigger>
+                    )}
+                  />
+                  <FormError error={errors.sub_departments} />
+                </div>
+              </section>
+              <section className=" flex items-center gap-2">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label htmlFor="process" className="font-helvetica-13">
+                    Risk rating<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="risk"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "risk"}
+                        onOpenChange={() => handleToggle("risk")}
+                        onValueChange={(value) => {
+                          const selected = results[1]?.data?.values?.find(
+                            (r) => r.name === value
+                          );
+                          field.onChange(selected);
+                        }}
+                        value={field.value?.name}>
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue placeholder="Select risk rating" />
+                        </SelectTrigger>
 
-                          <SelectContent className="">
-                            <ScrollArea className="max-h-[260px] h-auto overflow-auto">
-                              {results[0]?.data?.values?.map(
-                                (type, index: number) => (
-                                  <SelectItem
-                                    className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
-                                    key={index}
-                                    value={type ?? "type"}>
-                                    {type}
-                                  </SelectItem>
-                                )
-                              )}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      )}
+                        <SelectContent className="bg-neutral-200">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[1]?.data?.values?.map(
+                              (rating, index: number) => (
+                                <SelectItem
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
+                                  key={index}
+                                  value={rating.name ?? ""}>
+                                  <span>{rating.name}</span>
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-6">
+                    <MultiErrorForm
+                      error={
+                        errors.risk?.name?.message ||
+                        errors.risk?.magnitude?.message ||
+                        errors.risk?.message
+                      }
                     />
-                    <div className="h-6">
-                      <FormError error={errors.type} />
-                    </div>
                   </div>
-                </section>
-              </ScrollArea>
+                </div>
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label htmlFor="type" className="font-helvetica-13">
+                    Type<span className="text-destructive">*</span>
+                  </Label>
+                  <Controller
+                    name="type"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        open={openSelect === "type"}
+                        onOpenChange={() => handleToggle("type")}
+                        onValueChange={field.onChange}
+                        value={field.value}>
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select engagement type"
+                            className="placeholder:font-helvetica-13"
+                          />
+                        </SelectTrigger>
+
+                        <SelectContent className="bg-neutral-100">
+                          <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                            {results[0]?.data?.values?.map(
+                              (type, index: number) => (
+                                <SelectItem
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
+                                  key={index}
+                                  value={type ?? "type"}>
+                                  {type}
+                                </SelectItem>
+                              )
+                            )}
+                          </ScrollArea>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <div className="h-6">
+                    <FormError error={errors.type} />
+                  </div>
+                </div>
+              </section>
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => {
                   setOpen(false);
                 }}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createEngagementPending || updateEngagementPending}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 flex items-center font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

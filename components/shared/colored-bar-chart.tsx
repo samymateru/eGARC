@@ -69,12 +69,12 @@ export function ColoredBarChart({
   const { chartData, chartConfig } = buildChartDataAndConfig(data, colors);
 
   return (
-    <Card className="flex-1 border-none">
+    <Card className="flex-1 border-none bg-neutral-100">
       <CardHeader>
-        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide">
-          {title}
-        </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="font-helvetica-medium">{title}</CardTitle>
+        <CardDescription className="font-helvetica-13 text-neutral-700">
+          {description}
+        </CardDescription>
       </CardHeader>
       <CardContent className="py-1">
         <ChartContainer
@@ -102,9 +102,10 @@ export function ColoredBarChart({
                       x={x != null ? Number(x) + -40 : 0}
                       y={y}
                       dy={dy}
-                      fill="white"
-                      fontWeight="bold"
-                      fontSize={12}>
+                      fill="black"
+                      fontWeight="700"
+                      fontFamily="Helvetica"
+                      fontSize={13}>
                       {value}
                     </text>
                   );
@@ -120,10 +121,11 @@ export function ColoredBarChart({
                       x={x != null ? Number(x) + 10 : 0}
                       y={y}
                       dy={dy}
-                      fill="white"
+                      fill="black"
                       strokeWidth={200}
-                      fontWeight={900}
-                      fontSize={12}>
+                      fontWeight={700}
+                      fontFamily="Helvetica"
+                      fontSize={13}>
                       {formatLabel(String(value))}
                     </text>
                   );

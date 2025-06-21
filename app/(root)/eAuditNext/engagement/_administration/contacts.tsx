@@ -152,7 +152,7 @@ export const EngagementContacts = () => {
     <section className="pb-2">
       <section className="p-3 flex flex-col gap-3">
         <section className="flex items-center justify-between px-3">
-          <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-1 text-[18px]">
+          <Label className="font-helvetica-14 text-black">
             Business Contacts
           </Label>
           <section className="flex items-center gap-1">
@@ -162,9 +162,7 @@ export const EngagementContacts = () => {
               endpoint="engagements/business_contact"
               id={params.get("id")}
               mode="create">
-              <Button
-                className="w-[130px] h-[30px] bg-blue-800 text-white flex justify-start"
-                variant="ghost">
+              <Button className="w-[130px] h-[30px] bg-black font-helvetica-13 text-white justify-start">
                 <Contact size={16} strokeWidth={3} />
                 Action
               </Button>
@@ -175,9 +173,7 @@ export const EngagementContacts = () => {
               endpoint="engagements/business_contact"
               id={params.get("id")}
               mode="create">
-              <Button
-                className="w-[130px] h-[30px] bg-blue-800 text-white flex justify-start"
-                variant="ghost">
+              <Button className="w-[130px] h-[30px] bg-black font-helvetica-13 text-white flex justify-start">
                 <Contact size={16} strokeWidth={3} />
                 Informaion
               </Button>
@@ -189,12 +185,12 @@ export const EngagementContacts = () => {
           <ul className="flex flex-col gap-[6px]">
             {contacts.map((user) => (
               <section key={user.id} className="flex items-center gap-2">
-                <User size={16} strokeWidth={3} />
+                <User size={16} strokeWidth={2} className="text-black" />
                 <section className="flex items-center gap-1">
-                  <Label className="font-[helvetica] font-semibold tracking-wide text-[14px]">
+                  <Label className="font-helvetica-14 text-black">
                     {user.title}:
                   </Label>
-                  <Label className="text-blue-600 font-[helvetica] tracking-normal scroll-m-1 font-semibold">
+                  <Label className="font-helvetica-13 text-black">
                     {user.name.toLocaleUpperCase()}
                     <span className="ml-1 italic">&lt;{user.email}&gt;</span>
                   </Label>

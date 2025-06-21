@@ -230,10 +230,10 @@ export const EngagementProcessForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
@@ -242,9 +242,7 @@ export const EngagementProcessForm = ({
             <Separator className="" />
             <main className="px-5 py-3 flex flex-col gap-2">
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="_process_"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="_process_" className="font-helvetica-13">
                   Department<span className="text-destructive">*</span>
                 </Label>
                 <Controller
@@ -257,15 +255,18 @@ export const EngagementProcessForm = ({
                         field.onChange(value);
                       }}
                       value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select control type" />
+                      <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                        <SelectValue
+                          placeholder="Select control type"
+                          className="placeholder:font-helvetica-13"
+                        />
                       </SelectTrigger>
 
-                      <SelectContent className="">
+                      <SelectContent className="bg-neutral-100">
                         <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                           {process?.map((department, index: number) => (
                             <SelectItem
-                              className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                              className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                               key={index}
                               value={department.process_name ?? ""}>
                               {department.process_name}
@@ -279,9 +280,7 @@ export const EngagementProcessForm = ({
                 <FormError error={errors.process} />
               </div>
               <div>
-                <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Sub Departments
-                </Label>
+                <Label className="font-helvetica-13">Sub Departments</Label>
                 <Controller
                   name="sub_process"
                   control={control}
@@ -299,50 +298,44 @@ export const EngagementProcessForm = ({
               </div>
 
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="description"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="description" className="font-helvetica-13">
                   Description
                 </Label>
                 <Textarea
                   id="description"
                   placeholder="Description here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("description")}
                 />
                 <FormError error={errors.description} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="business_unit"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="business_unit" className="font-helvetica-13">
                   Business unit
                 </Label>
                 <Input
                   id="business_unit"
-                  placeholder="Description here"
-                  className=""
+                  placeholder="Business unit"
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("business_unit")}
                 />
                 <FormError error={errors.business_unit} />
               </div>
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={createProcessLoading || updateProcessLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

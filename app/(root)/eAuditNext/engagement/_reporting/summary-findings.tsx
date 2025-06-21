@@ -62,7 +62,7 @@ export const SummaryFindings = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="w-[calc(100vw-332px)]">
       <IssueTable data={findings ?? []} />
     </div>
   );

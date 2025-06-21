@@ -42,18 +42,16 @@ export const EditorMenu = ({ editor }: EditorProps) => {
         <Button
           onClick={() => editor?.chain().focus().undo().run()}
           disabled={!editor?.can().undo()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
-            editor?.can().undo() ? "bg-accent" : ""
+          className={`w-[30px] text-editor-action text-white h-[30px] rounded-md flex justify-center items-center ${
+            editor?.can()?.undo() ? "text-editor-action" : ""
           }`}>
           <Undo2 size={16} />
         </Button>
         <Button
           onClick={() => editor?.chain().focus().redo().run()}
           disabled={!editor?.can().redo()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
-            editor?.can().redo() ? "bg-accent" : ""
+          className={`w-[30px]  h-[30px] rounded-md flex justify-center items-center ${
+            editor?.can().redo() ? "text-editor-action" : ""
           }`}>
           <Redo2 size={16} />
         </Button>
@@ -62,45 +60,38 @@ export const EditorMenu = ({ editor }: EditorProps) => {
         <FontFamilyPicker editor={editor} />
         <Button
           onClick={() => editor?.chain().focus().toggleBold().run()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
+          className={`w-[30px] text-editor-action  h-[30px] rounded-md flex justify-center items-center ${
             editor?.isActive("bold") ? "bg-accent" : ""
           }`}>
           <Bold size={16} />
         </Button>
         <Button
           onClick={() => editor?.chain().focus().toggleItalic().run()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
+          className={`w-[30px] h-[30px] text-editor-action rounded-md flex justify-center items-center ${
             editor?.isActive("italic") ? "bg-accent" : ""
           }`}>
           <Italic size={16} />
         </Button>
         <Button
           onClick={() => editor?.chain().focus().toggleUnderline().run()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
+          className={`w-[30px] h-[30px] rounded-md text-editor-action flex justify-center items-center ${
             editor?.isActive("underline") ? "bg-accent" : ""
           }`}>
           <Underline size={16} />
         </Button>
         <Button
           onClick={() => editor?.chain().focus().toggleStrike().run()}
-          variant={"ghost"}
-          className={`w-[30px] h-[30px] rounded-md flex justify-center items-center ${
+          className={`w-[30px] h-[30px] rounded-md text-editor-action flex justify-center items-center ${
             editor?.isActive("strike") ? "bg-accent" : ""
           }`}>
           <Strikethrough size={16} />
         </Button>
-        <Button
-          variant={"ghost"}
-          className="w-[30px] h-[30px] rounded-md flex justify-center items-center">
+        <Button className="w-[30px] h-[30px] rounded-md text-editor-action flex justify-center items-center">
           <Code2 size={16} />
         </Button>
       </div>
       <div className="flex items-center gap-1">
         <TextColorPicker editor={editor} />
-
         <Button
           variant={"ghost"}
           className="w-[30px] h-[30px] rounded-md flex justify-center items-center">
@@ -110,9 +101,9 @@ export const EditorMenu = ({ editor }: EditorProps) => {
       <div className="flex items-center gap-2">
         <div>
           <DropdownMenu>
-            <DropdownMenuTrigger className="border-none rounded-md w-[30px] h-[30px] flex items-center justify-center dark:hover:bg-accent">
+            <DropdownMenuTrigger className="border-none text-editor-action rounded-md w-[30px] h-[30px] flex items-center justify-center">
               {alingment === "center" ? (
-                <AlignCenterIcon size={16} />
+                <AlignCenterIcon size={16} className="text-white" />
               ) : alingment === "left" ? (
                 <AlignLeftIcon size={16} />
               ) : alingment === "right" ? (
@@ -121,13 +112,13 @@ export const EditorMenu = ({ editor }: EditorProps) => {
                 <AlignJustifyIcon size={16} />
               ) : null}
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[190px] dark:bg-black">
-              <DropdownMenuLabel className="font-serif tracking-wide scroll-m-0">
+            <DropdownMenuContent className="w-[250px] bg-neutral-200">
+              <DropdownMenuLabel className="font-helvetica-14">
                 Alingment
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-neutral-500" />
               <DropdownMenuItem
-                className="font-serif tracking-wide scroll-m-0 flex items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
+                className="font-helvetica-13 flex hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
                 onClick={() => {
                   console.log("center");
                   setAlignment("center");
@@ -137,7 +128,7 @@ export const EditorMenu = ({ editor }: EditorProps) => {
                 Center
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="font-serif tracking-wide scroll-m-0 flex items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
+                className="font-helvetica-13 flex hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
                 onClick={() => {
                   setAlignment("left");
                   editor?.chain().focus().setTextAlign("left").run();
@@ -146,7 +137,7 @@ export const EditorMenu = ({ editor }: EditorProps) => {
                 Left
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="font-serif tracking-wide scroll-m-0 flex items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
+                className="font-helvetica-13 flex hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
                 onClick={() => {
                   setAlignment("right");
                   editor?.chain().focus().setTextAlign("right").run();
@@ -155,7 +146,7 @@ export const EditorMenu = ({ editor }: EditorProps) => {
                 Right
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="font-serif tracking-wide scroll-m-0 flex items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
+                className="font-helvetica-13 flex hover:bg-blue-400 items-center justify-start gap-2 dark:hover:bg-neutral-800 rounded-md px-2 h-7 cursor-pointer"
                 onClick={() => {
                   setAlignment("justify");
                   editor?.chain().focus().setTextAlign("justify").run();
@@ -167,9 +158,7 @@ export const EditorMenu = ({ editor }: EditorProps) => {
           </DropdownMenu>
         </div>
         <TableMenu editor={editor}>
-          <Button
-            variant={"ghost"}
-            className="w-[30px] h-[30px] rounded-md flex justify-center items-center">
+          <Button className="w-[30px] h-[30px] text-editor-action rounded-md flex justify-center items-center">
             <Table size={16} />
           </Button>
         </TableMenu>

@@ -69,18 +69,14 @@ export function ProcedureStatusPieChart({
   }, [data]);
 
   return (
-    <Card className="flex flex-col border-none">
+    <Card className="flex flex-col border-none bg-neutral-100">
       <CardHeader className="">
-        <CardTitle className="font-[helvetica] font-semibold text-[22px] tracking-wide text-left">
+        <CardTitle className="font-helvetica-medium text-left">
           Procudures Summary
         </CardTitle>
         <CardDescription className="flex gap-1 items-center">
-          <Label className="text-white text-[16px] font-[helvetica] font-semibold">
-            Total
-          </Label>
-          <Label className="text-white text-[16px] font-mono font-semibold">
-            {total}
-          </Label>
+          <Label className="text-neutral-700 font-helvetica-13">Total</Label>
+          <Label className="text-neutral-700 font-helvetica-13">{total}</Label>
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -134,12 +130,12 @@ export function ChartLegendContent({
           <div key={idx} className="flex flex-col items-center">
             <div className="flex items-center gap-1">
               <span
-                className="inline-block h-2 w-2 rounded-full"
+                className="inline-block h-[10px] w-[10px]"
                 style={{ backgroundColor: entry.color }}
               />
-              <span>{label}</span>
+              <span className="font-helvetica-13">{label}</span>
             </div>
-            <span className="text-muted-foreground text-xs">{percentage}%</span>
+            <span className="font-helvetica-13">{percentage}%</span>
           </div>
         );
       })}

@@ -3,6 +3,7 @@ import { Loader } from "@/components/shared/loader";
 import { Label } from "@/components/ui/label";
 import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { MonitorUp } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -55,10 +56,13 @@ export const EngagementProcesses = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-320px)] flex flex-col gap-2">
-      <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[18px] pl-2 pt-1">
-        Engagement Processes
-      </Label>
+    <div className="w-[calc(100vw-330px)] flex flex-col gap-2">
+      <section>
+        <Label className="font-helvetica-medium text-black pl-2 py-2 flex items-center gap-[5px]">
+          <MonitorUp size={16} strokeWidth={2} className="mb-[2px]" />
+          Engagement Processes
+        </Label>
+      </section>
       <EngagementProcessesTable data={data ?? []} />
     </div>
   );

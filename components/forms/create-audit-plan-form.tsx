@@ -7,7 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "../shared/form-error";
 import { useState } from "react";
-import { Send, CircleX } from "lucide-react";
+import { Send, CircleX, LoaderCircle } from "lucide-react";
 import { DatePicker } from "../shared/date-picker";
 import { PlanSchema, Response } from "@/lib/types";
 
@@ -181,10 +181,10 @@ export const PlanningForm = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 w-max-h-[500px] dark:bg-black pop-bg">
+        <AlertDialogContent className="p-0 w-max-h-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="font-hel-heading-bold">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
@@ -193,30 +193,34 @@ export const PlanningForm = ({
             <Separator className="" />
             <section className="px-5 py-3 flex flex-col gap-2">
               <div className="*:not-first:mt-2">
-                <Label htmlFor="name" className="ml-[2px] font-table">
+                <Label htmlFor="name" className="ml-[2px] font-helvetica-13">
                   Name
                 </Label>
                 <Input
                   id="name"
                   {...register("name")}
                   placeholder="Plan name"
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.name} />
               </div>
 
               <div className="*:not-first:mt-2">
-                <Label htmlFor="year" className="ml-[2px] font-table">
+                <Label htmlFor="year" className="ml-[2px] font-helvetica-13">
                   Year
                 </Label>
                 <Input
                   id="year"
                   {...register("year")}
                   placeholder="e.g., 2025"
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.year} />
               </div>
               <div className="*:not-first:mt-2">
-                <Label htmlFor="attachment" className="ml-[2px] font-table">
+                <Label
+                  htmlFor="attachment"
+                  className="ml-[2px] font-helvetica-13">
                   Attachment
                 </Label>
 
@@ -243,6 +247,7 @@ export const PlanningForm = ({
                           field.onChange(file);
                         }}
                         ref={field.ref}
+                        className="font-helvetica-input-13 placeholder:font-helvetica-13"
                       />
                     </>
                   )}
@@ -251,10 +256,8 @@ export const PlanningForm = ({
                 <FormError error={errors.attachment} />
               </div>
               <section className="flex items-center gap-2">
-                <div className="*:not-first:mt-2 flex-1 flex flex-col">
-                  <Label
-                    htmlFor="year"
-                    className="ml-[2px] font-table pb-[3px]">
+                <div className="*:not-first:mt-2 flex-1 flex flex-col gap-1">
+                  <Label htmlFor="year" className="ml-[2px] font-helvetica-13">
                     Start
                   </Label>
                   <Controller
@@ -273,10 +276,8 @@ export const PlanningForm = ({
                     <FormError error={errors.start} />
                   </div>
                 </div>
-                <div className="*:not-first:mt-2 flex-1 flex flex-col">
-                  <Label
-                    htmlFor="year"
-                    className="ml-[2px] font-table pb-[3px]">
+                <div className="*:not-first:mt-2 flex-1 flex flex-col gap-1">
+                  <Label htmlFor="year_" className="ml-[2px] font-helvetica-13">
                     End
                   </Label>
                   <Controller
@@ -301,19 +302,22 @@ export const PlanningForm = ({
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => {
                   setOpen(false);
                 }}
-                className="bg-red-800 text-white flex-1 font-table">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={isPending || updatePlanPending}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-table">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
+                {isPending || updatePlanPending ? (
+                  <LoaderCircle size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

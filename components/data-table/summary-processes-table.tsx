@@ -50,19 +50,19 @@ type SummaryAuditProcessValues = z.infer<typeof SummaryAuditProcessSchema>;
 const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Program</Label>,
+    header: () => <Label className="font-helvetica-table-14">Program</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.name}
       </Label>
     ),
   },
   {
     id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    header: () => <Label className="font-helvetica-table-14">Status</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.status}
       </Label>
     ),
@@ -70,9 +70,9 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "process_rating",
-    header: () => <Label className="font-table">Rating</Label>,
+    header: () => <Label className="font-helvetica-table-14">Rating</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.process_rating}
       </Label>
     ),
@@ -80,11 +80,13 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "issue_count",
-    header: () => <Label className="font-table">Total Issues</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Total Issues</Label>
+    ),
     accessorKey: "issue_count",
     cell: ({ row }) => {
       return (
-        <Label className="ml-7 font-table truncate overflow-hidden">
+        <Label className="ml-7 font-helvetica-table-13 truncate">
           {row.original.issue_count}
         </Label>
       );
@@ -92,11 +94,11 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "low_risk",
-    header: () => <Label className="font-table">Low Risk</Label>,
+    header: () => <Label className="font-helvetica-table-14">Low Risk</Label>,
     accessorKey: "low_risk",
     cell: ({ row }) => {
       return (
-        <Label className="ml-7 font-table truncate overflow-hidden">
+        <Label className="ml-7 font-helvetica-table-13 truncate">
           {row.original.acceptable + row.original.improvement_required}
         </Label>
       );
@@ -104,11 +106,11 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "high_risk",
-    header: () => <Label className="font-table">High Risk</Label>,
+    header: () => <Label className="font-helvetica-table-14">High Risk</Label>,
     accessorKey: "high_risk",
     cell: ({ row }) => {
       return (
-        <Label className="ml-7 font-table truncate overflow-hidden">
+        <Label className="ml-7 font-helvetica-table-13 truncate">
           {row.original.unacceptable +
             row.original.significant_improvement_required}
         </Label>
@@ -117,11 +119,13 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "recurring_issues",
-    header: () => <Label className="font-table">Recurring Issues</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Recurring Issues</Label>
+    ),
     accessorKey: "recurring_issues",
     cell: ({ row }) => {
       return (
-        <Label className="ml-10 font-table truncate overflow-hidden">
+        <Label className="ml-10 font-helvetica-table-13 truncate">
           {row.original.recurring_issues}
         </Label>
       );
@@ -129,11 +133,11 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "rating",
-    header: () => <Label className="font-table">Rating</Label>,
+    header: () => <Label className="font-helvetica-table-14">Rating</Label>,
     accessorKey: "rating",
     cell: () => {
       return (
-        <Label className="ml-10 font-table truncate overflow-hidden">
+        <Label className="ml-10 font-helvetica-table-13 truncate">
           {"N/A"}
         </Label>
       );
@@ -141,18 +145,18 @@ const columns: ColumnDef<SummaryAuditProcessValues>[] = [
   },
   {
     id: "actions",
-    header: () => <Label className="font-table">Actions</Label>,
+    header: () => <Label className="font-helvetica-table-14">Actions</Label>,
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+              className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400"
               variant="ghost">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black"></PopoverContent>
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200"></PopoverContent>
         </Popover>
       </div>
     ),
@@ -207,16 +211,16 @@ export const SummaryAuditProcessTable = ({
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y text-black select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500 bg-neutral-300"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -289,7 +293,7 @@ export const SummaryAuditProcessTable = ({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -298,7 +302,7 @@ export const SummaryAuditProcessTable = ({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -306,7 +310,9 @@ export const SummaryAuditProcessTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

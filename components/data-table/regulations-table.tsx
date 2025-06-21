@@ -54,20 +54,19 @@ type RegulationsValues = z.infer<typeof RegulationSchema>;
 const columns: ColumnDef<RegulationsValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-table">Name</Label>,
+    header: () => <Label className="font-helvetica-table-14">Name</Label>,
     accessorKey: "name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.name}
       </Label>
     ),
-    size: 300,
   },
   {
     id: "key_areas",
-    header: () => <Label className="font-table">Key areas</Label>,
+    header: () => <Label className="font-helvetica-table-14">Key areas</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.key_areas}
       </Label>
     ),
@@ -75,7 +74,7 @@ const columns: ColumnDef<RegulationsValues>[] = [
   },
   {
     id: "issue_date",
-    header: () => <Label className="font-table">Issue Date</Label>,
+    header: () => <Label className="font-helvetica-table-14">Issue Date</Label>,
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
         year: "numeric",
@@ -83,7 +82,7 @@ const columns: ColumnDef<RegulationsValues>[] = [
         day: "numeric",
       }).format(new Date(row.original.issue_date));
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {formatted}
         </Label>
       );
@@ -92,14 +91,14 @@ const columns: ColumnDef<RegulationsValues>[] = [
   },
   {
     id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
+    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
         href={row.getValue("attachment")}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-500 hover:underline font-serif tracking-wide scroll-m-0 text-[15px]">
+        className="text-blue-500 hover:underline ml-2 font-helvetica-table-13 truncate">
         View Attachment
       </a>
     ),
@@ -107,18 +106,18 @@ const columns: ColumnDef<RegulationsValues>[] = [
 
   {
     id: "actions",
-    header: () => <Label className="font-table">More</Label>,
+    header: () => <Label className="font-helvetica-table-14">More</Label>,
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
+              className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400"
               variant="ghost">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
             <div className="flex flex-col divide-y">
               <RegulationForm
                 data={{
@@ -138,15 +137,15 @@ const columns: ColumnDef<RegulationsValues>[] = [
                 endpoint="engagements/context/regulations">
                 <Button
                   variant="ghost"
-                  className="w-full flex items-center justify-start h-[30px]">
-                  <Pencil size={16} />
+                  className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Pencil size={16} strokeWidth={2} />
                   Edit
                 </Button>
               </RegulationForm>
               <Button
                 variant="ghost"
-                className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                <Trash size={16} strokeWidth={3} className="text-red-800" />
+                className="w-full rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                <Trash size={16} strokeWidth={2} className="text-red-800" />
                 Delete
               </Button>
             </div>
@@ -203,9 +202,9 @@ export const RegulationsTable = ({ data }: RegulationsTableProps) => {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-800 bg-neutral-500 text-black">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
@@ -294,7 +293,7 @@ export const RegulationsTable = ({ data }: RegulationsTableProps) => {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-800 text-black font-helvetica-table-13">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -302,7 +301,9 @@ export const RegulationsTable = ({ data }: RegulationsTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

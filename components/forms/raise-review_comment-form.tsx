@@ -260,40 +260,37 @@ export const RaiseReviewComment = ({
     <FormProvider {...methods}>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        <AlertDialogContent className="p-0 max-w-[500px] dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
-            <main className="px-5 py-3 flex flex-col gap-2">
+            <Separator className="bg-neutral-600" />
+            <main className="px-5 py-3 flex flex-col gap-3">
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="title"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="title" className="font-helvetica-13">
                   Title <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="title"
                   placeholder="Task title"
                   {...register("title")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.title} />
               </div>
               <div>
-                <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Action owners
-                </Label>
+                <Label className="font-helvetica-13">Action owners</Label>
                 <Controller
                   name="action_owner"
                   control={control}
                   render={({ field }) => (
                     <UserMultiSelector
-                      trigger="Selct action owners"
+                      trigger="Select action owners"
                       users={auditUsers ?? []}
                       title="Action owner"
                       value={field.value || []}
@@ -305,21 +302,21 @@ export const RaiseReviewComment = ({
               </div>
 
               <div className="*:not-first:mt-2">
-                <Label
-                  htmlFor="description"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="description" className="font-helvetica-13">
                   Description <span className="text-destructive">*</span>
                 </Label>
                 <Textarea
                   id="description"
                   placeholder="Description here"
-                  className="min-h-[100px] max-h-[160px]"
+                  className="min-h-[100px] max-h-[160px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("description")}
                 />
                 <FormError error={errors.description} />
               </div>
-              <div className="*:not-first:mt-2 flex-1 flex flex-col">
-                <Label htmlFor="year" className="ml-[2px] font-table pb-[3px]">
+              <div className="*:not-first:mt-2 flex-1 flex flex-col gap-1">
+                <Label
+                  htmlFor="year"
+                  className="ml-[2px] font-helvetica-13 pb-[3px]">
                   Due Date
                 </Label>
                 <Controller
@@ -338,21 +335,19 @@ export const RaiseReviewComment = ({
               </div>
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
             <footer className="flex justify-center gap-2 p-4">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={raiseReviewCommentPending || editReviewCommentPending}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

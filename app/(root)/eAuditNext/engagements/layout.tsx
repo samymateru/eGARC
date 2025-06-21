@@ -10,7 +10,7 @@ export default function EngagementLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col w-full">
+    <section className="w-[100vw] h-[100vh]">
       <main className="flex-1 flex h-full">{children}</main>
     </section>
   );

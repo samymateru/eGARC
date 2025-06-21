@@ -72,22 +72,24 @@ export const TasksTable = ({ data }: TasksTableProps) => {
   const columns: ColumnDef<TasksValues>[] = [
     {
       id: "reference",
-      header: () => <Label className="font-table">Reference</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Reference</Label>
+      ),
       accessorKey: "reference",
       cell: ({ row }) => (
         <Link
           replace
           href={row?.original?.href ?? "#"}
-          className="ml-2 font-table truncate text-balance overflow-hidden">
+          className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
           {row.original.reference}
         </Link>
       ),
     },
     {
       id: "title",
-      header: () => <Label className="font-table">Title</Label>,
+      header: () => <Label className="font-helvetica-table-14">Title</Label>,
       cell: ({ row }) => (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13  truncate">
           {row.original.title}
         </Label>
       ),
@@ -96,37 +98,35 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "status",
-      header: () => <Label className="font-table">Status</Label>,
+      header: () => <Label className="font-helvetica-table-14">Status</Label>,
       accessorKey: "status",
       cell: ({ row }) => (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.status}
         </Label>
       ),
     },
     {
       id: "decision",
-      header: () => <Label className="font-table">Decision</Label>,
+      header: () => <Label className="font-helvetica-table-14">Decision</Label>,
       accessorKey: "decision",
       cell: ({ row }) => {
         if (row.original.decision !== null) {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {row.original.decision}
             </Label>
           );
         } else {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
-              N/A
-            </Label>
+            <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
           );
         }
       },
     },
     {
       id: "due_date",
-      header: () => <Label className="font-table">Due Date</Label>,
+      header: () => <Label className="font-helvetica-table-14">Due Date</Label>,
       cell: ({ row }) => {
         if (row.original.due_date !== null) {
           const formatted = new Intl.DateTimeFormat("en-US", {
@@ -135,23 +135,23 @@ export const TasksTable = ({ data }: TasksTableProps) => {
             day: "numeric",
           }).format(new Date(row?.original?.due_date ?? ""));
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {formatted}
             </Label>
           );
         } else {
-          <Label className="ml-2 font-table truncate overflow-hidden">
-            N/A
-          </Label>;
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>;
         }
       },
       accessorKey: "due_date",
     },
     {
       id: "issuer_name",
-      header: () => <Label className="font-table">Issuer Name</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Issuer Name</Label>
+      ),
       cell: ({ row }) => (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.raised_by.name !== null
             ? row.original.raised_by.name
             : "N/A"}
@@ -161,9 +161,11 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "issuer_email",
-      header: () => <Label className="font-table">Issuer Email</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Issuer Email</Label>
+      ),
       cell: ({ row }) => (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.raised_by?.email !== null
             ? row.original.raised_by?.email
             : "N/A"}
@@ -173,7 +175,9 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "issued_on",
-      header: () => <Label className="font-table">Date Raised</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Date Raised</Label>
+      ),
       cell: ({ row }) => {
         if (row.original.raised_by !== null) {
           const formatted = new Intl.DateTimeFormat("en-US", {
@@ -182,33 +186,31 @@ export const TasksTable = ({ data }: TasksTableProps) => {
             day: "numeric",
           }).format(new Date(row?.original?.raised_by?.date_issued ?? ""));
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {formatted}
             </Label>
           );
         } else {
-          <Label className="ml-2 font-table truncate overflow-hidden">
-            N/A
-          </Label>;
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>;
         }
       },
       accessorKey: "raised_by",
     },
     {
       id: "resolver_name",
-      header: () => <Label className="font-table">Resolver Name</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Resolver Name</Label>
+      ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {row.original.resolved_by?.name}
             </Label>
           );
         } else {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
-              N/A
-            </Label>
+            <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
           );
         }
       },
@@ -217,19 +219,19 @@ export const TasksTable = ({ data }: TasksTableProps) => {
 
     {
       id: "resolver_email",
-      header: () => <Label className="font-table">Resolver Email</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Resolver Email</Label>
+      ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {row.original.resolved_by?.email}
             </Label>
           );
         } else {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
-              N/A
-            </Label>
+            <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
           );
         }
       },
@@ -237,7 +239,9 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "resolved_on",
-      header: () => <Label className="font-table">Date Resolved</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">Date Resolved</Label>
+      ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
           const formatted = new Intl.DateTimeFormat("en-US", {
@@ -246,15 +250,13 @@ export const TasksTable = ({ data }: TasksTableProps) => {
             day: "numeric",
           }).format(new Date(row.original.resolved_by.date_issued ?? ""));
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
+            <Label className="ml-2 font-helvetica-table-13 truncate">
               {formatted}
             </Label>
           );
         } else {
           return (
-            <Label className="ml-2 font-table truncate overflow-hidden">
-              N/A
-            </Label>
+            <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
           );
         }
       },
@@ -263,30 +265,30 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "actions",
       header: () => (
-        <Label className="font-table flex justify-center">More</Label>
+        <Label className="font-helvetica-table-14 flex justify-center">
+          More
+        </Label>
       ),
       cell: ({ row }) => {
         return (
           <div className="flex justify-center items-center w-full h-full">
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-                  variant="ghost">
+                <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
                   <Ellipsis />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-                <div className="flex flex-col divide-y">
+              <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+                <div className="flex flex-col gap-1">
                   <Link
-                    className="h-[32px] hover:bg-neutral-800 flex items-center gap-2 justify-start px-4 py-2 rounded-md"
+                    className="h-[32px] hover:bg-blue-400 text-black font-helvetica-table-13 flex items-center gap-2 justify-start px-4 py-2 rounded-md"
                     replace
                     href={`/eAuditNext/engagement?id=${
                       row.original.engagement
                     }&action=${row.original.id}&name=${params.get(
                       "name"
                     )}&stage=Tasks`}>
-                    <Info size={16} strokeWidth={3} />
+                    <Info size={16} strokeWidth={2} />
                     Details
                   </Link>
                   {row.original.status === Status.PENDING ? (
@@ -294,10 +296,8 @@ export const TasksTable = ({ data }: TasksTableProps) => {
                       title="Resolve Task"
                       id={row.original.id}
                       endpoint="task/resolve">
-                      <Button
-                        variant="ghost"
-                        className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                        <SendHorizonal size={16} strokeWidth={3} />
+                      <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                        <SendHorizonal size={16} strokeWidth={2} />
                         Resolve
                       </Button>
                     </ResolveTaskForm>
@@ -307,10 +307,8 @@ export const TasksTable = ({ data }: TasksTableProps) => {
                       title="Task Decision"
                       id={row.original.id}
                       endpoint="task/resolve/decision">
-                      <Button
-                        variant="ghost"
-                        className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                        <CircleCheck size={16} strokeWidth={3} />
+                      <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                        <CircleCheck size={16} strokeWidth={2} />
                         Decision
                       </Button>
                     </TaskDecisionForm>
@@ -327,10 +325,8 @@ export const TasksTable = ({ data }: TasksTableProps) => {
                       endpoint="task/raise"
                       mode="update"
                       id={row.original.id}>
-                      <Button
-                        variant="ghost"
-                        className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                        <Pencil size={16} strokeWidth={3} />
+                      <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                        <Pencil size={16} strokeWidth={2} />
                         Edit
                       </Button>
                     </RaiseTask>
@@ -338,8 +334,8 @@ export const TasksTable = ({ data }: TasksTableProps) => {
 
                   <Button
                     variant="ghost"
-                    className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                    <Trash size={16} strokeWidth={3} className="text-red-800" />
+                    className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                    <Trash size={16} strokeWidth={2} className="text-red-800" />
                     Delete
                   </Button>
                 </div>
@@ -392,16 +388,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500 text-black bg-neutral-300"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -474,7 +470,7 @@ export const TasksTable = ({ data }: TasksTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -483,7 +479,7 @@ export const TasksTable = ({ data }: TasksTableProps) => {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -491,7 +487,9 @@ export const TasksTable = ({ data }: TasksTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

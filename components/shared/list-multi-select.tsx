@@ -53,8 +53,7 @@ export const ListMultiSelector = ({
       <DialogTrigger asChild>
         <Button
           type="button"
-          variant="outline"
-          className="w-full justify-start font-[helvetica] tracking-wide font-semibold h-auto py-2">
+          className="w-full text-black border hover:bg-neutral-100 border-neutral-500 bg-inherit justify-start font-bold font-[helvetica] text-[13px] h-auto py-2">
           {value && value.length > 0 ? (
             <div className="flex flex-col gap-0.5 text-left">
               {value.slice(0, 3).map((v, i) => (
@@ -73,7 +72,7 @@ export const ListMultiSelector = ({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-[520px] gap-0 flex flex-col max-w-[800px] dark:bg-black">
+      <DialogContent className="h-[520px] gap-0 flex flex-col max-w-[800px] bg-white">
         <DialogHeader className="h-[30px]">
           <DialogTitle className="font-[helvetica] tracking-wide scroll-m-0 text-[20px] font-semibold">
             {title}
@@ -85,11 +84,10 @@ export const ListMultiSelector = ({
             placeholder="Search members..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-3 flex-1 my-3"
+            className="mb-3 flex-1 my-3 font-helvetica-13"
           />
           <Button
-            variant="ghost"
-            className="flex-1 font-semibold font-[helvetica] tracking-wide scroll-m-0 flex items-center gap-2 bg-green-800"
+            className="flex-1 font-helvetica-13 text-white tracking-wide scroll-m-0 flex items-center gap-2 bg-green-800"
             onClick={() => setOpen(false)}>
             <CircleCheck size={16} strokeWidth={3} />
             Pick
@@ -100,7 +98,9 @@ export const ListMultiSelector = ({
             <section className="flex gap-2 flex-col justify-center">
               {filteredProcesses.length > 0 ? (
                 filteredProcesses.map((process, index) => (
-                  <section key={index} className="flex items-center gap-1">
+                  <section
+                    key={index}
+                    className="flex items-center gap-1 hover:bg-neutral-300 pl-2">
                     <Checkbox
                       id={process}
                       checked={isSelected(process)}
@@ -108,17 +108,19 @@ export const ListMultiSelector = ({
                     />
                     <Label
                       htmlFor={process}
-                      className="flex-1 h-8 mr-3 flex items-center px-2 py-1 rounded-md cursor-pointer font-[helvetica] tracking-wide scroll-m-0 font-semibold dark:hover:bg-neutral-700">
+                      className="flex-1 font-helvetica-13 h-8 mr-3 flex items-center px-2 py-1 rounded-md cursor-pointer">
                       {process}
                     </Label>
                   </section>
                 ))
               ) : (
-                <p className="text-muted-foreground px-2">No results found.</p>
+                <p className="text-muted-foreground font-helvetica-13 px-2">
+                  No results found.
+                </p>
               )}
             </section>
           </ScrollArea>
-          <section className="pt-3 text-sm text-muted-foreground font-[helvetica] w-[370px]">
+          <section className="pt-3 text-muted-foreground font-helvetica-13 w-[370px]">
             <strong>Selected:</strong>
             <ul className="list-disc pl-5">
               {value.map((process, index) => (

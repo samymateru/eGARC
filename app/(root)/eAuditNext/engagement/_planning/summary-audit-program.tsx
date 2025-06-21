@@ -47,7 +47,7 @@ export const SummaryAuditProgram = () => {
   }, [error, isError]);
 
   return (
-    <section>
+    <section className="w-[calc(100vw-332px)]">
       <SummaryAuditProgramTable data={data ?? []} />
     </section>
   );

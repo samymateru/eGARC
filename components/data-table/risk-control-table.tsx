@@ -53,9 +53,9 @@ type PRCMValues = z.infer<typeof RiskControlSchema>;
 const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "risk",
-    header: () => <Label className="font-table">Risk</Label>,
+    header: () => <Label className="font-helvetica-table-14">Risk</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.risk}
       </Label>
     ),
@@ -63,9 +63,11 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "risk_rating",
-    header: () => <Label className="font-table">Risk Rating</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Risk Rating</Label>
+    ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.risk_rating}
       </Label>
     ),
@@ -73,9 +75,9 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control",
-    header: () => <Label className="font-table">Control</Label>,
+    header: () => <Label className="font-helvetica-table-14">Control</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control}
       </Label>
     ),
@@ -83,9 +85,11 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control_type",
-    header: () => <Label className="font-table">Control Type</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Control Type</Label>
+    ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control_type}
       </Label>
     ),
@@ -93,9 +97,11 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "control_objective",
-    header: () => <Label className="font-table">Control Objective</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Control Objective</Label>
+    ),
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate text-balance">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control_objective}
       </Label>
     ),
@@ -104,21 +110,21 @@ const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">More</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        More
+      </Label>
     ),
     cell: ({ row }) => {
       return (
         <div className="flex justify-center items-center w-full h-full">
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-                variant="ghost">
+              <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
                 <Ellipsis />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black">
-              <div className="flex flex-col divide-y">
+            <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
+              <div className="flex flex-col gap-1">
                 <RiskControlForm
                   data={{
                     risk: row.original.risk,
@@ -131,17 +137,13 @@ const columns: ColumnDef<PRCMValues>[] = [
                   title="Edit Risk Control"
                   id={row.original.id ?? null}
                   endpoint="engagements/sub_program/risk_control">
-                  <Button
-                    variant="ghost"
-                    className="w-full flex justify-start gap-2 items-center h-[30px]">
-                    <Pencil size={16} strokeWidth={3} />
+                  <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                    <Pencil size={16} strokeWidth={2} />
                     Edit
                   </Button>
                 </RiskControlForm>
-                <Button
-                  variant="ghost"
-                  className="w-full dark:hover:bg-neutral-800 rounded-md px-4 flex items-center justify-start gap-2 h-8 font-table">
-                  <Trash size={16} strokeWidth={3} className="text-red-800" />
+                <Button className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                  <Trash size={16} strokeWidth={2} className="text-red-800" />
                   Delete
                 </Button>
               </div>
@@ -199,16 +201,16 @@ export const RiskControlTable = ({ data }: RiskControlTableProps) => {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -281,7 +283,7 @@ export const RiskControlTable = ({ data }: RiskControlTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -290,7 +292,7 @@ export const RiskControlTable = ({ data }: RiskControlTableProps) => {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -298,7 +300,9 @@ export const RiskControlTable = ({ data }: RiskControlTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-helvetica-table-13">
                 No results.
               </TableCell>
             </TableRow>

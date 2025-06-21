@@ -44,25 +44,29 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { SummaryProcedureSchema } from "@/lib/types";
+import Link from "next/link";
 
 type SummaryProcedureValues = z.infer<typeof SummaryProcedureSchema>;
 
 const columns: ColumnDef<SummaryProcedureValues>[] = [
   {
     id: "reference",
-    header: () => <Label className="font-table">Reference</Label>,
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
     accessorKey: "reference",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Link
+        replace
+        href={"#"}
+        className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
         {row.original.reference}
-      </Label>
+      </Link>
     ),
   },
   {
     id: "program",
-    header: () => <Label className="font-table">Program</Label>,
+    header: () => <Label className="font-helvetica-table-14">Program</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.program}
       </Label>
     ),
@@ -70,9 +74,9 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "title",
-    header: () => <Label className="font-table">Title</Label>,
+    header: () => <Label className="font-helvetica-table-14">Title</Label>,
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate overflow-hidden">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.title}
       </Label>
     ),
@@ -80,11 +84,13 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "effectiveness",
-    header: () => <Label className="font-table">Effectiveness</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Effectiveness</Label>
+    ),
     accessorKey: "effectiveness",
     cell: ({ row }) => {
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.effectiveness}
         </Label>
       );
@@ -92,11 +98,11 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   },
   {
     id: "end",
-    header: () => <Label className="font-table">Issues</Label>,
+    header: () => <Label className="font-helvetica-table-14">Issues</Label>,
     accessorKey: "issue_count",
     cell: ({ row }) => {
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.issue_count}
         </Label>
       );
@@ -105,19 +111,19 @@ const columns: ColumnDef<SummaryProcedureValues>[] = [
   {
     id: "actions",
     header: () => (
-      <Label className="font-table flex justify-center">Actions</Label>
+      <Label className="font-helvetica-table-14 flex justify-center">
+        Actions
+      </Label>
     ),
     cell: () => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              className="flex justify-center items-center p-1 w-[30px] h-[30px]"
-              variant="ghost">
+            <Button className="flex justify-center items-center p-1 w-[30px] h-[30px] bg-neutral-200 text-black hover:bg-blue-400">
               <Ellipsis />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[250px] px-1 py-2 dark:bg-black"></PopoverContent>
+          <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200"></PopoverContent>
         </Popover>
       </div>
     ),
@@ -172,16 +178,16 @@ export const SummaryProceduresTable = ({
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500 text-black ">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500 bg-neutral-300 "
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -254,7 +260,7 @@ export const SummaryProceduresTable = ({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -263,7 +269,7 @@ export const SummaryProceduresTable = ({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -271,7 +277,9 @@ export const SummaryProceduresTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-helvetica-13 text-black">
                 No results.
               </TableCell>
             </TableRow>

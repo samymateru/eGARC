@@ -1,7 +1,14 @@
 import { Response, StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
 import { Button } from "../ui/button";
-import { Menu, PanelLeft, Save, UserCheck, UserCog } from "lucide-react";
+import {
+  FileText,
+  Menu,
+  PanelLeft,
+  Save,
+  UserCheck,
+  UserCog,
+} from "lucide-react";
 import TextEditor from "@/components/shared/tiptap-text-editor";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -253,21 +260,22 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
   }, []);
 
   return (
-    <section className="flex flex-col w-full">
-      <header className="flex justify-between px-1">
-        <section className="flex items-center justify-end gap-1 py-1 pl-1">
-          <Button
-            variant={"ghost"}
-            className="mr-4 dark:bg-neutral-800 w-[30px] flex justify-center items-center font-table h-[30px]">
+    <section className="flex flex-col w-[calc(100vw-332px)] h-[calc(100vh-99px)] overflow-y-auto overflow-x-hidden">
+      <header className="flex justify-between px-2 pt-[3px]">
+        <section className="flex items-center justify-end gap-1">
+          <Button className="mr-4 w-[30px] flex justify-center items-center font-table h-[30px]">
             <PanelLeft size={16} strokeWidth={3} />
           </Button>
-          <Separator orientation="vertical" />
-          <section className="flex items-center gap-1 font-table font-medium h-full">
-            <Label className="font-semibold font-[helvetica] text-[15px] scroll-m-0 px-2 truncate">
+          <Separator orientation="vertical" className="bg-neutral-400" />
+          <section className="flex items-center gap-1 max-w-[500px]">
+            <Label className="font-helvetica-14 px-2 truncate">
               {data?.title}
             </Label>
-            <Separator orientation="vertical" />
-            <Label className="font-semibold font-[helvetica] text-xs scroll-m-0 truncate">
+            <Separator
+              orientation="vertical"
+              className="bg-neutral-400 h-[30px]"
+            />
+            <Label className="font-helvetica-table-13 truncate">
               {data?.reference}
             </Label>
           </section>
@@ -276,28 +284,28 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           <div className="px-2">
             <ToggleProcedureVisibility />
           </div>
-          <Separator className="mx-1" orientation="vertical" />
+          <Separator
+            className="mx-1 bg-neutral-400 h-[28px]"
+            orientation="vertical"
+          />
           <Button
             onClick={onSubmit}
             disabled={saveProcedureLoading}
-            variant={"ghost"}
-            className="w-[130px] flex justify-start items-center h-7 font-bold text-white bg-blue-700">
+            className="w-[130px] flex justify-start items-center h-7 text-white font-helvetica-13 bg-black">
             <Save size={16} strokeWidth={3} />
             Save
           </Button>
-          <Separator className="mx-1" orientation="vertical" />
+          <Separator className="mx-1 bg-neutral-400" orientation="vertical" />
           <PlanningProcedureActions data={data}>
-            <Button
-              variant={"ghost"}
-              className="w-[130px] flex justify-start items-center h-7 font-bold text-white bg-blue-700">
+            <Button className="w-[130px] flex justify-start items-center h-7 text-white font-helvetica-13 bg-black">
               <Menu size={16} strokeWidth={3} />
               Menu
             </Button>
           </PlanningProcedureActions>
         </section>
       </header>
-      <Separator />
-      <main className="pt-3 overflow-y-auto overflow-x-hidden h-[calc(100vh-91px)] w-[calc(100vw-320px)]">
+      <Separator className="bg-neutral-500 mt-1" />
+      <main className="pt-3 overflow-y-auto overflow-x-hidden h-[calc(100vh-91px)] pb-2 w-[calc(100vw-332px)] hide-scrollbar">
         <TemplateWrapper
           setObjective={setObjective}
           setTests={setTests}
@@ -318,13 +326,12 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           ) : null}
         </section>
         <section>
-          <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-320px)] px-2">
+          <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-340px)] px-2">
             {!preparedBy ? (
               <Button
                 disabled={prepareLoading}
                 onClick={onPrepare}
-                variant="ghost"
-                className="w-[130px] h-7 flex items-center justify-start text-white font-bold bg-blue-700">
+                className="w-[130px] h-7 flex items-center justify-start text-white font-helvetica-13 bg-black">
                 <UserCog size={16} strokeWidth={3} />
                 Prepare
               </Button>
@@ -333,8 +340,7 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
               <Button
                 onClick={onReview}
                 disabled={reviewLoading}
-                variant="ghost"
-                className="w-[130px] h-7 flex items-center text-white justify-start font-bold bg-blue-700">
+                className="w-[130px] h-7 flex items-center text-white justify-start font-helvetica-13 bg-black">
                 <UserCheck size={16} strokeWidth={3} />
                 Review
               </Button>
@@ -349,16 +355,16 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
         </section>
         <section className="pt-2 w-full overflow-x-hidden mt-2">
           {data?.type === "risk" ? (
-            <section>
-              <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] ml-2">
+            <section className="flex flex-col gap-2">
+              <Label className="font-helvetica-medium ml-2">
                 Process Risk Control Matrix
               </Label>
               <PRCM />
             </section>
           ) : null}
           {data?.type === "program" ? (
-            <section>
-              <Label className="font-[helvetica] font-semibold tracking-normal scroll-m-0 text-[16px] ml-2">
+            <section className="flex flex-col gap-2">
+              <Label className="font-helvetica-medium ml-2 text-black">
                 Engagement Work Program
               </Label>
               <SummaryAuditProgram />
@@ -402,8 +408,9 @@ const TemplateWrapper = ({
           value={item.id}
           key={item.id}
           className="flex flex-col border-none w-full px-2">
-          <AccordionTrigger className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md leading-6 hover:no-underline w-full font-hel-heading">
+          <AccordionTrigger className="px-4 py-4 h-9 rounded-md leading-6 hover:no-underline w-full font-helvetica-13 bg-neutral-200">
             <span className="flex items-center gap-3">
+              <FileText size={17} strokeWidth={2} className="mb-1" />
               <span>{item.title}</span>
             </span>
           </AccordionTrigger>

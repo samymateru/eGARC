@@ -54,7 +54,7 @@ export const SummaryProcedure = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-320px)]">
+    <div className="flex flex-col gap-3 w-[calc(100vw-332px)]">
       <SummaryProceduresTable data={data ?? []} />
     </div>
   );

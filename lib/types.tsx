@@ -26,6 +26,7 @@ export const User = z.object({
 
 export const PlanSchema = z.object({
   id: z.string().optional(),
+  reference: z.string().optional(),
   module: z.string().optional(),
   name: z.string().min(1, "Plan name is equired"),
   year: z.string().regex(/^\d{4}$/, "Year must be a 4-digit string"),

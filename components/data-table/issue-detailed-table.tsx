@@ -31,37 +31,43 @@ type IssueDetailedValues = z.infer<typeof IssueDetailedSchema>;
 
 const columns: ColumnDef<IssueDetailedValues>[] = [
   {
-    header: () => <Label className="font-table">Reference</Label>,
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
     accessorKey: "reference",
     cell: ({ row }) => (
-      <div className="truncate font-medium">{row.original.reference}</div>
+      <div className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.reference}
+      </div>
     ),
     sortUndefined: "last",
     sortDescFirst: false,
   },
   {
     id: "engagement_name",
-    header: () => <Label className="font-table">Engagement Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Engagement Name</Label>
+    ),
     accessorKey: "engagement_name",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.engagement_name}
       </Label>
     ),
   },
   {
     id: "engagement_code",
-    header: () => <Label className="font-table">Engagement Code</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Engagement Code</Label>
+    ),
     accessorKey: "engagement_code",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.engagement_code}
       </Label>
     ),
   },
   {
     id: "year",
-    header: () => <Label className="font-table">Year</Label>,
+    header: () => <Label className="font-helvetica-table-14">Year</Label>,
     accessorKey: "financial_year",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -70,7 +76,7 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
         day: "numeric",
       }).format(new Date(row?.original?.financial_year ?? ""));
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {formatted}
         </Label>
       );
@@ -78,113 +84,129 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
   },
   {
     id: "opinion_rating",
-    header: () => <Label className="font-table">Opinion Rating</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Opinion Rating</Label>
+    ),
     accessorKey: "overall_opinion_rating",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.overall_opinion_rating}
       </Label>
     ),
   },
   {
     id: "issue_name",
-    header: () => <Label className="font-table">Title</Label>,
+    header: () => <Label className="font-helvetica-table-14">Title</Label>,
     accessorKey: "issue_name",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.issue_name}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.issue_name}
+      </Label>
     ),
   },
   {
     id: "issue_rating",
-    header: () => <Label className="font-table">Rating</Label>,
+    header: () => <Label className="font-helvetica-table-14">Rating</Label>,
     accessorKey: "issue_rating",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.issue_rating}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.issue_rating}
+      </Label>
     ),
   },
   {
     id: "issue_source",
-    header: () => <Label className="font-table">Source</Label>,
+    header: () => <Label className="font-helvetica-table-14">Source</Label>,
     accessorKey: "issue_source",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.issue_source}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.issue_source}
+      </Label>
     ),
   },
   {
     id: "issue_criteria",
-    header: () => <Label className="font-table">Criteria</Label>,
+    header: () => <Label className="font-helvetica-table-14">Criteria</Label>,
     accessorKey: "issue_criteria",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.issue_criteria}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.issue_criteria}
+      </Label>
     ),
   },
   {
     id: "root_cause_description",
-    header: () => <Label className="font-table">Root Cause</Label>,
+    header: () => <Label className="font-helvetica-table-14">Root Cause</Label>,
     accessorKey: "root_cause_description",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.root_cause_description}
       </Label>
     ),
   },
   {
     id: "impact_description",
-    header: () => <Label className="font-table">Impact Description</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Impact Description</Label>
+    ),
     accessorKey: "impact_description",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.impact_description}
       </Label>
     ),
   },
   {
     id: "issue_recommendation",
-    header: () => <Label className="font-table">Recommendation</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Recommendation</Label>
+    ),
     accessorKey: "issue_recommendation",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.issue_recommendation}
       </Label>
     ),
   },
   {
     id: "issue_management_action_plan",
-    header: () => <Label className="font-table">Action Plan</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Action Plan</Label>
+    ),
     accessorKey: "issue_management_action_plan",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.issue_management_action_plan}
       </Label>
     ),
   },
   {
     id: "issue_overall_status",
-    header: () => <Label className="font-table">Status</Label>,
+    header: () => <Label className="font-helvetica-table-14">Status</Label>,
     accessorKey: "issue_overall_status",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.issue_overall_status}
       </Label>
     ),
   },
   {
     id: "issue_reportable",
-    header: () => <Label className="font-table">Reportable</Label>,
+    header: () => <Label className="font-helvetica-table-14">Reportable</Label>,
     accessorKey: "issue_reportable",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
-        {row?.original?.issue_reportable ? "YES" : "NO"}
+      <Label className="ml-4 font-helvetica-table-13 truncate">
+        {row?.original?.issue_reportable ? "Yes" : "No"}
       </Label>
     ),
   },
   {
     id: "is_issue_sent_to_owner",
-    header: () => <Label className="font-table">Sent</Label>,
+    header: () => <Label className="font-helvetica-table-14">Sent</Label>,
     accessorKey: "is_issue_sent_to_owner",
     cell: ({ row }) =>
       row?.original?.is_issue_sent_to_owner === "Yes" ? (
-        <Label className="ml-4 font-table0">
+        <Label className="ml-4 font-helvetica-table-13 truncate">
           Yes -{"> "}
           {row.original.date_issue_sent_to_client
             ? new Date(
@@ -193,12 +215,14 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
             : "No date"}
         </Label>
       ) : (
-        <Label className="ml-4 font-table">No</Label>
+        <Label className="ml-4 font-helvetica-table-13 truncate">No</Label>
       ),
   },
   {
     id: "estimated_implementation_date",
-    header: () => <Label className="font-table">Estimated Date</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Estimated Date</Label>
+    ),
     accessorKey: "estimated_implementation_date",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -207,7 +231,7 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
         day: "numeric",
       }).format(new Date(row?.original?.estimated_implementation_date ?? ""));
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {formatted}
         </Label>
       );
@@ -215,10 +239,10 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
   },
   {
     id: "is_issue_revised",
-    header: () => <Label className="font-table">Revised</Label>,
+    header: () => <Label className="font-helvetica-table-14">Revised</Label>,
     accessorKey: "is_issue_revised",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-4 font-helvetica-table-13 truncate">
         {row?.original?.is_issue_revised === "Yes"
           ? `Yes -> ${row.original.issue_revised_count}`
           : "No"}
@@ -227,7 +251,9 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
   },
   {
     id: "latest_revised_date",
-    header: () => <Label className="font-table">Revised Date</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Revised Date</Label>
+    ),
     accessorKey: "latest_revised_date",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -236,7 +262,7 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
         day: "numeric",
       }).format(new Date(row?.original?.latest_revised_date ?? ""));
       return (
-        <Label className="ml-2 font-table truncate overflow-hidden">
+        <Label className="ml-2 font-helvetica-table-13 truncate">
           {formatted}
         </Label>
       );
@@ -244,14 +270,16 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
   },
   {
     id: "actual_implementation_date",
-    header: () => <Label className="font-table">Actual Date</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Actual Date</Label>
+    ),
     accessorKey: "latest_revised_date",
     cell: ({ row }) => {
       const dateStr = row?.original?.actual_implementation_date;
 
       if (dateStr !== null) {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {new Intl.DateTimeFormat("en-US", {
               year: "numeric",
               month: "long",
@@ -261,49 +289,51 @@ const columns: ColumnDef<IssueDetailedValues>[] = [
         );
       } else {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
-            N/A
-          </Label>
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
         );
       }
     },
   },
   {
     id: "is_issue_pass_due",
-    header: () => <Label className="font-table">Pass Due</Label>,
+    header: () => <Label className="font-helvetica-table-14">Pass Due</Label>,
     accessorKey: "is_issue_pass_due",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-4 font-helvetica-table-13 truncate">
         {row?.original?.is_issue_pass_due}
       </Label>
     ),
   },
   {
     id: "issue_due_more_than_90_days",
-    header: () => <Label className="font-table">{"Pass > 90"}</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">{"Pass > 90"}</Label>
+    ),
     accessorKey: "issue_due_more_than_90_days",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-4 font-helvetica-table-13 truncate">
         {row?.original?.issue_due_more_than_90_days}
       </Label>
     ),
   },
   {
     id: "issue_due_more_than_365_days",
-    header: () => <Label className="font-table">{"Pass > 365"}</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">{"Pass > 365"}</Label>
+    ),
     accessorKey: "issue_due_more_than_365_days",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-4 font-helvetica-table-13 truncate">
         {row?.original?.issue_due_more_than_365_days}
       </Label>
     ),
   },
   {
     id: "latest_response",
-    header: () => <Label className="font-table">Response</Label>,
+    header: () => <Label className="font-helvetica-table-14">Response</Label>,
     accessorKey: "latest_response",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row?.original?.latest_response === null
           ? "N/A"
           : row?.original?.latest_response}
@@ -410,7 +440,7 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
   });
 
   return (
-    <div className="flex flex-col w-[calc(100vw-300px)] [&>div]:max-h-[calc(100vh-98px)]">
+    <div className="flex flex-col w-[calc(100vw-310px)] [&>div]:max-h-[calc(100vh-98px)]">
       <div className="w-full flex items-center gap-2 pb-2 px-2 justify-between">
         <IssueDetailedFilter
           revised={revised}
@@ -442,7 +472,7 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 310),
         }}>
         <TableHeader className="border-r border-r-neutral-800 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -451,7 +481,7 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"

@@ -417,36 +417,37 @@ export const IssueForm = ({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 
-        <AlertDialogContent className="p-0 max-w-[100vw] bg-white flex flex-col dark:bg-black">
+        <AlertDialogContent className="p-0 max-w-[calc(100vw-300px)] bg-white flex flex-col">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col h-full mx-2">
             <AlertDialogHeader className="px-4 py-2">
-              <AlertDialogTitle className="text-[20px] font-bold font-serif tracking-wider scroll-m-1">
+              <AlertDialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </AlertDialogTitle>
               <AlertDialogDescription className="hidden" />
             </AlertDialogHeader>
 
-            <Separator className="" />
+            <Separator className="bg-neutral-700" />
 
-            <main className="px-4 py-3 flex flex-col h-[calc(100vh-98px)] overflow-auto gap-2">
+            <main className="px-4 py-3 flex flex-col h-[calc(100vh-98px)] overflow-auto gap-3">
               <div className="*:not-first:mt-2 px-1 mb-2">
-                <Label
-                  htmlFor="title"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="title" className="font-helvetica-13">
                   Title <span className="text-destructive">*</span>
                 </Label>
-                <Input id="title" placeholder="Title" {...register("title")} />
+                <Input
+                  id="title"
+                  placeholder="Title"
+                  {...register("title")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
+                />
                 <div className="h-[6]">
                   <FormError error={errors.title} />
                 </div>
               </div>
               <section className="flex items-center gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Issue Source
-                  </Label>
+                  <Label className="font-helvetica-13">Issue Source</Label>
                   <Controller
                     name="source"
                     control={control}
@@ -458,16 +459,19 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select issue source" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select issue source"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[0]?.data?.values?.map(
                               (source, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={source ?? ""}>
                                   {source}
@@ -484,9 +488,7 @@ export const IssueForm = ({
                   </div>
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Risk Level
-                  </Label>
+                  <Label className="font-helvetica-13">Risk Level</Label>
                   <Controller
                     name="risk_rating"
                     control={control}
@@ -498,16 +500,19 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select risk level" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select risk level"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[1]?.data?.values?.map(
                               (rating, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={rating ?? ""}>
                                   {rating}
@@ -526,15 +531,14 @@ export const IssueForm = ({
               </section>
               {getValues("source") === "Self Disclosed" ? (
                 <div className="*:not-first:mt-2 px-1 mb-2">
-                  <Label
-                    htmlFor="sdi"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="sdi" className="font-helvetica-13">
                     SDI Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="sdi_name"
                     placeholder="SDI name"
                     {...register("sdi_name")}
+                    className="font-helvetica-input-13 placeholder:font-helvetica-13"
                   />
                   <div className="h-[6]">
                     <FormError error={errors.sdi_name} />
@@ -542,38 +546,32 @@ export const IssueForm = ({
                 </div>
               ) : null}
               <div className="*:not-first:mt-2 px-1 mb-2">
-                <Label
-                  htmlFor="criteria"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="criteria" className="font-helvetica-13">
                   Criteria
                 </Label>
                 <Textarea
                   id="criteria"
                   placeholder="Criteria here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("criteria")}
                 />
                 <FormError error={errors.criteria} />
               </div>
               <div className="*:not-first:mt-2 px-1 mb-2">
-                <Label
-                  htmlFor="finding"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="finding" className="font-helvetica-13">
                   Finding Weakness
                 </Label>
                 <Textarea
                   id="finding"
                   placeholder="Finding weakness here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("finding")}
                 />
                 <FormError error={errors.finding} />
               </div>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label
-                    htmlFor="_process_"
-                    className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label htmlFor="_process_" className="font-helvetica-13">
                     Process<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -588,14 +586,14 @@ export const IssueForm = ({
                           setValue("sub_process", "");
                         }}
                         value={field.value}>
-                        <SelectTrigger>
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
                           <SelectValue placeholder="Select process" />
                         </SelectTrigger>
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[2]?.data?.map((process, index: number) => (
                               <SelectItem
-                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                 key={index}
                                 value={process.process_name ?? "0"}>
                                 {process.process_name}
@@ -609,7 +607,7 @@ export const IssueForm = ({
                   <FormError error={errors?.process} />
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Sub Process<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -623,15 +621,18 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select sub process" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select sub process"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {subProcesses?.map((sub_process, index: number) => (
                               <SelectItem
-                                className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                 key={index}
                                 value={sub_process ?? "0"}>
                                 {sub_process}
@@ -648,20 +649,20 @@ export const IssueForm = ({
               <div className="*:not-first:mt-2 px-1 mb-2">
                 <Label
                   htmlFor="root_cause_description"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  className="font-helvetica-13">
                   Root Cause Description
                 </Label>
                 <Textarea
                   id="root_cause_description"
                   placeholder="Root cause description here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("root_cause_description")}
                 />
                 <FormError error={errors.root_cause_description} />
               </div>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Root Cause<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -676,15 +677,18 @@ export const IssueForm = ({
                           setValue("sub_root_cause", "");
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select root cause" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select root cause"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[3]?.data?.map(
                               (root_cause, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={root_cause.root_cause ?? "0"}>
                                   {root_cause.root_cause}
@@ -701,7 +705,7 @@ export const IssueForm = ({
                   </div>
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Sub Root Cause<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -715,16 +719,19 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select sub root cause" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select sub root cause"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {subRootCause?.map(
                               (sub_root_cause, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={sub_root_cause ?? "0"}>
                                   {sub_root_cause}
@@ -743,7 +750,7 @@ export const IssueForm = ({
               </section>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Risk Category<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -758,15 +765,18 @@ export const IssueForm = ({
                           setValue("sub_risk_category", "");
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select risk category" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select risk category"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[4]?.data?.map(
                               (risk_category, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={risk_category.risk_category ?? "0"}>
                                   {risk_category.risk_category}
@@ -783,7 +793,7 @@ export const IssueForm = ({
                   </div>
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Sub Root Cause<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -797,16 +807,19 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select sub risk category" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select sub risk category"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {subRiskCategory?.map(
                               (sub_risk_category, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={sub_risk_category ?? "0"}>
                                   {sub_risk_category}
@@ -826,20 +839,20 @@ export const IssueForm = ({
               <div className="*:not-first:mt-2 px-1 mb-2">
                 <Label
                   htmlFor="impact_description"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  className="font-helvetica-13">
                   Impact Description
                 </Label>
                 <Textarea
                   id="impact_description"
                   placeholder="Impact description here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("impact_description")}
                 />
                 <FormError error={errors.impact_description} />
               </div>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Impact Category<span className="text-destructive">*</span>
                   </Label>
                   <Controller
@@ -854,15 +867,18 @@ export const IssueForm = ({
                           setValue("impact_sub_category", "");
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select impact category" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select impact category"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {results[5]?.data?.map(
                               (impact_category, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={
                                     impact_category.impact_category ?? "0"
@@ -896,16 +912,19 @@ export const IssueForm = ({
                           field.onChange(value);
                         }}
                         value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select sub impact category" />
+                        <SelectTrigger className="border border-neutral-500 font-helvetica-13">
+                          <SelectValue
+                            placeholder="Select sub impact category"
+                            className="placeholder:font-helvetica-13"
+                          />
                         </SelectTrigger>
 
-                        <SelectContent className="">
+                        <SelectContent className="bg-neutral-100">
                           <ScrollArea className="max-h-[260px] h-auto overflow-auto">
                             {subImpactCategory?.map(
                               (sub_impact_category, index: number) => (
                                 <SelectItem
-                                  className="font-serif tracking-wide scroll-m-1 text-[14px] dark:hover:bg-neutral-800 cursor-pointer"
+                                  className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black"
                                   key={index}
                                   value={sub_impact_category ?? "0"}>
                                   {sub_impact_category}
@@ -923,15 +942,13 @@ export const IssueForm = ({
                 </div>
               </section>
               <div className="*:not-first:mt-2 px-1 mb-2">
-                <Label
-                  htmlFor="recommendation"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                <Label htmlFor="recommendation" className="font-helvetica-13">
                   Recommendation
                 </Label>
                 <Textarea
                   id="recommendation"
                   placeholder="recommendation here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("recommendation")}
                 />
                 <FormError error={errors.recommendation} />
@@ -939,19 +956,19 @@ export const IssueForm = ({
               <div className="*:not-first:mt-2 px-1 mb-2">
                 <Label
                   htmlFor="management_action_plan"
-                  className="font-serif tracking-wide scroll-m-0 font-medium">
+                  className="font-helvetica-13">
                   Management Action Plan
                 </Label>
                 <Textarea
                   id="management_action_plan"
                   placeholder="Management action plan here"
-                  className="min-h-[100px] max-h-[120px]"
+                  className="min-h-[100px] max-h-[120px] font-helvetica-input-13 placeholder:font-helvetica-13"
                   {...register("management_action_plan")}
                 />
                 <FormError error={errors.management_action_plan} />
               </div>
-              <div className="*:not-first:mt-2 flex-1 flex flex-col">
-                <Label className="ml-[2px] font-table pb-[3px]">
+              <div className="*:not-first:mt-2 flex-1 flex flex-col gap-[2px]">
+                <Label className="ml-[2px] font-helvetica-13 pb-[3px]">
                   Estimated Implementation Date
                 </Label>
                 <Controller
@@ -977,7 +994,10 @@ export const IssueForm = ({
                     checked={recurring}
                     onCheckedChange={(value) => setRecurring(value === true)}
                   />
-                  <Label id="recurring" htmlFor="recurring">
+                  <Label
+                    id="recurring"
+                    htmlFor="recurring"
+                    className="font-helvetica-13">
                     Recurring
                   </Label>
                 </section>
@@ -995,16 +1015,17 @@ export const IssueForm = ({
                       />
                     )}
                   />
-                  <Label id="regulatory" htmlFor="regulatory">
+                  <Label
+                    id="regulatory"
+                    htmlFor="regulatory"
+                    className="font-helvetica-13">
                     Regulatory
                   </Label>
                 </section>
               </section>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    LOD1 Owner
-                  </Label>
+                  <Label className="font-helvetica-13">LOD1 Owner</Label>
                   <Controller
                     name="lod1_owner"
                     control={control}
@@ -1021,9 +1042,7 @@ export const IssueForm = ({
                   <FormError error={errors.lod1_owner} />
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    LOD1 Implementer
-                  </Label>
+                  <Label className="font-helvetica-13">LOD1 Implementer</Label>
                   <Controller
                     name="lod1_implementer"
                     control={control}
@@ -1042,9 +1061,7 @@ export const IssueForm = ({
               </section>
               <section className="flex gap-2 px-1 mb-2">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Risk Officer
-                  </Label>
+                  <Label className="font-helvetica-13">Risk Officer</Label>
                   <Controller
                     name="lod2_risk_manager"
                     control={control}
@@ -1061,7 +1078,7 @@ export const IssueForm = ({
                   <FormError error={errors.lod2_risk_manager} />
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
+                  <Label className="font-helvetica-13">
                     Compliance Officer
                   </Label>
                   <Controller
@@ -1082,9 +1099,7 @@ export const IssueForm = ({
               </section>
               <section className="flex gap-2 px-1 mb-3">
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Audit Manager
-                  </Label>
+                  <Label className="font-helvetica-13">Audit Manager</Label>
                   <Controller
                     name="lod3_audit_manager"
                     control={control}
@@ -1101,9 +1116,7 @@ export const IssueForm = ({
                   <FormError error={errors.lod3_audit_manager} />
                 </div>
                 <div className="*:not-first:mt-2 flex-1">
-                  <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                    Observers
-                  </Label>
+                  <Label className="font-helvetica-13">Observers</Label>
                   <Controller
                     name="observers"
                     control={control}
@@ -1122,21 +1135,19 @@ export const IssueForm = ({
               </section>
             </main>
 
-            <Separator />
+            <Separator className="bg-neutral-700" />
             <footer className="flex justify-center gap-2 px-4 py-2">
               <Button
                 type="button"
-                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-black text-white flex-1 font-helvetica-13">
                 <CircleX className="mr-1" size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
                 disabled={issueLoading}
                 type="submit"
-                variant="ghost"
-                className="bg-green-800 text-white flex-1 font-serif tracking-wide scroll-m-1 font-bold">
+                className="bg-green-900 text-white flex-1 font-helvetica-13">
                 <Send className="mr-1" size={16} strokeWidth={3} />
                 Submit
               </Button>

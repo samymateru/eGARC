@@ -27,12 +27,12 @@ export const PlanningProcedureActions = ({
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="p-2">
+      <PopoverContent className="p-2 bg-neutral-300" align="end">
         <section>
-          <Label className="font-hel-heading-bold">Actions</Label>
+          <Label className="font-helvetica-medium pl-5">Actions</Label>
         </section>
-        <Separator />
-        <section className="pt-1 divide-y">
+        <Separator className="bg-neutral-500 my-1" />
+        <section className="pt-1 flex flex-col gap-1">
           <RaiseTask
             data={{
               title: "",
@@ -45,8 +45,8 @@ export const PlanningProcedureActions = ({
             id={params.get("id")}>
             <Button
               variant={"ghost"}
-              className=" w-full flex justify-start items-center font-table h-[30px]">
-              <ListTodoIcon size={16} strokeWidth={3} />
+              className=" w-full flex justify-start hover:bg-blue-400 items-center font-helvetica-13 h-[30px]">
+              <ListTodoIcon size={16} strokeWidth={2} />
               Raise Task
             </Button>
           </RaiseTask>
@@ -62,9 +62,9 @@ export const PlanningProcedureActions = ({
             id={params.get("id")}>
             <Button
               variant={"ghost"}
-              className="w-full flex justify-start items-center h-[30px]">
-              <MessagesSquare size={16} strokeWidth={3} />
-              Raise Note
+              className="w-full flex justify-start hover:bg-blue-400 items-center font-helvetica-13 h-[30px]">
+              <MessagesSquare size={16} strokeWidth={2} />
+              Raise Comment
             </Button>
           </RaiseReviewComment>
           {data?.type === "risk" ? (
@@ -80,10 +80,8 @@ export const PlanningProcedureActions = ({
               title="Add PRCM"
               endpoint="engagements/PRCM"
               id={params.get("id")}>
-              <Button
-                variant={"ghost"}
-                className="w-full flex justify-start items-center h-[30px]">
-                <AlertTriangle size={16} strokeWidth={3} />
+              <Button className="w-full flex justify-start hover:bg-blue-400 items-center font-helvetica-13 h-[30px] bg-inherit text-black shadow-none">
+                <AlertTriangle size={16} strokeWidth={2} />
                 Add PRCM
               </Button>
             </PRCMForm>

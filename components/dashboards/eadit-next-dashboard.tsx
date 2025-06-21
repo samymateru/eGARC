@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { GradientBarChart } from "../shared/gradient-bar-chart";
 import { AuditSummaryDonutChart } from "../shared/audit-summary-donut-chart";
 import { EngagementSummaryDonutChart } from "../shared/engagement-summary-donut-chart";
-import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { IssueStatusDonutChart } from "../shared/issue-status-donut-chart";
 import { Loader } from "../shared/loader";
 import { ErrorMessage } from "@/lib/utils";
 import { ErrorQuery } from "../shared/error-query";
+import { BreadCrumbNavbar } from "../shared/breadcrum-nav";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allRootCauses = [
@@ -122,42 +122,40 @@ export const EauditDashboard = () => {
   }
 
   return (
-    <section className="w-full flex flex-col h-[100vh]">
-      <section className="py-2">
-        <Label className="font-[helvetica] font-bold text-[24px] tracking-wide scroll-m-0 pl-3">
-          eAuditNext Dashboard
-        </Label>
-        <Separator />
+    <section className="flex flex-col h-[100vh] w-[calc(100vw-310px)]">
+      <section className="pt-[22px] flex items-center justify-between mx-2">
+        <BreadCrumbNavbar />
       </section>
-      <section className="w-full flex-1 overflow-auto">
+      <Separator className="mt-2 bg-neutral-600" />
+      <section className="w-full flex-1 overflow-auto bg-neutral-300">
         <section className="flex flex-col">
-          <section className="flex items-center gap-1 w-full">
+          <section className="flex items-center gap-1 w-full p-2">
             <AuditSummaryDonutChart data={auditSummary} />
             <EngagementSummaryDonutChart data={engagementSummary} />
           </section>
-          <section className="flex items-center gap-1">
+          <section className="flex items-center gap-1 p-2">
             <IssueStatusDonutChart data={issueStatus} />
             <IssueRecurringDonutChart data={recurring} />
           </section>
-          <section className="flex items-center gap-1">
+          <section className="flex items-center gap-1 p-2">
             <GradientBarChart
               title="Root Cause Insights"
               description=""
-              color="#1e40af"
+              color="#3b82f6"
               data={rootCause}
             />
             <GradientBarChart
               title="Impact Category Insights"
               description=""
-              color="#1e40af"
+              color="#3b82f6"
               data={impactCategory}
             />
           </section>
-          <section className="flex items-center gap-1">
+          <section className="flex items-center gap-1 p-2">
             <GradientBarChart
               title="Top Rated Processes"
               description=""
-              color="#1e40af"
+              color="#3b82f6"
               data={process}
             />
           </section>

@@ -161,22 +161,20 @@ export const InformationContactsForm = ({
     <FormProvider {...methods}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="p-0 gap-0 max-w-[500px]">
+        <DialogContent className="p-0 gap-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader className="rounded-tl rounded-tr  py-2">
-              <DialogTitle className="font-serif text-[20px] pl-3 tracking-wide scroll-m-0 font-bold text-xl">
+              <DialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </DialogTitle>
               <DialogDescription className="hidden" />
             </DialogHeader>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
 
             <section className="py-5 px-5 flex flex-col gap-3">
               <div className="*:not-first:mt-2 flex-1">
-                <Label className="font-serif tracking-wide scroll-m-0 font-medium">
-                  Contact Person
-                </Label>
+                <Label className="font-helvetica-13">Contact Person</Label>
                 <Controller
                   name="user"
                   control={control}
@@ -200,22 +198,20 @@ export const InformationContactsForm = ({
               </div>
             </section>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
 
             <footer className="rounded-br rounded-bl flex px-4 py-2 gap-2">
               <Button
-                variant="ghost"
                 type="button"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 font-serif font-semibold flex-1">
+                className="bg-black font-helvetica-13 flex-1">
                 <CircleX size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
-                variant="ghost"
                 disabled={saveBusinessContactPending}
                 type="submit"
-                className="bg-green-800 font-serif font-semibold flex-1">
+                className="bg-green-900 font-helvetica-13 flex-1">
                 <Send size={16} strokeWidth={3} />
                 {"Submit"}
               </Button>

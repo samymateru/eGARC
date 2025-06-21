@@ -25,12 +25,10 @@ export const MainProgramAction = ({ children, id }: MainProgramActionProps) => {
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         side="right"
-        className="dark:bg-black p-2"
+        className="bg-neutral-300 p-2"
         onClick={(e) => e.stopPropagation()}>
-        <Label className="font-bold text-[20px] font-[helvetica]">
-          Program Actions
-        </Label>
-        <Separator />
+        <Label className="font-helvetica-medium pl-3">Program</Label>
+        <Separator className="bg-neutral-500 my-1" />
         <section className="mt-1">
           <SubProgramForm
             data={{
@@ -43,8 +41,8 @@ export const MainProgramAction = ({ children, id }: MainProgramActionProps) => {
             id={id}>
             <Button
               variant="ghost"
-              className="w-full flex justify-start gap-2 items-center h-[30px]">
-              <CirclePlus size={16} strokeWidth={3} />
+              className="w-full flex font-helvetica-13 hover:bg-blue-400 justify-start gap-2 items-center h-[30px]">
+              <CirclePlus size={16} strokeWidth={2} />
               Procedure
             </Button>
           </SubProgramForm>
@@ -58,28 +56,28 @@ export const MainProgramAction = ({ children, id }: MainProgramActionProps) => {
             }}>
             <Button
               variant="ghost"
-              className="w-full flex justify-start gap-2 items-center h-[30px]">
-              <Edit size={16} strokeWidth={3} />
+              className="w-full flex font-helvetica-13 hover:bg-blue-400 justify-start gap-2 items-center h-[30px]">
+              <Edit size={16} strokeWidth={2} />
               Edit
             </Button>
           </MainProgramForm>
 
           <Button
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <Share size={16} strokeWidth={3} />
+            className="w-full flex font-helvetica-13 hover:bg-blue-400 justify-start gap-2 items-center h-[30px]">
+            <Share size={16} strokeWidth={2} />
             Assign
           </Button>
           <Button
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <Import size={16} strokeWidth={3} />
+            className="w-full flex font-helvetica-13 hover:bg-blue-400 justify-start gap-2 items-center h-[30px]">
+            <Import size={16} strokeWidth={2} />
             Import
           </Button>
           <Button
             variant="ghost"
-            className="w-full flex justify-start gap-2 items-center h-[30px]">
-            <Trash size={16} strokeWidth={3} />
+            className="w-full flex font-helvetica-13 hover:bg-blue-400 justify-start gap-2 items-center h-[30px]">
+            <Trash size={16} strokeWidth={2} />
             Remove
           </Button>
         </section>

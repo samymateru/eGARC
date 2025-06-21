@@ -39,6 +39,7 @@ interface ModuleSelectProps {
   organizationType: string;
   organizationTelephone: string;
   organizationEmail: string;
+  organizationId: string;
   id: string;
 }
 
@@ -49,6 +50,7 @@ export const ModuleSelect = ({
   organizationType,
   organizationTelephone,
   organizationEmail,
+  organizationId,
 }: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const { data, isError, error } = useQuery({
@@ -82,24 +84,45 @@ export const ModuleSelect = ({
     }
   }, [data, isError, error]);
 
+  const setProfile = (
+    moduleId?: string,
+    moduleName?: string,
+    organizationId?: string,
+    organizationName?: string
+  ) => {
+    if (typeof window !== undefined) {
+      localStorage.setItem("moduleId", moduleId ?? "");
+      localStorage.setItem("moduleName", moduleName ?? "");
+      localStorage.setItem("organizationId", organizationId ?? "");
+      localStorage.setItem("organizationName", organizationName ?? "");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-[350px] max-h-[80vh] overflow-y-auto px-2 py-3 relative gap-0">
+      <DialogContent className="max-w-[500px] max-h-[70vh]  px-2 py-5 relative gap-0 bg-white">
         <Button
           onClick={() => setOpen(false)}
-          className="absolute top-1 right-1 w-[24px] h-[24px]"
           variant="ghost"
-          size="icon">
+          className="absolute top-1 right-1 w-[15px] h-[25px] hover:bg-neutral-700">
           <X size={16} />
         </Button>
         <DialogHeader>
-          <DialogTitle className="font-[helvetica] font-bold tracking-normal scroll-m-0 text-xl pl-2">
+          <DialogTitle className="font-helvetica-large pb-2">
             Organization
           </DialogTitle>
           <DialogDescription className="absolute" />
         </DialogHeader>
         <section className="flex items-center justify-end gap-1 my-1">
+          <ModuleForm title="New Module" id={id} endpoint="modules">
+            <Button
+              type="submit"
+              className="bg-black font-helvetica-13 text-white h-8 flex-1 flex items-center justify-start">
+              <CirclePlus className="mr-1" size={16} strokeWidth={3} />
+              Module
+            </Button>
+          </ModuleForm>
           <OrganizationForm
             data={{
               name: organizationName,
@@ -111,36 +134,45 @@ export const ModuleSelect = ({
             title="Edit Organization"
             mode="update"
             id={id}>
-            <Button className="w-[30px] h-[30px]" variant="ghost">
+            <Button className="h-[30px] font-helvetica-13 flex-1 flex items-center justify-start">
               <Edit size={16} />
+              Edit
             </Button>
           </OrganizationForm>
-          <Button className="w-[30px] h-[30px]" variant="ghost">
-            <Trash size={16} />
+          <Button className="flex-1 h-[30px] flex items-center justify-start font-helvetica-13">
+            <Trash size={16} className="text-red-700" />
+            Remove
           </Button>
         </section>
         <Separator className="" />
         <section className="flex flex-col gap-2 mt-3">
           <section>
-            <h2 className="font-[helvetica] text-[14px] tracking-normal flex items-center gap-2">
+            <h2 className="font-helvetica-14 flex items-center gap-2">
               <Package size={16} />
               Modules
             </h2>
           </section>
           {data && data.length > 0 ? (
-            <ul className="">
+            <ul className="flex flex-col gap-1 max-h-[200px] overflow-auto">
               {data.map((module) => (
                 <Link
-                  onClick={() => {
-                    localStorage.setItem("moduleId", module.id ?? "");
-                    localStorage.setItem("moduleName", module.name ?? "");
-                    localStorage.setItem("organizationId", id);
-                  }}
-                  className="px-3 font-[helvetica] text-[15px] font-medium tracking-wide w-full dark:hover:bg-neutral-800 h-8 rounded-md flex items-center gap-2"
+                  onClick={() =>
+                    setProfile(
+                      module.id,
+                      module.name,
+                      organizationId,
+                      organizationName
+                    )
+                  }
+                  className="font-helvetica-13 px-2 w-[calc(100%-30px)] mx-auto bg-neutral-300 h-8 rounded-md flex items-center gap-2"
                   key={module.id}
                   href={{
                     pathname: `/${module.name}`,
-                    query: { id: module.id, organizationId: id },
+                    query: {
+                      id: module.id,
+                      organizationId: id,
+                      action: "dashboard",
+                    },
                   }}>
                   {module.name === "eAuditNext" ? (
                     <Activity size={16} />
@@ -158,20 +190,10 @@ export const ModuleSelect = ({
             </p>
           )}
         </section>
-        <footer className="flex justify-center gap-2 my-3">
-          <ModuleForm title="New Module" id={id} endpoint="modules">
-            <Button
-              type="submit"
-              variant="ghost"
-              className="bg-blue-950 text-white flex-1 font-[helvetica] tracking-wide h-8 scroll-m-1 font-bold">
-              <CirclePlus className="mr-1" size={16} strokeWidth={3} />
-              New Module
-            </Button>
-          </ModuleForm>
-        </footer>
+        <footer className="flex justify-center gap-2 my-3"></footer>
         <Separator className="" />
         <section className="py-1">
-          <p className="text-balance text-[13px] font-[helvetica] tracking-normal text-neutral-500 mt-2">
+          <p className="text-balance font-helvetica-13 text-neutral-700 mt-2">
             In this upper section you can edit or remove the current
             organization selected, be carefully while doing that, the low
             section list the modules in current organization

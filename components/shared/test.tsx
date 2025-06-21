@@ -1,12 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  AlertTriangle,
   AtSignIcon,
+  BookCheck,
   CirclePlus,
   CommandIcon,
   EclipseIcon,
   Ellipsis,
   FileText,
   Folder,
+  Mail,
+  MessageCircle,
+  Settings,
+  Star,
   ZapIcon,
 } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
@@ -19,7 +25,6 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 import { StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -185,103 +190,170 @@ export default function Component() {
             className="flex flex-col border-none w-full">
             <AccordionTrigger
               onClick={() => setUpdateMenu((prev) => !prev)}
-              className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md leading-6 hover:no-underline w-full font-hel-heading ">
+              className="px-4 py-4  h-9 rounded-md leading-6 w-full font-helvetica-13 bg-black hover:bg-neutral-900 text-white hover:no-underline">
               <span className="flex items-center gap-3">
                 <item.icon
                   size={16}
-                  className="shrink-0 opacity-60"
+                  className="shrink-0 opacity-90"
                   aria-hidden="true"
                 />
                 <span>{item.title}</span>
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
+            <AccordionContent className="pt-1">
               {item.title === "Fieldwork" ? (
-                <section>
+                <section className="flex flex-col gap-1">
                   <Button
-                    className="h-9 w-full mt-1 flex justify-start font-serif font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                    className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                     onClick={() => setAction("summary_procedures")}>
+                    <Settings
+                      size={16}
+                      className="text-black"
+                      strokeWidth={2}
+                    />
                     Summary of procedures
                   </Button>
                   <Button
-                    className="h-9 w-full mt-1 flex justify-start font-serif font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                    className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                     onClick={() => setAction("summary_review_comments")}>
+                    <MessageCircle
+                      size={16}
+                      className="text-black"
+                      strokeWidth={2}
+                    />
                     Summary of comments
                   </Button>
                   <Button
-                    className="h-9 w-full mt-1 flex justify-start font-serif font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                    className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                     onClick={() => setAction("summary_tasks")}>
+                    <BookCheck
+                      size={16}
+                      className="text-black"
+                      strokeWidth={2}
+                    />
                     Summary of tasks
                   </Button>
                 </section>
               ) : null}
               {item.title === "Planning" && results[0].data ? (
                 <>
-                  <ScrollArea
-                    className="max-h-[400px] h-auto overflow-y-auto"
+                  <section
+                    className="max-h-[400px] h-auto overflow-y-auto flex flex-col gap-1"
                     key={item.id}>
                     {results[0].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button
-                          className="h-9 w-full mt-1 flex justify-start font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                          className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                           key={item.id}
                           onClick={() => {
                             setAction(item.id, "Planning");
                           }}>
+                          {item.type === "risk" ? (
+                            <AlertTriangle
+                              size={16}
+                              className="text-red-600"
+                              strokeWidth={3}
+                            />
+                          ) : item.type === "program" ? (
+                            <Folder
+                              size={16}
+                              className="text-black"
+                              strokeWidth={2}
+                            />
+                          ) : item.type === "letter" ? (
+                            <Mail
+                              size={16}
+                              className="text-black-600"
+                              strokeWidth={2}
+                            />
+                          ) : (
+                            <Settings
+                              size={16}
+                              className="text-black-600"
+                              strokeWidth={2}
+                            />
+                          )}
                           {item.title}
                         </Button>
                       ))}
-                  </ScrollArea>
+                  </section>
                 </>
               ) : null}
               {item.title === "Finalization" && results[1].data ? (
                 <>
-                  <ScrollArea
-                    className="max-h-[400px] h-auto overflow-y-auto"
+                  <section
+                    className="max-h-[400px] h-auto overflow-y-auto flex flex-col gap-1"
                     key={item.id}>
                     {results[1].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button
-                          className="h-9 w-full mt-1 flex justify-start font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                          className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                           key={item.id}
                           onClick={() => {
                             setAction(item.id, "Finalization");
                           }}>
+                          <Settings
+                            size={16}
+                            className="text-black-600"
+                            strokeWidth={2}
+                          />
                           {item.title}
                         </Button>
                       ))}
-                  </ScrollArea>
+                  </section>
                 </>
               ) : null}
               {item.title === "Reporting" && results[2].data ? (
                 <>
-                  <ScrollArea
-                    className="max-h-[400px] h-auto overflow-y-auto"
+                  <section
+                    className="max-h-[400px] h-auto overflow-y-auto flex flex-col gap-1"
                     key={item.id}>
                     {results[2].data
                       ?.sort((a, b) => a.reference?.localeCompare(b.reference))
                       ?.map((item) => (
                         <Button
-                          className="h-9 w-full mt-1 flex justify-start font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
+                          className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
                           key={item.id}
                           onClick={() => {
                             setAction(item.id, "Reporting");
                           }}>
-                          <span className="flex items-center gap-3">
-                            <FileText />
-                            {item.title}
-                          </span>
+                          {item.type === "finding" ? (
+                            <AlertTriangle
+                              size={16}
+                              className="text-red-600"
+                              strokeWidth={2}
+                            />
+                          ) : item.type === "audit_process" ? (
+                            <Star
+                              size={16}
+                              className="text-black"
+                              strokeWidth={2}
+                            />
+                          ) : item.type === "sheet" ? (
+                            <FileText
+                              size={16}
+                              className="text-black"
+                              strokeWidth={2}
+                            />
+                          ) : (
+                            <Settings
+                              size={16}
+                              className="text-black"
+                              strokeWidth={2}
+                            />
+                          )}
+                          {item.title}
                         </Button>
                       ))}
-                  </ScrollArea>
+                  </section>
                 </>
               ) : null}
             </AccordionContent>
           </AccordionItem>
         ))}
-        <Separator />
+        <Separator className="bg-neutral-400 mt-2" />
         <section className="py-2 flex justify-between items-center">
           <Label className="font-hel-heading-bold ">Work Proram</Label>
           <MainProgramForm
@@ -304,20 +376,20 @@ export default function Component() {
             <AccordionTrigger
               disabled={item.procedures.length < 0 ? true : false}
               onClick={() => setUpdateMenu((prev) => !prev)}
-              className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md leading-6 hover:no-underline w-full font-hel-heading">
-              <section className="flex items-center justify-between w-full">
-                <span className="flex items-center gap-3">
-                  <Folder size={16} strokeWidth={3} />
-                  <span className="truncate block max-w-[175px] whitespace-nowrap overflow-hidden">
+              className="px-4 py-4  h-9 rounded-md leading-6 font-helvetica-13 bg-black hover:bg-neutral-900 text-white hover:no-underline">
+              <section className="flex items-center justify-between w-full truncate">
+                <span className="flex flex-1 items-center gap-3">
+                  <Folder size={16} strokeWidth={2} />
+                  <Label className="truncate flex-1 font-helvetica-13 w-[100px] cursor-pointer">
                     {item.name}
-                  </span>
+                  </Label>
                 </span>
                 <MainProgramAction id={item.id ?? ""}>
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
-                    className="w-[30px] h-[30px] flex items-center justify-center dark:hover:bg-black rounded-md">
+                    className="w-[30px] h-[30px] flex items-center justify-center hover:bg-blue-900 rounded-md mx-1">
                     <Ellipsis size={16} />
                   </div>
                 </MainProgramAction>
@@ -327,32 +399,30 @@ export default function Component() {
               (procedure) => procedure.procedure_id && procedure.procedure_title
             ).length > 0 && (
               <AccordionContent className="text-muted-foreground">
-                <section>
-                  <ScrollArea
-                    className="max-h-[350px] h-auto overflow-y-auto"
-                    key={item.id}>
-                    {item.procedures
-                      ?.sort((a, b) => a.reference?.localeCompare(b.reference))
-                      .filter(
-                        (procedure) =>
-                          procedure.procedure_id && procedure.procedure_title
-                      )
-                      .map((procedure) => (
-                        <Button
-                          key={procedure.procedure_id}
-                          className="h-9 w-full mt-1 flex justify-start font-serif font-table dark:bg-background dark:hover:bg-black dark:text-neutral-200"
-                          onClick={() =>
-                            setAction(procedure.procedure_id ?? "")
-                          }>
-                          <span className="flex items-center justify-between w-full">
-                            <span className="flex items-center gap-3">
-                              <FileText />
+                <section
+                  className="max-h-[350px] overflow-y-auto flex flex-col gap-1 pt-1"
+                  key={item.id}>
+                  {item.procedures
+                    ?.sort((a, b) => a.reference?.localeCompare(b.reference))
+                    .filter(
+                      (procedure) =>
+                        procedure.procedure_id && procedure.procedure_title
+                    )
+                    .map((procedure) => (
+                      <Button
+                        key={procedure.procedure_id}
+                        className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
+                        onClick={() => setAction(procedure.procedure_id ?? "")}>
+                        <span className="flex items-center justify-between w-full">
+                          <span className="flex items-center gap-3 truncate">
+                            <Settings size={16} strokeWidth={2} />
+                            <Label className="flex-1 truncate font-helvetica-13 cursor-pointer">
                               {procedure.procedure_title}
-                            </span>
+                            </Label>
                           </span>
-                        </Button>
-                      ))}
-                  </ScrollArea>
+                        </span>
+                      </Button>
+                    ))}
                 </section>
               </AccordionContent>
             )}

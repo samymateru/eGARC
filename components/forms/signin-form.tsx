@@ -3,8 +3,7 @@ import { cn, ErrorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ModeToggle } from "../shared/toggle-button";
-import { LogIn, Moon, Sun } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -110,26 +109,17 @@ export function LoginForm({
       className={cn("flex flex-col gap-6", className)}
       {...props}
       onSubmit={handleSubmit(onSubmit)}>
-      <div className="absolute top-2 right-2">
-        <ModeToggle>
-          <Button className="focus-visible:outline-none focus-visible:ring-0 focus:outline-none w-[38px] h-[38px] rounded-full bg-white dark:bg-background hover:bg-neutral-300 hover:dark:bg-neutral-800 border border-neutral-700">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black dark:text-white" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-black dark:text-white" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </ModeToggle>
-      </div>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold font-serif text-nowrap">
+        <h1 className="font-helvetica-large text-nowrap">
           Welcome back to EGARC !!
         </h1>
-        <p className="text-sm text-muted-foreground font-serif text-nowrap">
+        <p className="font-helvetica-14 text-nowrap">
           Provide email and password to login to your account
         </p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-2">
-          <Label htmlFor="email" className="">
+          <Label htmlFor="email" className="font-helvetica-13">
             Email
           </Label>
           <Input
@@ -137,51 +127,72 @@ export function LoginForm({
             {...register("email")}
             type="email"
             placeholder="m@example.com"
-            className=""
+            className="font-helvetica-input-13 placeholder:font-helvetica-13"
           />
           <FormError error={errors.email} />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
-            <Label htmlFor="password" className="">
+            <Label htmlFor="password" className="font-helvetica-13">
               Password
             </Label>
             <a
               href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline">
+              className="ml-auto font-helvetica-13 underline-offset-4 hover:underline">
               Forgot your password?
             </a>
           </div>
           <Input
             id="password"
             type="password"
-            className=""
+            className="font-helvetica-input-13 placeholder:font-helvetica-13"
             {...register("password")}
           />
           <FormError error={errors.password} />
         </div>
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="w-full font-helvetica-13"
+          disabled={isPending}>
           Login
           <LogIn size={16} strokeWidth={3} />
         </Button>
         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
+          <span className="relative z-10 bg-background px-2 text-muted-foreground font-helvetica-13">
             Or continue with
           </span>
         </div>
-        <Button variant="outline" className="w-full text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <Button className="w-full text-white font-helvetica-13">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 48 48"
+            width="24"
+            height="24">
             <path
-              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-              fill="currentColor"
+              fill="#4285F4"
+              d="M24 9.5c3.34 0 5.63 1.45 6.92 2.67l5.1-5.1C32.22 4.17 28.53 2 24 2 14.92 2 7.47 7.87 4.95 15.44l6.96 5.42C13.2 14.15 18.2 9.5 24 9.5z"
+            />
+            <path
+              fill="#34A853"
+              d="M46.1 24.55c0-1.7-.15-2.95-.48-4.23H24v8.01h12.56c-.26 1.73-1.7 4.33-4.9 6.07l7.57 5.88c4.4-4.07 6.87-10.07 6.87-15.73z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M10.56 28.02a14.62 14.62 0 0 1 0-8.04L3.6 14.56a24.042 24.042 0 0 0 0 18.88l6.96-5.42z"
+            />
+            <path
+              fill="#EA4335"
+              d="M24 46c6.48 0 11.91-2.13 15.87-5.8l-7.58-5.88c-2.06 1.38-4.82 2.2-8.29 2.2-5.8 0-10.8-4.65-12.1-10.9l-6.96 5.42C7.47 40.13 14.92 46 24 46z"
             />
           </svg>
           Login with Google
         </Button>
       </div>
-      <div className="text-center text-sm">
+      <div className="text-center text-sm font-helvetica-13 flex items-center justify-center">
         Don&apos;t have an account?{" "}
-        <a href="/signup" className="underline underline-offset-4">
+        <a
+          href="/signup"
+          className="underline underline-offset-4 font-helvetica-13 text-black ml-1">
           Sign up
         </a>
       </div>

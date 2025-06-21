@@ -31,7 +31,14 @@ import { ErrorMessage } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EngagementRatingForm } from "@/components/forms/engagement-rating-form";
-import { Star } from "lucide-react";
+import {
+  AlertTriangle,
+  ListTodo,
+  MessageCircle,
+  PanelLeft,
+  Settings,
+  Star,
+} from "lucide-react";
 
 type IssueValues = z.infer<typeof SummaryFindingSchema>;
 type CommentAndTaskValues = z.infer<typeof ReviewCommentsSchema>;
@@ -231,30 +238,80 @@ export default function EngagementPage() {
       <TabsContent
         value="summary_procedures"
         className="flex-1 text-white mt-0 ">
-        <section className="pt-1 pl-4">
-          <Label className="text-[20px] font-semibold">
-            Summary of Procedures
-          </Label>
+        <section className="pt-[4px] pl-2 flex items-center gap-2">
+          <section>
+            <Button className="w-[28px] flex justify-center items-center h-[28px]">
+              <PanelLeft size={16} strokeWidth={3} />
+            </Button>
+          </section>
+          <Separator
+            orientation="vertical"
+            className="bg-neutral-400 h-[28px] mx-2"
+          />
+          <section>
+            <Settings
+              size={16}
+              strokeWidth={2}
+              className="inline-block text-black mb-1 mr-2"
+            />
+            <Label className="font-helvetica-medium text-black">
+              Summary of Procedures
+            </Label>
+          </section>
         </section>
-        <Separator className="my-2" />
+        <Separator className="mt-1 mb-3 bg-neutral-500" />
         <SummaryProcedure />
       </TabsContent>
       <TabsContent
         value="summary_review_comments"
         className="flex-1 text-white mt-0">
-        <section className="pt-1 pl-4">
-          <Label className="text-[20px] font-semibold">
-            Summary of Review Comments
-          </Label>
+        <section className="pt-[4px] pl-2 flex items-center gap-2">
+          <section>
+            <Button className="w-[28px] flex justify-center items-center h-[28px]">
+              <PanelLeft size={16} strokeWidth={3} />
+            </Button>
+          </section>
+          <Separator
+            orientation="vertical"
+            className="bg-neutral-400 h-[28px] mx-2"
+          />
+          <section>
+            <MessageCircle
+              size={16}
+              strokeWidth={2}
+              className="inline-block text-black mb-1 mr-2"
+            />
+            <Label className="font-helvetica-medium text-black">
+              Summary of Review Comments
+            </Label>
+          </section>
         </section>
-        <Separator className="my-2" />
+        <Separator className="mt-1 mb-3 bg-neutral-500" />
         <SummaryReviewComments />
       </TabsContent>
       <TabsContent value="summary_tasks" className="flex-1 text-white mt-0">
-        <section className="pt-1 pl-4">
-          <Label className="text-[20px] font-semibold">Summary of Tasks</Label>
+        <section className="pt-[4px] pl-2 flex items-center gap-2">
+          <section>
+            <Button className="w-[28px] flex justify-center items-center h-[28px]">
+              <PanelLeft size={16} strokeWidth={3} />
+            </Button>
+          </section>
+          <Separator
+            orientation="vertical"
+            className="bg-neutral-400 h-[28px] mx-2"
+          />
+          <section>
+            <ListTodo
+              size={16}
+              strokeWidth={2}
+              className="inline-block text-black mb-1 mr-2"
+            />
+            <Label className="font-helvetica-medium text-black">
+              Summary of Tasks
+            </Label>
+          </section>
         </section>
-        <Separator className="my-2" />
+        <Separator className="mt-1 mb-3 bg-neutral-500" />
         <SummaryTasks />
       </TabsContent>
 
@@ -274,6 +331,31 @@ export default function EngagementPage() {
               value={item.id}
               key={index}
               className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <section className="pt-[4px] px-2 flex items-center justify-between">
+                <section className="flex items-center gap-2">
+                  <section>
+                    <Button className="w-[28px] flex justify-center items-center h-[28px]">
+                      <PanelLeft size={16} strokeWidth={3} />
+                    </Button>
+                  </section>
+                  <Separator
+                    orientation="vertical"
+                    className="bg-neutral-400 h-[28px] mx-2"
+                  />
+                  <section>
+                    <AlertTriangle
+                      size={16}
+                      strokeWidth={2}
+                      className="inline-block text-red-500 mb-1 mr-2"
+                    />
+                    <Label className="font-helvetica-medium text-black">
+                      Summary of Findings/Issue
+                    </Label>
+                  </section>
+                </section>
+                <section></section>
+              </section>
+              <Separator className="mt-1 mb-3 bg-neutral-500" />
               <SummaryFindings />
             </TabsContent>
           );
@@ -285,23 +367,41 @@ export default function EngagementPage() {
               value={item.id}
               key={index}
               className="w-full data-[state=inactive]:hidden data-[state=active]:flex-1 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
-              <section className="pt-1 pl-4 flex items-center justify-between px-2">
-                <Label className="text-[20px] font-semibold">
-                  Summary of Audit Processes
-                </Label>
-                <EngagementRatingForm
-                  title="Engagement Rating"
-                  endpoint=""
-                  id={"sam"}>
-                  <Button
-                    className="w-[130px] h-7 flex items-center justify-start bg-blue-700 text-white font-bold font-[helvetica]"
-                    variant="ghost">
-                    <Star size={16} strokeWidth={3} />
-                    Rate
-                  </Button>
-                </EngagementRatingForm>
+              <section className="pt-[4px] px-2 flex items-center justify-between">
+                <section className="flex items-center gap-2">
+                  <section>
+                    <Button className="w-[28px] flex justify-center items-center h-[28px]">
+                      <PanelLeft size={16} strokeWidth={3} />
+                    </Button>
+                  </section>
+                  <Separator
+                    orientation="vertical"
+                    className="bg-neutral-400 h-[28px] mx-2"
+                  />
+                  <section>
+                    <Star
+                      size={16}
+                      strokeWidth={2}
+                      className="inline-block text-black mb-1 mr-2"
+                    />
+                    <Label className="font-helvetica-medium text-black">
+                      Summary of Process
+                    </Label>
+                  </section>
+                </section>
+                <section>
+                  <EngagementRatingForm
+                    title="Engagement Rating"
+                    endpoint=""
+                    id={"sam"}>
+                    <Button className="w-[130px] h-7 flex items-center justify-start action text-white font-helvetica-13">
+                      <Star size={16} strokeWidth={2} />
+                      Rate
+                    </Button>
+                  </EngagementRatingForm>
+                </section>
               </section>
-              <Separator className="my-1" />
+              <Separator className="mt-1 mb-3 bg-neutral-500" />
               <SummaryProcess />
             </TabsContent>
           );

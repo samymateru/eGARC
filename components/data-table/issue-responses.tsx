@@ -44,46 +44,56 @@ type IssueResponsesValues = z.infer<typeof IssueResponsesSchema>;
 const columns: ColumnDef<IssueResponsesValues>[] = [
   {
     id: "notes",
-    header: () => <Label className="font-table">Notes</Label>,
+    header: () => <Label className="font-helvetica-table-14">Notes</Label>,
     accessorKey: "notes",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.notes}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.notes}
+      </Label>
     ),
   },
   {
     id: "type",
-    header: () => <Label className="font-table">Type</Label>,
+    header: () => <Label className="font-helvetica-table-14">Type</Label>,
     accessorKey: "type",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">{row.original.type}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.type}
+      </Label>
     ),
   },
   {
     id: "issuer_name",
-    header: () => <Label className="font-table">Issuer Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Issuer Name</Label>
+    ),
     accessorKey: "issuer_name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.issued_by === null ? "N/A" : row.original.issued_by.name}
       </Label>
     ),
   },
   {
     id: "issuer_email",
-    header: () => <Label className="font-table">Issuer Emal</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Issuer Emal</Label>
+    ),
     accessorKey: "issuer_name",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.issued_by === null ? "N/A" : row.original.issued_by.email}
       </Label>
     ),
   },
   {
     id: "issued_on",
-    header: () => <Label className="font-table">Date Issued</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Date Issued</Label>
+    ),
     accessorKey: "issuer_on",
     cell: ({ row }) => (
-      <Label className="ml-2 font-table truncate">
+      <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.issued_by !== null
           ? new Intl.DateTimeFormat("en-US", {
               year: "numeric",
@@ -96,7 +106,7 @@ const columns: ColumnDef<IssueResponsesValues>[] = [
   },
   {
     id: "attachment",
-    header: () => <Label className="font-table">Attachment</Label>,
+    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
     accessorKey: "attachments",
     cell: ({ row }) => {
       if (row.original.attachments !== null) {
@@ -105,12 +115,14 @@ const columns: ColumnDef<IssueResponsesValues>[] = [
             href={row.original.attachments?.[0]}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 hover:underline font-table">
+            className="text-blue-500 hover:underline font-helvetica-table-13">
             View Attachment
           </a>
         );
       } else {
-        return <Label className="ml-2 font-table truncate">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
@@ -165,14 +177,14 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
             window.innerWidth - 320 - 32
           ),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500 text-black bg-neutral-300"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -245,7 +257,7 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -254,7 +266,7 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -262,7 +274,9 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-black font-helvetica-large">
                 No results.
               </TableCell>
             </TableRow>

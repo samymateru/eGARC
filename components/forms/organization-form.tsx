@@ -187,61 +187,56 @@ export const OrganizationForm = ({
     <FormProvider {...methods}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="p-0 gap-0 max-w-[500px]">
+        <DialogContent className="p-0 gap-0 max-w-[500px] bg-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader className="rounded-tl rounded-tr  py-2">
-              <DialogTitle className="font-serif text-[20px] pl-3 tracking-wide scroll-m-0 font-bold text-xl">
+              <DialogTitle className="font-helvetica-large px-2 pt-2">
                 {title}
               </DialogTitle>
               <DialogDescription className="hidden" />
             </DialogHeader>
 
-            <Separator />
+            <Separator className="bg-neutral-600" />
 
             <section className="py-5 px-5 flex flex-col gap-3">
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="website"
-                  className="font-table tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="name" className="font-helvetica-13">
                   Organization<span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="name"
                   placeholder="Organization name"
                   {...register("name")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.name} />
               </div>
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="website"
-                  className="font-table tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="email" className="font-helvetica-13">
                   Email<span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="email"
                   placeholder="Organization Email"
                   {...register("email")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.email} />
               </div>
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="website"
-                  className="font-table tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="telephone" className="font-helvetica-13">
                   Telephone<span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="email"
                   placeholder="Organization Telephone"
                   {...register("telephone")}
+                  className="font-helvetica-input-13 placeholder:font-helvetica-13"
                 />
                 <FormError error={errors.telephone} />
               </div>
               <div className="*:not-first:mt-2 flex-1">
-                <Label
-                  htmlFor="type"
-                  className="font-serif tracking-wide scroll-m-1 font-semibold">
+                <Label htmlFor="type" className="font-helvetica-13">
                   Type <span className="text-destructive">*</span>
                 </Label>
                 <Controller
@@ -249,15 +244,15 @@ export const OrganizationForm = ({
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
+                      <SelectTrigger className="font-helvetica-13 border border-neutral-600">
                         <SelectValue placeholder="Select Organization type" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-neutral-200">
                         {organization_types.map((item, index) => (
                           <SelectItem
                             key={index}
                             value={item.value}
-                            className="font-serif tracking-wide scroll-m-1 dark:hover:bg-neutral-800 cursor-pointer">
+                            className="font-helvetica-13 cursor-pointer hover:bg-neutral-400">
                             {item.label}
                           </SelectItem>
                         ))}
@@ -273,20 +268,18 @@ export const OrganizationForm = ({
 
             <footer className="rounded-br rounded-bl flex px-4 py-2 gap-2">
               <Button
-                variant="ghost"
                 type="button"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 font-serif font-semibold flex-1">
+                className="font-helvetica-13 bg-black text-white flex-1">
                 <CircleX size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
-                variant="ghost"
                 disabled={
                   createOrganizationLoading || updateOrganizationLoading
                 }
                 type="submit"
-                className="bg-green-800 font-serif font-semibold flex-1">
+                className="bg-green-900 font-helvetica-13 flex-1">
                 <Send size={16} strokeWidth={3} />
                 {"Submit"}
               </Button>

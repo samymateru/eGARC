@@ -29,70 +29,86 @@ type ReviewCommentsReportValues = z.infer<typeof RevieCommentReportSchema>;
 
 const columns: ColumnDef<ReviewCommentsReportValues>[] = [
   {
-    header: () => <Label className="font-table">Reference</Label>,
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
     accessorKey: "reference",
     cell: ({ row }) => (
-      <div className="truncate font-medium">{row.original.reference}</div>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.reference}
+      </Label>
     ),
     sortUndefined: "last",
     sortDescFirst: false,
   },
   {
     id: "title",
-    header: () => <Label className="font-table">Title</Label>,
+    header: () => <Label className="font-helvetica-table-14">Title</Label>,
     accessorKey: "title",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.title}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.title}
+      </Label>
     ),
   },
   {
     id: "description",
-    header: () => <Label className="font-table">Description</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Description</Label>
+    ),
     accessorKey: "description",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.description}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.description}
+      </Label>
     ),
   },
   {
     id: "raiser_name",
-    header: () => <Label className="font-table">Raiser Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Raiser Name</Label>
+    ),
     accessorKey: "raiser_name",
     cell: ({ row }) => {
       if (row.original.raised_by !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.raised_by?.email}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "raiser_email",
-    header: () => <Label className="font-table">Raise Email</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Raise Email</Label>
+    ),
     accessorKey: "raiser_email",
     cell: ({ row }) => {
       if (row.original.raised_by !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.raised_by?.email}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-1 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "raised_on",
-    header: () => <Label className="font-table">Raised On</Label>,
+    header: () => <Label className="font-helvetica-table-14">Raised On</Label>,
     accessorKey: "raised_on",
     cell: ({ row }) => {
       if (row.original.raised_by !== null) {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {new Intl.DateTimeFormat("en-US", {
               year: "numeric",
               month: "long",
@@ -102,85 +118,101 @@ const columns: ColumnDef<ReviewCommentsReportValues>[] = [
         );
       } else {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
-            N/A
-          </Label>
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
         );
       }
     },
   },
   {
     id: "resolution_summary",
-    header: () => <Label className="font-table">Resolution Summary</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Resolution Summary</Label>
+    ),
     accessorKey: "resolution_summary",
     cell: ({ row }) => {
       if (row.original.resolution_summary !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.resolution_summary}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "resolution_details",
-    header: () => <Label className="font-table">Resolution Details</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Resolution Details</Label>
+    ),
     accessorKey: "resolution_details",
     cell: ({ row }) => {
       if (row.original.resolution_details !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.resolution_details}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "resolver_name",
-    header: () => <Label className="font-table">Resolver Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Resolver Name</Label>
+    ),
     accessorKey: "resolver_name",
     cell: ({ row }) => {
       if (row.original.resolved_by !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.resolved_by?.name}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "resolver_email",
-    header: () => <Label className="font-table">Resolver Email</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Resolver Email</Label>
+    ),
     accessorKey: "resolver_email",
     cell: ({ row }) => {
       if (row.original.resolved_by !== null) {
         return (
-          <Label className="ml-4 font-table">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {row?.original?.resolved_by?.email}
           </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
   {
     id: "resolved_on",
-    header: () => <Label className="font-table">Resolved On</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">Resolved On</Label>
+    ),
     accessorKey: "resolved_on",
     cell: ({ row }) => {
       if (row?.original?.resolved_by !== null) {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
+          <Label className="ml-2 font-helvetica-table-13 truncate">
             {new Intl.DateTimeFormat("en-US", {
               year: "numeric",
               month: "long",
@@ -190,32 +222,36 @@ const columns: ColumnDef<ReviewCommentsReportValues>[] = [
         );
       } else {
         return (
-          <Label className="ml-2 font-table truncate overflow-hidden">
-            N/A
-          </Label>
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
         );
       }
     },
   },
   {
     id: "status",
-    header: () => <Label className="font-table">Status</Label>,
+    header: () => <Label className="font-helvetica-table-14">Status</Label>,
     accessorKey: "status",
     cell: ({ row }) => (
-      <Label className="ml-4 font-table">{row?.original?.status}</Label>
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row?.original?.status}
+      </Label>
     ),
   },
   {
     id: "decision",
-    header: () => <Label className="font-table">Decision</Label>,
+    header: () => <Label className="font-helvetica-table-14">Decision</Label>,
     accessorKey: "decision",
     cell: ({ row }) => {
       if (row.original.decision !== null) {
         return (
-          <Label className="ml-4 font-table">{row?.original?.decision}</Label>
+          <Label className="ml-2 font-helvetica-table-13 truncate">
+            {row?.original?.decision}
+          </Label>
         );
       } else {
-        return <Label className="ml-4 font-table">N/A</Label>;
+        return (
+          <Label className="ml-2 font-helvetica-table-13 truncate">N/A</Label>
+        );
       }
     },
   },
@@ -249,21 +285,21 @@ export default function ReviewCommentsReportTable({
   });
 
   return (
-    <div className="flex flex-col w-[calc(100vw-300px)]">
+    <div className="flex flex-col">
       <div className="w-full flex items-center gap-2"></div>
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 300),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 310),
         }}>
-        <TableHeader className="border-r border-r-neutral-800">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500 text-black bg-neutral-300"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -336,7 +372,7 @@ export default function ReviewCommentsReportTable({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="border-r border-r-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -345,7 +381,7 @@ export default function ReviewCommentsReportTable({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="truncate border-l border-l-neutral-800">
+                    className="truncate border-l border-l-neutral-500 text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -353,7 +389,9 @@ export default function ReviewCommentsReportTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-helvetica-table-13 text-black">
                 No results.
               </TableCell>
             </TableRow>
