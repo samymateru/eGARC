@@ -4,7 +4,7 @@ import { SummaryFindingSchema } from "@/lib/types";
 import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { z } from "zod";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -12,10 +12,9 @@ type IssueValues = z.infer<typeof SummaryFindingSchema>;
 
 export const SummaryFindings = () => {
   const params = useSearchParams();
-  const [findings, setFindings] = useState<IssueValues[]>([]);
   const { data, isError, isLoading, error } = useQuery({
     queryKey: ["_summary_findinds_", params.get("id")],
-    queryFn: async () => {
+    queryFn: async (): Promise<IssueValues[]> => {
       const response = await fetch(
         `${BASE_URL}/engagements/summary_findings/${params.get("id")}`,
         {
@@ -48,11 +47,13 @@ export const SummaryFindings = () => {
     }
   }, [isError, error]);
 
-  useEffect(() => {
-    if (!data) return;
-
-    const sorted = [...data].sort((a, b) => a.ref.localeCompare(b.ref));
-    setFindings(sorted);
+  const findings = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
+      const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    });
   }, [data]);
 
   if (isLoading) {

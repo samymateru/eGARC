@@ -1,5 +1,5 @@
 "use client";
-import { cn, saveSearchToLocalStorage } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
@@ -69,8 +69,14 @@ export default function EngagementTable({ data }: EngagementTableProps) {
       header: () => <Label className="font-helvetica-table-14">Code</Label>,
       cell: ({ row }) => (
         <Link
-          href={"#"}
-          replace
+          href={{
+            pathname: "/eAuditNext/engagement",
+            query: {
+              id: row.original.id,
+              action: "dashboard",
+              name: row.original.name,
+            },
+          }}
           className="ml-2 font-helvetica-table-13 text-blue-700 cursor-pointer hover:underline w-full text-center">
           {row?.original?.code}
         </Link>
@@ -157,13 +163,6 @@ export default function EngagementTable({ data }: EngagementTableProps) {
             <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
               <div className="flex flex-col divide-y">
                 <Link
-                  onClick={() => {
-                    saveSearchToLocalStorage({
-                      name: row.original.name,
-                      value: `/eAuditNext/engagement/?id=${row.original.id}&stage=dashboard&name=${row.original.name}`,
-                      tag: "engagements",
-                    });
-                  }}
                   href={{
                     pathname: "/eAuditNext/engagement",
                     query: {

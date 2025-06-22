@@ -1,16 +1,19 @@
 import { SummaryProceduresTable } from "@/components/data-table/summary-procedures-table";
 import { Loader } from "@/components/shared/loader";
+import { SummaryProcedureSchema } from "@/lib/types";
 import { ErrorMessage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { z } from "zod";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+type ProceduresValues = z.infer<typeof SummaryProcedureSchema>;
 
 export const SummaryProcedure = () => {
   const params = useSearchParams();
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_summary_procedures_", params.get("id")],
-    queryFn: async () => {
+    queryFn: async (): Promise<ProceduresValues[]> => {
       const response = await fetch(
         `${BASE_URL}/engagements/fieldwork/summary_procedures/${params.get(
           "id"
@@ -45,6 +48,15 @@ export const SummaryProcedure = () => {
     }
   }, [isError, error]);
 
+  const procedures = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => {
+      const getRefNumber = (ref: string) =>
+        parseInt(ref.replace(/[^\d]/g, ""), 10);
+      return getRefNumber(b.reference) - getRefNumber(a.reference); // descending
+    });
+  }, [data]);
+
   if (isLoading) {
     return (
       <div className="w-full h-full relative">
@@ -55,7 +67,7 @@ export const SummaryProcedure = () => {
 
   return (
     <div className="flex flex-col gap-3 w-[calc(100vw-332px)]">
-      <SummaryProceduresTable data={data ?? []} />
+      <SummaryProceduresTable data={procedures ?? []} />
     </div>
   );
 };

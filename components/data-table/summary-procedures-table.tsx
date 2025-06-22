@@ -50,19 +50,41 @@ import SearchInput from "../shared/search-input";
 
 type SummaryProcedureValues = z.infer<typeof SummaryProcedureSchema>;
 
+type QueryParams = {
+  id?: string | null;
+  action?: string | null;
+  name?: string | null;
+};
+
+function parseQueryParams(query: string): QueryParams {
+  const params = new URLSearchParams(query);
+  return {
+    id: params.get("id"),
+    action: params.get("action"),
+    name: params.get("name"),
+  };
+}
+
 const columns: ColumnDef<SummaryProcedureValues>[] = [
   {
     id: "reference",
     header: () => <Label className="font-helvetica-table-14">Reference</Label>,
     accessorKey: "reference",
-    cell: ({ row }) => (
-      <Link
-        replace
-        href={"#"}
-        className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
-        {row.original.reference}
-      </Link>
-    ),
+    cell: ({ row }) => {
+      if (typeof window !== undefined) {
+        const params: QueryParams = parseQueryParams(window.location.search);
+        return (
+          <Link
+            replace
+            href={`/eAuditNext/engagement/?id=${params.id}&action=${row.original.id}&name=${params.name}`}
+            className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
+            {row.original.reference}
+          </Link>
+        );
+      } else {
+        return <div></div>;
+      }
+    },
   },
   {
     id: "program",

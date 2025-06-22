@@ -1,5 +1,5 @@
 "use client";
-import { cn, saveSearchToLocalStorage } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
@@ -63,8 +63,10 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     accessorKey: "reference",
     cell: ({ row }) => (
       <Link
-        href={"#"}
-        replace
+        href={{
+          pathname: "/eAuditNext/engagements",
+          query: { id: row.original.id, plan: row.original.name },
+        }}
         className="ml-2 font-helvetica-table-13 text-blue-700 cursor-pointer hover:underline w-full text-center">
         {row?.original?.reference}
       </Link>
@@ -168,13 +170,6 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
           <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
             <div className="flex flex-col gap-1">
               <Link
-                onClick={() => {
-                  saveSearchToLocalStorage({
-                    name: row.original.name,
-                    value: `/eAuditNext/engagements/?id=${row.original.id}&plan=${row.original.name}`,
-                    tag: "plans",
-                  });
-                }}
                 href={{
                   pathname: "/eAuditNext/engagements",
                   query: { id: row.original.id, plan: row.original.name },

@@ -243,6 +243,7 @@ export const EngagementSchema = z.object({
 });
 
 export const SummaryProcedureSchema = z.object({
+  id: z.string().optional(),
   reference: z.string(),
   program: z.string(),
   title: z.string(),
@@ -609,6 +610,7 @@ export const SummaryFindingSchema = z.object({
   estimated_implementation_date: z.date({
     required_error: "Estimated date required",
   }),
+  created_at: z.date().optional(),
   status: z
     .enum(["Not started", "In progress", "Completed", "Closed"])
     .optional()
