@@ -194,9 +194,8 @@ export const SummaryAuditProcessTable = ({
 
   useEffect(() => {
     const filtered = data.filter((row) => {
-      const matchedProgram = row.name
-        .toLowerCase()
-        .includes(program.toLowerCase());
+      const matchedProgram =
+        row?.name ?? "".toLowerCase().includes(program.toLowerCase());
 
       const matchedStatus =
         status.length === 0 || status.includes(row.status ?? "");

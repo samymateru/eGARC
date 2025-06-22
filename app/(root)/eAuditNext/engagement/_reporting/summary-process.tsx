@@ -14,7 +14,7 @@ export const SummaryProcess = () => {
   const params = useSearchParams();
 
   const { data, isError, isLoading, error } = useQuery({
-    queryKey: ["_summary_procedures_", params.get("id")],
+    queryKey: ["_summary_process_", params.get("id")],
     queryFn: async (): Promise<SummaryAuditProcessValue[]> => {
       const response = await fetch(
         `${BASE_URL}/engagements/summary_audit_process/${params.get("id")}`,

@@ -161,9 +161,8 @@ export const SummaryProceduresTable = ({
 
   useEffect(() => {
     const filtered = data.filter((row) => {
-      const matchesName = row.title
-        .toLowerCase()
-        .includes(program.toLowerCase());
+      const matchesName =
+        row?.title ?? "".toLowerCase().includes(program.toLowerCase());
 
       const effectivenesStatus =
         effectiveness.length === 0 ||
