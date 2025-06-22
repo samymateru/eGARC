@@ -18,8 +18,8 @@ const allRootCauses = [
   "Governance",
   "Process",
   "Financial",
-  "ExternalFactors",
-  "TechnologySystem",
+  "External factors",
+  "Technology / Systems",
 ];
 
 const allImpactCategory = [

@@ -17,8 +17,8 @@ const allRootCauses = [
   "Governance",
   "Process",
   "Financial",
-  "ExternalFactors",
-  "TechnologySystem",
+  "External factors",
+  "Technology / Systems",
 ];
 
 const labelMap: Record<string, string> = {
