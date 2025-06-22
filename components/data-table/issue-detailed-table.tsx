@@ -474,14 +474,14 @@ export default function IssueDetailedTable({ data }: IssueDetailedProps) {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 310),
         }}>
-        <TableHeader className="border-r border-r-neutral-800 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
+        <TableHeader className="border-r border-r-neutral-500 bg-background/90 sticky top-0 z-10 backdrop-blur-xs">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"

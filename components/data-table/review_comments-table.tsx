@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -54,6 +54,8 @@ import { useSearchParams } from "next/navigation";
 import { ResolveReviewCommentForm } from "../forms/resolve-review-comment-form";
 import { ReviewCommentDecisionForm } from "../forms/review-comment-decision-form";
 import { RaiseReviewComment } from "../forms/raise-review_comment-form";
+import MultiStatusFilter from "../shared/multi-status-filter";
+import SearchInput from "../shared/search-input";
 
 enum Status {
   PENDING = "Pending",
@@ -354,13 +356,43 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
     columns.map((column) => column.id as string)
   );
 
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState<string[]>([]);
+  const [decision, setDecision] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<ReviewCommentsValues[]>([]);
+
+  const statusOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item?.status))));
+  }, [data]);
+
+  const decisionOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item?.decision))));
+  }, [data]);
+
+  useEffect(() => {
+    const filtered = data.filter((row) => {
+      const matchedTitle = (row?.title ?? "")
+        .toLowerCase()
+        .includes(title.toLowerCase());
+
+      const matchedStatus =
+        status.length === 0 || status.includes(row.status ?? "");
+
+      const matchedDecision =
+        decision.length === 0 || decision.includes(String(row.decision));
+
+      return matchedTitle && matchedStatus && matchedDecision;
+    });
+    setTableData(filtered);
+  }, [data, title, status, decision]);
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -384,13 +416,30 @@ export const ReviewCommentsTable = ({ data }: ReviewCommentsTableProps) => {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full [&>div]:max-h-[calc(100vh-230px)]">
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
+        <section className="flex items-center gap-2">
+          <SearchInput placeholder="Title" value={title} onChange={setTitle} />
+          <MultiStatusFilter
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+            title="Status"
+          />
+          <MultiStatusFilter
+            options={decisionOptions}
+            value={decision}
+            onChange={setDecision}
+            title="Decision"
+          />
+        </section>
+      </div>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {

@@ -15,12 +15,14 @@ import { Separator } from "../ui/separator";
 type MultiStatusFilterProps = {
   options?: string[];
   value: string[];
+  title?: string;
   onChange: (selected: string[]) => void;
 };
 
 export default function MultiStatusFilter({
   options,
   value,
+  title,
   onChange,
 }: MultiStatusFilterProps) {
   const [open, setOpen] = useState(false);
@@ -38,7 +40,11 @@ export default function MultiStatusFilter({
       {value.length === 0 ? (
         "All"
       ) : value.length === 1 ? (
-        value[0]
+        value[0] === "null" ? (
+          "N/A"
+        ) : (
+          value[0]
+        )
       ) : (
         <>
           <span className="font-helvetica-13">Selected</span>
@@ -53,12 +59,14 @@ export default function MultiStatusFilter({
       <PopoverTrigger asChild>
         <Button className="min-w-[130px] h-7 flex items-center justify-start font-helvetica-13 bg-black">
           <FilterIcon size={16} strokeWidth={2} />
-          <span className="flex flex-col">{buttonLabel}</span>
+          <span className="flex flex-col font-helvetica-13">{buttonLabel}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[280px] space-y-2 px-3 py-2 bg-neutral-300">
         <div>
-          <Label className="font-helvetica-14">Filter By</Label>
+          <Label className="font-helvetica-14">
+            {title !== undefined ? title : "Filtered By"}
+          </Label>
         </div>
         <Separator className="bg-neutral-500 my-1" />
         {options?.map((option) => (
@@ -70,8 +78,8 @@ export default function MultiStatusFilter({
             />
             <label
               htmlFor={option}
-              className="font-helvetica-13 hover:bg-blue-400 w-full rounded-md py-1 px-3 cursor-pointer">
-              {option}
+              className="font-helvetica-13 hover:bg-blue-400 flex-1 truncate rounded-md py-1 px-3 cursor-pointer">
+              {option === "null" ? "N/A" : option}
             </label>
           </div>
         ))}

@@ -1,6 +1,6 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { cn, ErrorMessage } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   ColumnDef,
@@ -49,6 +49,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "../shared/toast";
 import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import MultiStatusFilter from "../shared/multi-status-filter";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -68,7 +69,7 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     {
       id: "select",
       cell: ({ row }) =>
-        row.original.status === "Not started" ? (
+        row.original.status === "Not started" && row.original.reportable ? (
           <Checkbox
             disabled={row.original.status !== "Not started"}
             checked={row.getIsSelected()}
@@ -108,6 +109,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.title}
+        </Label>
+      ),
+    },
+    {
+      id: "source",
+      header: () => <Label className="font-helvetica-table-14">Source</Label>,
+      accessorKey: "source",
+      cell: ({ row }) => (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {row.original.source}
         </Label>
       ),
     },
@@ -215,11 +226,21 @@ export const IssueTable = ({ data }: IssueTableProps) => {
 
   const [searchName, setSearchName] = useState("");
   const [tableData, setTableData] = useState<IssueValues[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedRiskRating, setSelectedRiskRating] = useState<string[]>([]);
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const statusOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item.status))));
+  }, [data]);
+
+  const riskRatingOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item.risk_rating))));
+  }, [data]);
 
   const table = useReactTable({
     data: tableData,
@@ -248,10 +269,18 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         .toLowerCase()
         .includes(searchName.toLowerCase());
 
-      return matchesName;
+      const matchedStatus =
+        selectedStatuses.length === 0 ||
+        selectedStatuses.includes(row.status ?? "");
+
+      const matchedRiskRating =
+        selectedRiskRating.length === 0 ||
+        selectedRiskRating.includes(row.risk_rating ?? "");
+
+      return matchesName && matchedStatus && matchedRiskRating;
     });
     setTableData(filtered);
-  }, [data, searchName]);
+  }, [data, searchName, selectedStatuses, selectedRiskRating]);
 
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage: table.getState().pagination.pageIndex + 1,
@@ -296,22 +325,35 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         query_client.invalidateQueries({
           queryKey: ["_summary_findinds_", params.get("id")],
         });
+        table.resetRowSelection();
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
     });
   };
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-320px)] py-2 px-2">
-        <section className="">
+    <div className="w-full flex flex-col [&>div]:max-h-[calc(100vh-230px)]">
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
+        <section className="flex items-center gap-2">
           <SearchInput
             placeholder="Plan name"
             value={searchName}
             onChange={setSearchName}
+          />
+          <MultiStatusFilter
+            options={statusOptions}
+            value={selectedStatuses}
+            onChange={setSelectedStatuses}
+            title="Statuses"
+          />
+          <MultiStatusFilter
+            options={riskRatingOptions}
+            value={selectedRiskRating}
+            onChange={setSelectedRiskRating}
+            title="Risk Rating"
           />
         </section>
         <section>
@@ -319,27 +361,31 @@ export const IssueTable = ({ data }: IssueTableProps) => {
             <Button
               onClick={onSubmit}
               disabled={sendIssueLoading}
-              variant="ghost"
-              className="flex items-center w-[120px] justify-start h-[30px] border border-neutral-700">
-              <SendHorizontal size={16} strokeWidth={3} />
+              className="flex items-center w-[130px] justify-start h-[30px] bg-black text-white font-helvetica-13">
+              <SendHorizontal size={16} strokeWidth={2} />
               Send
+              <span className="font-mono font-bold ml-1 text-xs">
+                {table.getSelectedRowModel().rows.length}
+              </span>
             </Button>
           ) : null}
         </section>
       </div>
       <Table
-        className="table-fixed"
+        className="table-fixed hide-scrollbar overflow-y-auto"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader className="border-r  border-r-neutral-500  sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow
+              key={headerGroup.id}
+              className="bg-muted/50 border-t border-t-neutral-500">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500 text-black bg-neutral-300 "
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500 text-black bg-neutral-300"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"

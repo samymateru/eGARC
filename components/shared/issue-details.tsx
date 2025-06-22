@@ -108,55 +108,56 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
   };
 
   return (
-    <section className="flex-1 w-full flex flex-col">
-      <header className="flex items-center px-2 py-1 justify-between">
+    <section className="flex-1 w-[calc(100vw-332px)] flex flex-col">
+      <header className="flex items-center px-2 pt-1 pb-[2px] justify-between">
         <section className="w-fit flex items-center h-[30px]">
           <Button
-            className="w-[33px] h-[30px]"
-            variant="ghost"
+            className="w-[30px] h-[30px] action"
             onClick={() => setAction(issueId ?? "", "Issue")}>
             <ArrowLeft />
           </Button>
-          <Separator orientation="vertical" className="mx-2" />
-          <Label className="">{data.ref}</Label>
-          <Separator orientation="vertical" className="mx-2" />
-          <Label>{data.status}</Label>
+          <Separator orientation="vertical" className="mx-2 bg-neutral-400" />
+          <Label className="font-helvetica-14 text-black">{data.ref}</Label>
+          <Separator orientation="vertical" className="mx-2 bg-neutral-400" />
+          <Label className="font-helvetica-13 text-black">{data.status}</Label>
         </section>
         <section className="flex-1 flex justify-end">
-          <IssueDetailsActions id={data.id}>
-            <Button
-              className="w-[120px] h-[30px] flex items-center justify-start"
-              variant="ghost">
-              <Menu size={16} strokeWidth={3} />
+          <IssueDetailsActions
+            id={data.id}
+            prepared={data?.prepared_by}
+            reviewed={data?.reviewed_by}
+            status={data?.status}>
+            <Button className="w-[130px] action h-[30px] flex items-center justify-start">
+              <Menu size={16} strokeWidth={2} />
               Menu
             </Button>
           </IssueDetailsActions>
         </section>
       </header>
-      <main className=" w-full h-[calc(100vh-98px)] overflow-auto py-2 hide-scrollbar">
+      <Separator className="bg-neutral-500" />
+      <main className=" w-full h-[calc(100vh-144px)] overflow-auto py-2 hide-scrollbar">
         <section className="h-full w-full px-4">
-          <Accordion
-            type="single"
-            collapsible
-            className="w-full flex flex-col gap-1">
+          <Accordion type="single" collapsible className=" flex flex-col gap-1">
             {items.map((item) => (
               <AccordionItem
                 value={item.id}
                 key={item.id}
                 className="flex flex-col border-none w-full">
-                <AccordionTrigger className="px-4 py-4 dark:bg-neutral-800 dark:hover:bg-neutral-800 h-9 rounded-md leading-6 hover:no-underline w-full font-hel-heading ">
+                <AccordionTrigger className="px-4 py-4 bg-neutral-200 h-9 rounded-md leading-6 hover:no-underline">
                   <span className="flex items-center gap-3">
                     <item.icon
                       size={16}
                       className="shrink-0 opacity-60"
                       aria-hidden="true"
                     />
-                    <span>{item.title}</span>
+                    <span className="font-helvetica-13 text-black">
+                      {item.title}
+                    </span>
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground py-2">
+                <AccordionContent className="text-muted-foreground py-2 w-full">
                   {item.id === "1" ? (
-                    <div>
+                    <div className="">
                       <Details
                         title={data.title}
                         criteria={data.criteria}
@@ -184,15 +185,15 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
                       />
                     </div>
                   ) : item.id === "2" ? (
-                    <div className="w-[calc(100vw-352px)]">
+                    <div className="w-full">
                       <Classification data={data} />
                     </div>
                   ) : item.id === "3" ? (
-                    <div>
+                    <div className="w-full">
                       <Contacts data={data} />
                     </div>
                   ) : item.id === "4" ? (
-                    <div className="w-[calc(100vw-352px)]">
+                    <div className="w-full">
                       <IssueResponsesTable data={responses ?? []} />
                     </div>
                   ) : null}
@@ -254,93 +255,68 @@ const Details = ({
   reviewed_by,
 }: DetailsProps) => {
   return (
-    <section className="pt-3 px-2 text-white flex flex-col gap-4 h-[400px] overflow-auto">
-      <Separator className="my-1" />
+    <section className="pt-3 px-2 flex flex-col gap-4 max-h-[350px] w-[calc(100vw-332px)] overflow-auto">
       <section className="flex gap-2 items-center">
-        <Label className="font-[helvetica] font-bold text-[15px]">Title:</Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {title}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Title:</Label>
+        <Label className="font-helvetica-13 text-black">{title}</Label>
       </section>
       <section className="flex flex-col">
-        <Label className="font-[helvetica] font-bold text-[15px]">
-          Criteria
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {criteria}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Criteria</Label>
+        <Label className="font-helvetica-13 text-black">{criteria}</Label>
       </section>
       <section className="flex flex-col">
-        <Label className="font-[helvetica] font-bold text-[15px]">
-          Finding/Weakness
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {finding}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Finding/Weakness</Label>
+        <Label className="font-helvetica-13 text-black">{finding}</Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px]">
-          Risk Level:
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {risk_rating}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Risk Level:</Label>
+        <Label className="font-helvetica-13 text-black">{risk_rating}</Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px]">
-          Source:
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {source}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Source:</Label>
+        <Label className="font-helvetica-13 text-black">{source}</Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px]">
-          SDI Name:
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-14 text-black">SDI Name:</Label>
+        <Label className="font-helvetica-13 text-black">
           {sdi_name !== null ? sdi_name : "N/A"}
         </Label>
       </section>
       <section className="flex flex-col">
-        <Label className="ffont-[helvetica] font-bold text-[15px]">
-          Recommendation
-        </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
-          {recomendation}
-        </Label>
+        <Label className="font-helvetica-14 text-black">Recommendation</Label>
+        <Label className="font-helvetica-13 text-black">{recomendation}</Label>
       </section>
       <section className="flex flex-col">
-        <Label className="font-[helvetica] font-bold text-[15px]">
+        <Label className="font-helvetica-14 text-black">
           Management Action Plan
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {managament_action_plan}
         </Label>
       </section>
       <section className="flex flex-col">
-        <Label className="font-[helvetica] font-bold text-[15px]">
+        <Label className="font-helvetica-14 text-black">
           Root Cause Description
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {root_cause_description}
         </Label>
       </section>
       <section className="flex flex-col">
-        <Label className="font-[helvetica] font-bold text-[15px]">
+        <Label className="font-helvetica-14 text-black">
           Impact Description
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {impact_description}
         </Label>
       </section>
       <Separator className="my-1" />
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px]  flex item-center gap-1">
+        <Label className="font-helvetica-14 text-black  flex item-center gap-1">
           <Calendar size={16} strokeWidth={3} className="text-neutral-400" />
           Estimated Implementatation Date:
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {estimated_implementation_date !== null
             ? new Intl.DateTimeFormat("en-US", {
                 year: "numeric",
@@ -351,11 +327,11 @@ const Details = ({
         </Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px]  flex item-center gap-1">
+        <Label className="font-helvetica-14 text-black  flex item-center gap-1">
           <Calendar size={16} strokeWidth={3} className="text-neutral-400" />
           Date Sent To Implementer:
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {date_opened !== null
             ? new Intl.DateTimeFormat("en-US", {
                 year: "numeric",
@@ -366,11 +342,11 @@ const Details = ({
         </Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+        <Label className="font-helvetica-14 text-black flex item-center gap-1">
           <Calendar size={16} strokeWidth={3} className="text-neutral-400" />
           Last Revised Date:
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {date_revised !== null
             ? new Intl.DateTimeFormat("en-US", {
                 year: "numeric",
@@ -381,11 +357,11 @@ const Details = ({
         </Label>
       </section>
       <section className="flex items-center gap-1">
-        <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+        <Label className="font-helvetica-14 text-black flex item-center gap-1">
           <Calendar size={16} strokeWidth={3} className="text-neutral-400" />
           Actual Close Date:
         </Label>
-        <Label className="font-[helvetica] font-medium text-neutral-300">
+        <Label className="font-helvetica-13 text-black">
           {date_closed !== null
             ? new Intl.DateTimeFormat("en-US", {
                 year: "numeric",
@@ -398,34 +374,34 @@ const Details = ({
       <Separator className="my-1" />
       <section className="flex flex-col gap-2">
         <section className="flex items-center gap-2">
-          <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+          <Label className="font-helvetica-14 text-black flex item-center gap-1">
             Recurring:
           </Label>
-          <Label className="font-[helvetica] font-medium text-neutral-300">
+          <Label className="font-helvetica-13 text-black">
             {recurring ? "Yes" : "No"}
           </Label>
         </section>
         <section className="flex items-center gap-2">
-          <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+          <Label className="font-helvetica-14 text-black flex item-center gap-1">
             Regulatory:
           </Label>
-          <Label className="font-[helvetica] font-medium text-neutral-300">
+          <Label className="font-helvetica-13 text-black">
             {regulatory ? "Yes" : "No"}
           </Label>
         </section>
         <section className="flex items-center gap-2">
-          <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+          <Label className="font-helvetica-14 text-black flex item-center gap-1">
             Reportable:
           </Label>
-          <Label className="font-[helvetica] font-medium text-neutral-300">
+          <Label className="font-helvetica-13 text-black">
             {reportable ? "Yes" : "No"}
           </Label>
         </section>
         <section className="flex items-center gap-2">
-          <Label className="font-[helvetica] font-bold text-[15px] flex item-center gap-1">
+          <Label className="font-helvetica-14 text-black flex item-center gap-1">
             Revised:
           </Label>
-          <Label className="font-[helvetica] font-medium text-neutral-300">
+          <Label className="font-helvetica-13 text-black">
             {revised_status ? "Yes" : "No"}
             <span>&lt;{revised_count}&gt;</span>
           </Label>
@@ -434,37 +410,23 @@ const Details = ({
       <Separator className="my-1" />
       <section className="flex items-center gap-1">
         <section className="flex flex-col mb-2 flex-1 gap-1">
-          <Label className="font-[helvetica] font-bold text-[15px]">
-            Prepared By:
-          </Label>
-          <section className="flex flex-col gap-2 pl-1">
+          <Label className="font-helvetica-14 text-black">Prepared By:</Label>
+          <section className="flex flex-col gap-2">
             <section className="flex item-center gap-2">
-              <User
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300">
+              <User size={16} strokeWidth={2} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {prepared_by === null ? "N/A" : prepared_by?.name}
               </Label>
             </section>
             <section className="flex item-center gap-2">
-              <Mail
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300 italic">
+              <Mail size={16} strokeWidth={2} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {prepared_by === null ? "N/A" : prepared_by?.email}
               </Label>
             </section>
             <section className="flex item-center gap-2">
-              <Calendar
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300">
+              <Calendar size={16} strokeWidth={2} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {prepared_by !== null
                   ? new Intl.DateTimeFormat("en-US", {
                       year: "numeric",
@@ -477,37 +439,23 @@ const Details = ({
           </section>
         </section>
         <section className="flex flex-col mb-2 flex-1 gap-1">
-          <Label className="font-[helvetica] font-bold text-[15px]">
-            Review By:
-          </Label>
+          <Label className="font-helvetica-14 text-black">Review By:</Label>
           <section className="flex flex-col gap-2 pl-1">
             <section className="flex item-center gap-2">
-              <User
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300">
+              <User size={16} strokeWidth={3} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {reviewed_by === null ? "N/A" : reviewed_by?.name}
               </Label>
             </section>
             <section className="flex item-center gap-2">
-              <Mail
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300 italic">
+              <Mail size={16} strokeWidth={2} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {reviewed_by === null ? "N/A" : reviewed_by?.email}
               </Label>
             </section>
             <section className="flex item-center gap-2">
-              <Calendar
-                size={16}
-                strokeWidth={3}
-                className="text-muted-foreground"
-              />
-              <Label className="text-neutral-300">
+              <Calendar size={16} strokeWidth={2} className="text-black" />
+              <Label className="font-helvetica-13 text-black">
                 {reviewed_by !== null
                   ? new Intl.DateTimeFormat("en-US", {
                       year: "numeric",
@@ -520,7 +468,6 @@ const Details = ({
           </section>
         </section>
       </section>
-      <Separator className="my-1" />
     </section>
   );
 };
@@ -531,18 +478,18 @@ interface ContactsProps {
 
 const Contacts = ({ data }: ContactsProps) => {
   return (
-    <section className="h-[400px] overflow-auto flex flex-col gap-2 px-5 py-2">
+    <section className="max-h-[350px] overflow-auto flex flex-col gap-2 px-5 py-2">
       <section className="flex items-center gap-2 w-full px-2 flex-1 ">
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Owners
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Owners</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
             {data.lod1_owner.map((user) => {
               return (
-                <Label key={user.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user.name} <span>&lt;{user.email}&gt;</span>
                   </span>
@@ -552,15 +499,15 @@ const Contacts = ({ data }: ContactsProps) => {
           </ul>
         </section>
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Implementers
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Implementers</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 ">
             {data.lod1_implementer.map((user) => {
               return (
-                <Label key={user.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user.name} <span>&lt;{user.email}&gt;</span>
                   </span>
@@ -572,15 +519,15 @@ const Contacts = ({ data }: ContactsProps) => {
       </section>
       <section className="flex items-center gap-2 w-full px-2 flex-1">
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Risk Managers
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Risk Managers</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
             {data.lod2_risk_manager.map((user) => {
               return (
-                <Label key={user.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user.name} <span>&lt;{user.email}&gt;</span>
                   </span>
@@ -590,15 +537,17 @@ const Contacts = ({ data }: ContactsProps) => {
           </ul>
         </section>
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
+          <Label className="font-helvetica-14 text-black">
             Compliance Officers
           </Label>
-          <Separator className="my-1" />
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
             {data.lod2_compliance_officer.map((user) => {
               return (
-                <Label key={user.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user.name} <span>&lt;{user.email}&gt;</span>
                   </span>
@@ -610,15 +559,15 @@ const Contacts = ({ data }: ContactsProps) => {
       </section>
       <section className="flex items-center gap-2 w-full px-2 flex-1">
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Audit Managers
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Audit Managers</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
             {data?.lod3_audit_manager.map((user) => {
               return (
-                <Label key={user.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user?.name} <span>&lt;{user?.email}&gt;</span>
                   </span>
@@ -628,15 +577,15 @@ const Contacts = ({ data }: ContactsProps) => {
           </ul>
         </section>
         <section className="flex-1 flex flex-col h-[100px]">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Observers
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Observers</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
             {data?.observers.map((user) => {
               return (
-                <Label key={user?.email} className="flex items-center gap-1">
-                  <User size={16} strokeWidth={3} />
+                <Label
+                  key={user?.email}
+                  className="flex items-center gap-1 text-black font-helvetica-13">
+                  <User size={16} strokeWidth={2} />
                   <span>
                     {user?.name} <span>&lt;{user?.email}&gt;</span>
                   </span>
@@ -659,26 +608,26 @@ const Classification = ({ data }: ClassificationProps) => {
     <section className="flex flex-col gap-7 px-5 py-5">
       <section className="flex items-center gap-2 w-full px-2 flex-1 ">
         <section className="flex-1 flex flex-col h-fit">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Root Cause
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Root Cause</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 gap-[2px]">
-            <Label className="font-semibold">{data.root_cause}</Label>
-            <Label className="flex items-center">
+            <Label className="font-helvetica-13 text-black">
+              {data.root_cause}
+            </Label>
+            <Label className="flex items-center font-helvetica-13 text-black">
               <Dot size={16} />
               {data.sub_root_cause}
             </Label>
           </ul>
         </section>
         <section className="flex-1 flex flex-col h-fit">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Risk Category
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Risk Category</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 gap-[2px]">
-            <Label className="font-semibold">{data.risk_category}</Label>
-            <Label className="flex items-center">
+            <Label className="font-helvetica-13 text-black">
+              {data.risk_category}
+            </Label>
+            <Label className="flex items-center font-helvetica-13 text-black">
               <Dot size={16} />
               {data.sub_risk_category}
             </Label>
@@ -687,26 +636,28 @@ const Classification = ({ data }: ClassificationProps) => {
       </section>
       <section className="flex items-center gap-2 w-full px-2 flex-1">
         <section className="flex-1 flex flex-col h-fit">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
-            Process
-          </Label>
-          <Separator className="my-1" />
+          <Label className="font-helvetica-14 text-black">Process</Label>
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 gap-[2px]">
-            <Label className="font-semibold">{data.process}</Label>
-            <Label className="flex items-center">
+            <Label className="font-helvetica-13 text-black">
+              {data.process}
+            </Label>
+            <Label className="flex items-center font-helvetica-13 text-black">
               <Dot size={16} />
               {data.sub_process}
             </Label>
           </ul>
         </section>
         <section className="flex-1 flex flex-col h-fit">
-          <Label className="font-[helvetica] text-[15px] font-bold scroll-m-1 tracking-normal text-white">
+          <Label className="font-helvetica-14 text-black">
             Impact Category
           </Label>
-          <Separator className="my-1" />
+          <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 gap-[2px]">
-            <Label className="font-semibold">{data.impact_category}</Label>
-            <Label className="flex items-center">
+            <Label className="font-helvetica-13 text-black">
+              {data.impact_category}
+            </Label>
+            <Label className="flex items-center font-helvetica-13 text-black">
               <Dot size={16} />
               {data.impact_sub_category}
             </Label>

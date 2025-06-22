@@ -6,7 +6,13 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { Check, CheckCircle, CircleX, Clipboard, Loader } from "lucide-react";
+import {
+  CheckCircle,
+  CircleCheck,
+  CircleX,
+  Clipboard,
+  Loader,
+} from "lucide-react";
 import { Separator } from "../ui/separator";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IssueResponder } from "@/lib/types";
@@ -21,10 +27,16 @@ type PreparedBy = z.infer<typeof IssueResponder>;
 interface IssueDetailsActionsProps {
   children: ReactNode;
   id?: string;
+  prepared?: PreparedBy;
+  reviewed?: PreparedBy;
+  status?: string;
 }
 export const IssueDetailsActions = ({
   children,
   id,
+  prepared,
+  reviewed,
+  status,
 }: IssueDetailsActionsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const query_client = useQueryClient();
@@ -141,52 +153,55 @@ export const IssueDetailsActions = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="p-1">
+      <PopoverContent className="p-1 bg-neutral-200">
         <section>
           <header>
-            <Label className="font-[helvetica] tracking-normal scroll-m-0 font-semibold text-[16px] pl-2 pb-2">
+            <Label className="font-helvetica-14 text-black pl-2 pb-2">
               Actions
             </Label>
           </header>
-          <Separator />
+          <Separator className="bg-neutral-500" />
           <main className="flex flex-col pt-2">
-            <Button
-              onClick={onPrepare}
-              disabled={prepareIssuePending}
-              className="h-[33px] flex items-center justify-start"
-              variant="ghost">
-              <Loader size={16} strokeWidth={3} />
-              Prepare
-            </Button>
-            <Button
-              onClick={onReview}
-              disabled={reviewIssuePending}
-              className="h-[33px] flex items-center justify-start"
-              variant="ghost">
-              <CheckCircle size={16} strokeWidth={3} />
-              Review
-            </Button>
-            <IssueReportForm
-              title="Issue Reportabe"
-              endpoint="issue/reportable"
-              id={id ?? null}>
+            {prepared === null ? (
               <Button
-                className="h-[33px] flex items-center justify-start"
-                variant="ghost">
-                <Clipboard size={16} strokeWidth={3} />
-                Reportable
+                onClick={onPrepare}
+                disabled={prepareIssuePending}
+                className="h-[33px] bg-inherit shadow-none text-black hover:bg-blue-400 flex items-center justify-start font-helvetica-13">
+                <Loader size={16} strokeWidth={2} />
+                Prepare
               </Button>
-            </IssueReportForm>
-            <Button
-              className="h-[33px] flex items-center justify-start"
-              variant="ghost">
-              <Check size={16} strokeWidth={3} className="text-green-700" />
+            ) : null}
+            {!!prepared && !reviewed && prepared?.email !== email ? (
+              <Button
+                onClick={onReview}
+                disabled={reviewIssuePending}
+                className="h-[33px] font-helvetica-13 bg-inherit shadow-none hover:bg-blue-400 text-black flex items-center justify-start">
+                <CheckCircle size={16} strokeWidth={2} />
+                Review
+              </Button>
+            ) : null}
+            {status === "Not started" ? (
+              <IssueReportForm
+                title="Issue Reportabe"
+                endpoint="issue/reportable"
+                id={id ?? null}>
+                <Button className="h-[33px] font-helvetica-13 bg-inherit shadow-none hover:bg-blue-400 text-black flex items-center justify-start">
+                  <Clipboard size={16} strokeWidth={2} />
+                  Reportable
+                </Button>
+              </IssueReportForm>
+            ) : null}
+
+            <Button className="h-[33px] font-helvetica-13 bg-inherit shadow-none  hover:bg-blue-400 text-black flex items-center justify-start">
+              <CircleCheck
+                size={16}
+                strokeWidth={2}
+                className="text-green-700"
+              />
               Accept
             </Button>
-            <Button
-              className="h-[33px] flex items-center justify-start"
-              variant="ghost">
-              <CircleX size={16} strokeWidth={3} className="text-red-700" />
+            <Button className="h-[33px] font-helvetica-13 bg-inherit shadow-none hover:bg-blue-400 text-black flex items-center justify-start">
+              <CircleX size={16} strokeWidth={2} className="text-red-700" />
               Decline
             </Button>
           </main>

@@ -40,6 +40,14 @@ import PreparedReviewedBy from "./prepared_reviewed_by";
 import { useSaveWorkProgramProcedure } from "@/hooks/use-save-workprogram-procedure";
 import { useWorkProgramProcedurePrepare } from "@/hooks/use-edit-workprogram-prepared";
 import { useWorkProgramProcedureReview } from "@/hooks/use-edit-workprogram-reviewed";
+import { ErrorMessage } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const items = [
   {
@@ -228,12 +236,16 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
         query_client.invalidateQueries({
           queryKey: ["sub_program_procedure", params.get("action")],
         });
+        query_client.invalidateQueries({
+          queryKey: ["_summary_procedures_", params.get("id")],
+        });
+
         if (mode === "manual") {
           showToast(data.detail, "success");
         }
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {},
     });
@@ -254,7 +266,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {},
     });
@@ -275,7 +287,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
         showToast(data.detail, "success");
       },
       onError: (error) => {
-        console.log(error);
+        ErrorMessage(error);
       },
       onSettled: () => {},
     });
@@ -528,7 +540,40 @@ const TemplateWrapper = ({
             value={item.id}
             key={item.id}
             className="flex flex-col border-none">
-            {!(item.id === "9" || item.id === "10") || extendedTesting ? (
+            {item.id === "11" ? (
+              <section className="pl-4 py-2">
+                <Label className="font-helvetica-13">Effectiveness</Label>
+                <section>
+                  <Select
+                    value={effectiveness}
+                    onValueChange={setEffectiveness}>
+                    <SelectTrigger className="border border-neutral-500 font-helvetica-13 w-[280px] h-[33px] cursor-pointer">
+                      <SelectValue
+                        placeholder="Choose"
+                        className="placeholder:font-helvetica-13 cursor-pointer"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="bg-neutral-200">
+                      <SelectItem
+                        value="Effective"
+                        className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                        Effective
+                      </SelectItem>
+                      <SelectItem
+                        value="Partially effective"
+                        className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                        Partially Effective
+                      </SelectItem>
+                      <SelectItem
+                        value="Ineffective"
+                        className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                        Ineffective
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </section>
+              </section>
+            ) : !(item.id === "9" || item.id === "10") || extendedTesting ? (
               <AccordionTrigger
                 suppressHydrationWarning
                 icon={item.id === "8" || item.id === "4" ? false : true}
@@ -697,11 +742,6 @@ const TemplateWrapper = ({
                 <TextEditor
                   initialContent={extendedResults}
                   onChange={setExtendedResults}
-                />
-              ) : item.id === "11" ? (
-                <TextEditor
-                  initialContent={effectiveness}
-                  onChange={setEffectiveness}
                 />
               ) : item.id === "12" ? (
                 <TextEditor

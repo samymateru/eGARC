@@ -62,7 +62,7 @@ export const SummaryFindings = () => {
   }
 
   return (
-    <div className="w-[calc(100vw-332px)]">
+    <div className="w-[calc(100vw-332px)] hide-scrollbar">
       <IssueTable data={findings ?? []} />
     </div>
   );

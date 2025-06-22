@@ -21,9 +21,9 @@ import { Label } from "../ui/label";
 export const description = "A pie chart with a label list";
 
 const statusColors: Record<string, string> = {
-  pending: "#991b1b",
-  in_progress: "#0369a1",
-  completed: "#15803d",
+  pending: "#ef4444",
+  in_progress: "#3b82f6",
+  completed: "#22c55e",
 };
 
 type ChartData = {

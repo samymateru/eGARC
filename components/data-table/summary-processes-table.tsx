@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -44,6 +44,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { SummaryAuditProcessSchema } from "@/lib/types";
+import SearchInput from "../shared/search-input";
+import MultiStatusFilter from "../shared/multi-status-filter";
 
 type SummaryAuditProcessValues = z.infer<typeof SummaryAuditProcessSchema>;
 
@@ -177,13 +179,35 @@ export const SummaryAuditProcessTable = ({
     columns.map((column) => column.id as string)
   );
 
+  const [program, setProgam] = useState("");
+  const [status, setStatus] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<SummaryAuditProcessValues[]>([]);
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
+  const statusOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item?.status))));
+  }, [data]);
+
+  useEffect(() => {
+    const filtered = data.filter((row) => {
+      const matchedProgram = row.name
+        .toLowerCase()
+        .includes(program.toLowerCase());
+
+      const matchedStatus =
+        status.length === 0 || status.includes(row.status ?? "");
+
+      return matchedProgram && matchedStatus;
+    });
+    setTableData(filtered);
+  }, [data, status, program]);
+
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -207,13 +231,28 @@ export const SummaryAuditProcessTable = ({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full [&>div]:max-h-[calc(100vh-230px)]">
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
+        <section className="flex items-center gap-2">
+          <SearchInput
+            placeholder="Program name"
+            value={program}
+            onChange={setProgam}
+          />
+          <MultiStatusFilter
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+            title="Status"
+          />
+        </section>
+      </div>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {

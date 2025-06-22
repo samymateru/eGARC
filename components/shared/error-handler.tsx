@@ -3,7 +3,6 @@ import { ErrorHandlerSchema } from "@/lib/types";
 import { showToast } from "./toast";
 
 export const ErrorHandler = ({ status, body }: ErrorHandlerSchema) => {
-  console.log(status);
   if (status === 400) {
     showToast(body?.detail, "error");
   }
@@ -14,5 +13,9 @@ export const ErrorHandler = ({ status, body }: ErrorHandlerSchema) => {
         window.location.href = "/signin";
       }, 2000);
     }
+  }
+  if (status === 403) {
+    showToast(body?.detail, "error");
+    console.log(status);
   }
 };

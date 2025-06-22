@@ -202,7 +202,8 @@ const config: Config = {
 					fontSize: "18px",
 				},
 				".action":{
-					backgroundColor: "black"
+					backgroundColor: "black",
+					color: "white"
 				}, 
 				".text-editor-action":{
 					backgroundColor: "#334155",

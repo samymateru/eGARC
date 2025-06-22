@@ -9,7 +9,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const SummaryProcedure = () => {
   const params = useSearchParams();
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["_summary_procedures_"],
+    queryKey: ["_summary_procedures_", params.get("id")],
     queryFn: async () => {
       const response = await fetch(
         `${BASE_URL}/engagements/fieldwork/summary_procedures/${params.get(

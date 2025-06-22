@@ -25,6 +25,7 @@ import { z } from "zod";
 import { FormError } from "../shared/form-error";
 import { showToast } from "../shared/toast";
 import { ErrorMessage } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -50,7 +51,7 @@ export const IssueReportForm = ({
   endpoint,
 }: IssueReportFormProps) => {
   const [open, setOpen] = useState<boolean>(false);
-
+  const params = useSearchParams();
   const query_client = useQueryClient();
 
   const { mutate: issueReportable, isPending: issueReportablePending } =
@@ -98,7 +99,7 @@ export const IssueReportForm = ({
     issueReportable(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["organizations"],
+          queryKey: ["_summary_findinds_", params.get("id")],
         });
         showToast(data.detail, "success");
       },
@@ -139,7 +140,7 @@ export const IssueReportForm = ({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="border border-neutral-500 font-helvetica-13">
                         <SelectValue
-                          placeholder="Select Organization type"
+                          placeholder="Is reportable"
                           className="placeholder:font-helvetica-13"
                         />
                       </SelectTrigger>

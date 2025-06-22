@@ -213,13 +213,13 @@ export const PRCMTable = ({ data }: PRCMTableProps) => {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full [&>div]:max-h-[400px]">
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {

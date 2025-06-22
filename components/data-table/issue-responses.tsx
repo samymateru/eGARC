@@ -172,10 +172,7 @@ export const IssueResponsesTable = ({ data }: IssueResponsesTableProps) => {
       <Table
         className="table-fixed"
         style={{
-          width: Math.max(
-            table.getCenterTotalSize(),
-            window.innerWidth - 320 - 32
-          ),
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 340),
         }}>
         <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (

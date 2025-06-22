@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -45,6 +45,8 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { SummaryProcedureSchema } from "@/lib/types";
 import Link from "next/link";
+import MultiStatusFilter from "../shared/multi-status-filter";
+import SearchInput from "../shared/search-input";
 
 type SummaryProcedureValues = z.infer<typeof SummaryProcedureSchema>;
 
@@ -144,13 +146,36 @@ export const SummaryProceduresTable = ({
     columns.map((column) => column.id as string)
   );
 
+  const [program, setProgam] = useState("");
+  const [effectiveness, setEffectiveness] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<SummaryProcedureValues[]>([]);
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
+  const effectivenessOptions = useMemo(() => {
+    return Array.from(new Set(data.map((item) => String(item?.effectiveness))));
+  }, [data]);
+
+  useEffect(() => {
+    const filtered = data.filter((row) => {
+      const matchesName = row.title
+        .toLowerCase()
+        .includes(program.toLowerCase());
+
+      const effectivenesStatus =
+        effectiveness.length === 0 ||
+        effectiveness.includes(row.effectiveness ?? "");
+
+      return matchesName && effectivenesStatus;
+    });
+    setTableData(filtered);
+  }, [data, effectiveness, program]);
+
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
@@ -174,13 +199,28 @@ export const SummaryProceduresTable = ({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full [&>div]:max-h-[calc(100vh-230px)]">
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
+        <section className="flex items-center gap-2">
+          <SearchInput
+            placeholder="Program name"
+            value={program}
+            onChange={setProgam}
+          />
+          <MultiStatusFilter
+            options={effectivenessOptions}
+            value={effectiveness}
+            onChange={setEffectiveness}
+            title="Risk Rating"
+          />
+        </section>
+      </div>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 text-black ">
+        <TableHeader className="border-r border-r-neutral-500 text-black sticky top-0 z-10">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {

@@ -19,9 +19,9 @@ import { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 
 const statusColors: Record<string, string> = {
-  pending: "#991b1b",
-  in_progress: "#0369a1",
-  closed: "#15803d",
+  pending: "#ef4444",
+  in_progress: "#3b82f6",
+  closed: "#22c55e",
 };
 
 type ChartData = {
@@ -68,7 +68,7 @@ export function ReviewCommentsStatusPieChart({
   return (
     <Card className="flex flex-col border-none bg-neutral-100">
       <CardHeader className="">
-        <CardTitle className="font-helvetica-medium text-left">
+        <CardTitle className="font-helvetica-medium text-left ">
           Review Comments Summary
         </CardTitle>
         <CardDescription className="flex gap-1 items-center">
