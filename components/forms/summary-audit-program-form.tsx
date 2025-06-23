@@ -36,12 +36,6 @@ type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 interface SummaryAuditProgramFormProps {
   children: React.ReactNode;
   prcm_id: string | null;
-  process: string;
-  risk: string;
-  risk_rating: string;
-  control_: string;
-  control_objective: string;
-  control_type: string;
   endpoint: string;
   title: string;
   mode?: string;
@@ -50,6 +44,7 @@ interface SummaryAuditProgramFormProps {
 type Procedure = {
   procedure_id?: string;
   procedure_title?: string;
+  reference?: string;
 };
 
 type WorkProgramResponse = {
@@ -60,13 +55,7 @@ type WorkProgramResponse = {
 
 export const SummaryAuditProgramForm = ({
   children,
-  process,
   prcm_id,
-  risk,
-  risk_rating,
-  control_,
-  control_objective,
-  control_type,
   endpoint,
   title,
 }: SummaryAuditProgramFormProps) => {
@@ -77,6 +66,8 @@ export const SummaryAuditProgramForm = ({
   const [programOpen, setProgramOpen] = useState(false);
   const [subProcedureOpen, setSubProcedureOpen] = useState(false);
   const [programId, setProgramId] = useState<string>("");
+  const [procedureId, setProcedureId] = useState<string>("");
+  const [reference, setReference] = useState<string>("");
 
   const params = useSearchParams();
 
@@ -115,10 +106,12 @@ export const SummaryAuditProgramForm = ({
     mutate: createSummaryAuditProgram,
     isPending: createSummaryAuditProgramLoading,
   } = useMutation({
-    mutationKey: ["_create_summary_audit_program_"],
-    mutationFn: async (data: SummaryAuditProgramValues): Promise<Response> => {
+    mutationKey: ["_create_summary_audit_program_", prcm_id],
+    mutationFn: async (
+      formData: SummaryAuditProgramValues
+    ): Promise<Response> => {
       const response = await fetch(
-        `${BASE_URL}/${endpoint}/${params.get("id")}?prcm_id=${prcm_id}`,
+        `${BASE_URL}/${endpoint}/${prcm_id}?procedure_id=${procedureId}&reference=${reference}`,
         {
           method: "POST",
           headers: {
@@ -127,7 +120,7 @@ export const SummaryAuditProgramForm = ({
               typeof window === "undefined" ? "" : localStorage.getItem("token")
             }`,
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(formData),
         }
       );
       if (!response.ok) {
@@ -150,19 +143,13 @@ export const SummaryAuditProgramForm = ({
   } = methods;
 
   const onSubmit = (data: SummaryAuditProgramValues) => {
-    const summaryAuditProgramData = {
-      ...data,
-      process,
-      risk,
-      risk_rating,
-      control: control_,
-      control_objective,
-      control_type,
-    };
-    createSummaryAuditProgram(summaryAuditProgramData, {
+    createSummaryAuditProgram(data, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
           queryKey: ["_summary_program_", params.get("id")],
+        });
+        query_client.invalidateQueries({
+          queryKey: ["_prcm_", params.get("id")],
         });
         showToast(data.detail, "success");
       },
@@ -206,7 +193,7 @@ export const SummaryAuditProgramForm = ({
                         field.onChange(value);
                         const selected = data?.find((p) => p.name === value);
                         setProgramId(selected?.id ?? "");
-                        setValue("procedure", "", { shouldValidate: true });
+                        setValue("procedure", "");
                       }}
                       value={field.value}
                       open={programOpen}
@@ -246,7 +233,16 @@ export const SummaryAuditProgramForm = ({
                   control={control}
                   render={({ field }) => (
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        const selectedProcedure = data
+                          ?.find((p) => p.id === programId)
+                          ?.procedures.find(
+                            (procedure) => procedure.procedure_title === value
+                          );
+                        setProcedureId(selectedProcedure?.procedure_id ?? "");
+                        setReference(selectedProcedure?.reference ?? "");
+                      }}
                       value={field.value}
                       open={subProcedureOpen}
                       onOpenChange={(open) => {

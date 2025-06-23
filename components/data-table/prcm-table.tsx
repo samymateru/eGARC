@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, parseQueryParams } from "@/lib/utils";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -45,13 +45,38 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { PRCMSchema } from "@/lib/types";
+import { PRCMSchema, QueryParams } from "@/lib/types";
 import { SummaryAuditProgramForm } from "../forms/summary-audit-program-form";
 import { PRCMForm } from "../forms/prcm-form";
+import Link from "next/link";
 
 type PRCMValues = z.infer<typeof PRCMSchema>;
 
 const columns: ColumnDef<PRCMValues>[] = [
+  {
+    id: "reference",
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    accessorKey: "summary_audit_program",
+    cell: ({ row }) => {
+      if (typeof window !== undefined) {
+        const params: QueryParams = parseQueryParams(window.location.search);
+        return (
+          <Link
+            replace
+            href={
+              row.original.reference
+                ? `/eAuditNext/engagement/?id=${params.id}&action=${row.original.summary_audit_program}&name=${params.name}`
+                : "#"
+            }
+            className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
+            {row.original.reference ? row.original.reference : "N/A"}
+          </Link>
+        );
+      } else {
+        return <div></div>;
+      }
+    },
+  },
   {
     id: "process",
     header: () => <Label className="font-helvetica-table-14">Process</Label>,
@@ -120,23 +145,20 @@ const columns: ColumnDef<PRCMValues>[] = [
             </PopoverTrigger>
             <PopoverContent className="w-[250px] px-1 py-2 bg-neutral-200">
               <div className="flex flex-col gap-1">
-                <SummaryAuditProgramForm
-                  title="Work Program"
-                  endpoint="engagements/summary_audit_program"
-                  prcm_id={row.original.id ?? null}
-                  process={row.original.process}
-                  risk={row.original.risk}
-                  risk_rating={row.original.risk_rating}
-                  control_={row.original.control}
-                  control_objective={row.original.control_objective}
-                  control_type={row.original.control_type}>
-                  <Button
-                    variant="ghost"
-                    className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
-                    <Pencil size={16} strokeWidth={2} />
-                    Work Program
-                  </Button>
-                </SummaryAuditProgramForm>
+                {row.original.summary_audit_program === null ? (
+                  <SummaryAuditProgramForm
+                    title="Work Program"
+                    endpoint="engagements/summary_audit_program"
+                    prcm_id={row.original.id ?? null}>
+                    <Button
+                      variant="ghost"
+                      className="w-full bg-neutral-200 text-black shadow-none rounded-md px-4 flex items-center justify-start gap-2 h-[30px] font-helvetica-13 hover:bg-blue-400">
+                      <Pencil size={16} strokeWidth={2} />
+                      Work Program
+                    </Button>
+                  </SummaryAuditProgramForm>
+                ) : null}
+
                 <PRCMForm
                   data={{
                     process: row.original.process,

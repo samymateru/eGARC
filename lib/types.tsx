@@ -18,6 +18,12 @@ export type UserResponse = {
   email?: string;
 };
 
+export type QueryParams = {
+  id?: string | null;
+  action?: string | null;
+  name?: string | null;
+};
+
 export const User = z.object({
   name: z.string().optional(),
   email: z.string().optional(),
@@ -138,6 +144,7 @@ export const RiskSchema = z
 
 export const PRCMSchema = z.object({
   id: z.string().optional(),
+  reference: z.string().optional(),
   process: z
     .string({ required_error: "Business process is required" })
     .min(1, "Business process is required"),
@@ -156,6 +163,7 @@ export const PRCMSchema = z.object({
 
 export const RiskControlSchema = z.object({
   id: z.string().optional(),
+  type: z.string().optional(),
   risk: z.string().min(1, "Risk is required"),
   risk_rating: z.string({ required_error: "Risk rating is required" }),
   control: z.string().min(1, "Control is required"),
@@ -166,6 +174,8 @@ export const RiskControlSchema = z.object({
 
 export const SummaryAuditProgramSchema = z.object({
   id: z.string().optional(),
+  reference: z.string().optional(),
+  procedure_id: z.string().optional(),
   process: z.string().optional(),
   risk: z.string().optional(),
   risk_rating: z.string().optional(),

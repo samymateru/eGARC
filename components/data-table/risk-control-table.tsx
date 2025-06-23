@@ -108,6 +108,18 @@ const columns: ColumnDef<PRCMValues>[] = [
     accessorKey: "control_objective",
   },
   {
+    id: "type",
+    header: () => (
+      <Label className="font-helvetica-table-14">From Planning</Label>
+    ),
+    cell: ({ row }) => (
+      <Label className="ml-2 font-helvetica-table-13 truncate">
+        {row.original.type === "planning" ? "Yes" : "No"}
+      </Label>
+    ),
+    accessorKey: "type",
+  },
+  {
     id: "actions",
     header: () => (
       <Label className="font-helvetica-table-14 flex justify-center">

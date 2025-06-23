@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Search } from "./types";
+import { QueryParams, Search } from "./types";
 import { ErrorHandler } from "@/components/shared/error-handler";
 import { showToast } from "@/components/shared/toast";
 
@@ -133,4 +133,13 @@ export function capitalizeWords(input: string): string {
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+export function parseQueryParams(query: string): QueryParams {
+  const params = new URLSearchParams(query);
+  return {
+    id: params.get("id"),
+    action: params.get("action"),
+    name: params.get("name"),
+  };
 }

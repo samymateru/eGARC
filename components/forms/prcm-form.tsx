@@ -145,7 +145,7 @@ export const PRCMForm = ({
   });
 
   const { mutate: createPRCM, isPending: createPRCMLoading } = useMutation({
-    mutationKey: ["_create_prcm_"],
+    mutationKey: ["_create_prcm_", id],
     mutationFn: async (data: PRCMFormValues): Promise<Response> => {
       const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
         method: "POST",

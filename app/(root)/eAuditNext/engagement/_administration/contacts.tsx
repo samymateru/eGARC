@@ -202,21 +202,21 @@ export const EngagementContacts = () => {
         <Separator className="my-1" />
         <section className="flex flex-col gap-3">
           <section>
-            <Label className="font-[helvetica] font-semibold tracking-normal flex items-center">
+            <Label className="font-helvetica-14 text-black flex items-center">
               <Dot size={24} strokeWidth={3} />
               Contacts for Action
             </Label>
-            <ul className="ml-4 flex flex-col gap-1">
+            <ul className="ml-2 flex flex-col gap-1">
               {actionContacts.map((contact, idx) =>
                 contact.user?.map((u, uIdx) => (
                   <section
                     key={`${idx}-${uIdx}-${u.email ?? u.name ?? uIdx}`}
                     className="flex items-center gap-2">
-                    <User size={16} strokeWidth={3} />
+                    <User size={16} strokeWidth={2} className="text-black" />
                     <section className="flex items-center gap-1">
-                      <Label className="text-neutral-300 font-[helvetica] tracking-normal scroll-m-1 font-semibold">
+                      <Label className="font-helvetica-13 text-black">
                         {u.name?.toLocaleUpperCase()}
-                        <span className="ml-1 text-blue-600">
+                        <span className="ml-1 text-black font-helvetica-13">
                           &lt;{u.email}&gt;
                         </span>
                       </Label>
@@ -228,21 +228,21 @@ export const EngagementContacts = () => {
           </section>
           <Separator className="my-1" />
           <section>
-            <Label className="font-[helvetica] font-semibold tracking-normal flex items-center ">
-              <Dot size={24} strokeWidth={3} />
+            <Label className="font-helvetica-14 text-black flex items-center">
+              <Dot size={24} strokeWidth={2} />
               Contacts for Information
             </Label>
-            <ul className="flex flex-col gap-[6px]">
+            <ul className="ml-2 flex flex-col gap-[6px]">
               {informationContacts.map((contact, idx) =>
                 contact.user?.map((u, uIdx) => (
                   <section
                     key={`${idx}-${uIdx}-${u.email ?? u.name ?? uIdx}`}
                     className="flex items-center gap-2">
-                    <User size={16} strokeWidth={3} />
+                    <User size={16} strokeWidth={2} className="text-black" />
                     <section className="flex items-center gap-1">
-                      <Label className="text-neutral-300 font-[helvetica] tracking-normal scroll-m-1 font-semibold">
+                      <Label className="text-black font-helvetica-13">
                         {u.name?.toLocaleUpperCase()}
-                        <span className="ml-1 text-blue-600">
+                        <span className="ml-1 text-black font-helvetica-13">
                           &lt;{u.email}&gt;
                         </span>
                       </Label>

@@ -146,16 +146,21 @@ export const RiskControlForm = ({
     useMutation({
       mutationKey: ["_create_risk_control_", id],
       mutationFn: async (data: RiskControlFormValues): Promise<Response> => {
-        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              typeof window === "undefined" ? "" : localStorage.getItem("token")
-            }`,
-          },
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(
+          `${BASE_URL}/${endpoint}/${id}?engagement_id=${params.get("id")}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                typeof window === "undefined"
+                  ? ""
+                  : localStorage.getItem("token")
+              }`,
+            },
+            body: JSON.stringify(data),
+          }
+        );
         if (!response.ok) {
           const errorBody = await response.json().catch(() => ({}));
           throw {

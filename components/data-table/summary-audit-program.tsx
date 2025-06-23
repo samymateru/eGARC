@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { cn, parseQueryParams } from "@/lib/utils";
 import { useState } from "react";
 import {
   ColumnDef,
@@ -45,11 +45,36 @@ import {
 } from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { SummaryAuditProgramSchema } from "@/lib/types";
+import { QueryParams, SummaryAuditProgramSchema } from "@/lib/types";
+import Link from "next/link";
 
 type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 
 const columns: ColumnDef<SummaryAuditProgramValues>[] = [
+  {
+    id: "reference",
+    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    accessorKey: "summary_audit_program",
+    cell: ({ row }) => {
+      if (typeof window !== undefined) {
+        const params: QueryParams = parseQueryParams(window.location.search);
+        return (
+          <Link
+            replace
+            href={
+              row.original.reference
+                ? `/eAuditNext/engagement/?id=${params.id}&action=${row.original.procedure_id}&name=${params.name}`
+                : "#"
+            }
+            className="ml-2 font-helvetica-table-13 text-blue-700 hover:underline  truncate">
+            {row.original.reference ? row.original.reference : "N/A"}
+          </Link>
+        );
+      } else {
+        return <div></div>;
+      }
+    },
+  },
   {
     id: "process",
     header: () => <Label className="font-helvetica-table-14">Process</Label>,
