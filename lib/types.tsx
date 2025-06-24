@@ -456,6 +456,7 @@ export const UserSchema = z.object({
   name: z.string().min(1, "Please provide member name"),
   email: z.string().email({ message: "Provide valid email please" }),
   telephone: z.string().optional(),
+  engagements: z.array(z.string()).optional(),
   role: z.string({ required_error: "Provide user role" }),
   title: z.string({ required_error: "Provide user title" }),
   module: z.string().optional(),
@@ -708,4 +709,15 @@ export const RatingSchema = z.object({
     .string()
     .min(1, "Provide opinion rating desciption"),
   opinion_rating: z.string({ required_error: "Opinion rating required" }),
+});
+
+export const UpdateUserSchema = z.object({
+  name: z.string().min(1, "User name is required"),
+  telephone: z.string().min(1, "Provide telephone number"),
+});
+
+export const ExitModuleSchema = z.object({
+  exit_date: z.date({ required_error: "Exit date is required" }),
+  reason: z.string().min(1, "Exit reason is required"),
+  description: z.string().optional(),
 });

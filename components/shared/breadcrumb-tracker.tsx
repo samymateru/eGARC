@@ -30,7 +30,15 @@ const BreadcrumbTracker = () => {
     let history: string[] = JSON.parse(
       sessionStorage.getItem(HISTORY_KEY) || "[]"
     );
+
     const last = history[history.length - 1];
+    console.log(last);
+    console.log(fullUrl);
+
+    if (fullUrl === "/?" || fullUrl === "/") {
+      sessionStorage.setItem(HISTORY_KEY, JSON.stringify([]));
+      return;
+    }
 
     if (!last) {
       // First load
@@ -48,7 +56,7 @@ const BreadcrumbTracker = () => {
 
     if (existingIndex > -1) {
       // User went back to a previous page
-      removeLastBreadcrumb();
+      removeLastBreadcrumb([]);
       history = history.slice(0, existingIndex + 1);
     } else {
       if (label !== "Page") {

@@ -6,7 +6,7 @@ const nextConfig = {
     missingSuspenseWithCSRBailout: false,
   },
     images: {
-        domains: ['img.freepik.com'], // Add external image domains here
+        domains: ['media.vaticannews.va'], // Add external image domains here
       },
 };
 

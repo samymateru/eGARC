@@ -91,7 +91,7 @@ export default function EngagementPage() {
         <Separator className="my-1 bg-neutral-800" />
         <TabsContent
           value="engagements"
-          className="w-[100vw] px-2 flex flex-col gap-2 flex-1 mt-0">
+          className="w-[100vw] px-2 flex flex-col gap-2 flex-1 mt-0 overflow-x-hidden overflow-y-auto hide-scrollbar">
           <AnnuaPlanDashboard value={100} />
           <EngagementTable data={engagements ?? []} />
         </TabsContent>

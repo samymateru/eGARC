@@ -117,15 +117,22 @@ export const removeBreadcrumbByLabel = (label: string) => {
   window.dispatchEvent(new Event('breadcrumbChange'));
 };
 
-export const removeLastBreadcrumb = () => {
+export const removeLastBreadcrumb = (labelsToRemove: string[]) => {
   if (typeof window === 'undefined') return;
 
-  const breadcrumbs = JSON.parse(localStorage.getItem('breadcrumbs') || '[]');
-  breadcrumbs.pop(); // Remove the last one
-  localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
+  const breadcrumbs: { label: string; url: string }[] = JSON.parse(
+    localStorage.getItem('breadcrumbs') || '[]'
+  );
 
-  // Notify breadcrumb UI to update
+  const updated = breadcrumbs.filter(
+    (b) => !labelsToRemove.includes(b.label)
+  );
+
+  localStorage.setItem('breadcrumbs', JSON.stringify(updated));
+
+  // Optional: Notify UI
   window.dispatchEvent(new Event('breadcrumbChange'));
+
 };
 
 export function capitalizeWords(input: string): string {

@@ -199,7 +199,11 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
                   className="font-helvetica-13 w-full h-8 rounded-md pl-2 flex items-center gap-2 hover:bg-blue-400"
                   href={{
                     pathname: `/eAuditNext`,
-                    query: { id: moduleId, organizationId: orgId },
+                    query: {
+                      id: moduleId,
+                      organizationId: orgId,
+                      action: "dashboard",
+                    },
                   }}>
                   <LayoutDashboard size={16} strokeWidth={2} />
                   Dashboard
@@ -209,7 +213,11 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
                   className="font-helvetica-13 w-full h-8 rounded-md pl-2 flex items-center gap-2 hover:bg-blue-400"
                   href={{
                     pathname: `/eAuditNext`,
-                    query: { id: moduleId, organizationId: orgId },
+                    query: {
+                      id: moduleId,
+                      organizationId: orgId,
+                      action: "audit_plan",
+                    },
                   }}>
                   <Goal size={16} strokeWidth={2} />
                   Audit Plans
@@ -219,7 +227,11 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
                   className="font-helvetica-13 w-full h-8 rounded-md pl-2 flex items-center gap-2 hover:bg-blue-400"
                   href={{
                     pathname: `/eAuditNext`,
-                    query: { id: moduleId, organizationId: orgId },
+                    query: {
+                      id: moduleId,
+                      organizationId: orgId,
+                      action: "report",
+                    },
                   }}>
                   <BarChart size={16} strokeWidth={2} />
                   Reports
@@ -229,7 +241,11 @@ export const EngagementDropdownMenu = ({ children }: SystemOptionsProps) => {
                   className="font-helvetica-13 w-full h-8 rounded-md pl-2 flex items-center gap-2 hover:bg-blue-400"
                   href={{
                     pathname: `/eAuditNext`,
-                    query: { id: moduleId, organizationId: orgId },
+                    query: {
+                      id: moduleId,
+                      organizationId: orgId,
+                      action: "follow_up",
+                    },
                   }}>
                   <Clock size={16} strokeWidth={2} />
                   Follow up

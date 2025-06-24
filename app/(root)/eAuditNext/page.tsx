@@ -21,7 +21,7 @@ import { z } from "zod";
 import { EauditDashboard } from "@/components/dashboards/eadit-next-dashboard";
 import { useRouter, useSearchParams } from "next/navigation";
 import AnnualAuditPlanningTable from "@/components/data-table/annual_audit_planning-table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { SystemOptions } from "@/components/menus/system-options";
@@ -54,7 +54,6 @@ export default function AuditNextPage() {
   const [organizationName, setOrgnizationName] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const router = useRouter();
-  const [action, setAction] = useState<string>("dashboard");
 
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["_entity_", params.get("organizationId")],
@@ -114,7 +113,6 @@ export default function AuditNextPage() {
   }
 
   const onTabChange = (tab: string) => {
-    setAction(tab);
     const param = new URLSearchParams(params.toString());
     param.set("action", tab);
     router.replace(`?${param.toString()}`, { scroll: false });
@@ -122,7 +120,7 @@ export default function AuditNextPage() {
 
   return (
     <Tabs
-      value={action}
+      value={params.get("action") ?? "dashboard"}
       onValueChange={onTabChange}
       className="flex-1 flex w-[100vw] h-[100vh]">
       <TabsList className=" flex flex-col gap-1 bg-white rounded-none justify-start w-[300px] h-full">
@@ -198,7 +196,6 @@ export default function AuditNextPage() {
 
 const AnnualAuditPlan = () => {
   const params = useSearchParams();
-  const [auditplans, setAuditPlans] = useState<AuditPlanType[]>([]);
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["_annual_plan_", params.get("id")],
     queryFn: async (): Promise<AuditPlanType[]> => {
@@ -229,19 +226,22 @@ const AnnualAuditPlan = () => {
   });
 
   useEffect(() => {
-    if (!isLoading && isSuccess) {
-      const auditPlans = data?.sort((a: AuditPlanType, b: AuditPlanType) => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [isError, error]);
+
+  const sortedAuditPlans = useMemo(() => {
+    if (!isLoading && isSuccess && data) {
+      return [...data].sort((a: AuditPlanType, b: AuditPlanType) => {
         return (
           new Date(b.created_at ?? "").getTime() -
           new Date(a.created_at ?? "").getTime()
         );
       });
-      setAuditPlans(auditPlans ?? []);
     }
-    if (isError) {
-      ErrorMessage(error);
-    }
-  }, [isLoading, isSuccess, isError, error, data]);
+    return [];
+  }, [isLoading, isSuccess, data]);
 
   if (isLoading) {
     return (
@@ -257,7 +257,7 @@ const AnnualAuditPlan = () => {
         <BreadCrumbNavbar />
       </section>
       <Separator className="my-2 bg-neutral-600" />
-      <AnnualAuditPlanningTable data={auditplans ?? []} />
+      <AnnualAuditPlanningTable data={sortedAuditPlans ?? []} />
     </div>
   );
 };

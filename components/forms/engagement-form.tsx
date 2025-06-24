@@ -309,6 +309,13 @@ export const EngagementForm = ({
           query_client.invalidateQueries({
             queryKey: ["_engagements_", id],
           });
+          query_client.invalidateQueries({
+            queryKey: ["_eaudit_plan_details_", params.get("id")],
+          });
+          query_client.invalidateQueries({
+            queryKey: ["_plan_data_", params.get("id")],
+          });
+
           showToast(data.detail, "success");
         },
         onError: (error) => {
