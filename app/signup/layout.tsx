@@ -1,5 +1,6 @@
 import { TanstackProvider } from "@/providers/TanstackProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import "@/app/globals.css";
 
 export const metadata = {
   title: "Next.js",
