@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/providers/ThemeProvider";
 import "@/app/globals.css";
 import { TanstackProvider } from "@/providers/TanstackProvider";
 export const metadata = {
@@ -14,15 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <TanstackProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange>
-            {children}
-          </ThemeProvider>
-        </TanstackProvider>
+        <TanstackProvider>{children}</TanstackProvider>
       </body>
     </html>
   );
