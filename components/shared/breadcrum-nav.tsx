@@ -73,21 +73,27 @@ export const BreadCrumbNavbar = () => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         {breadcrumbs.map((crumb, index: number) => (
-          <>
+          <section key={index} className="flex items-center gap-2">
             <BreadcrumbItem className="font-helvetica-13" key={index}>
               <BreadcrumbLink
-                onClick={() => router.replace(crumb.href)}
+                onClick={() => {
+                  router.replace(crumb.href);
+                }}
                 className="font-helvetica-13 text-black flex items-center gap-1 cursor-pointer">
                 {icons[index]}
                 {crumb.label}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-          </>
+          </section>
         ))}
         <BreadcrumbItem>
           <BreadcrumbPage className="font-helvetica-13">
-            {pathname === "/eAuditNext" ? (page ? pages[page] : "") : ""}
+            {pathname === "/eAuditNext"
+              ? page
+                ? pages[page]
+                : "Dashboard"
+              : ""}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

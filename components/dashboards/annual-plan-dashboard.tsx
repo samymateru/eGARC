@@ -124,8 +124,6 @@ export const AnnuaPlanDashboard = ({}: AnnuaPlanDashboardProps) => {
     }
   }, [isError, error, planError, isPlanError]);
 
-  console.log(planData);
-
   return (
     <section className="flex items-center justify-center w-[100vw] mb-2">
       <section className="w-1/2 h-fit py-6 bg-neutral-100 flex shadow-md shadow-blue-400 flex-col gap-2 p-5 rounded-lg">

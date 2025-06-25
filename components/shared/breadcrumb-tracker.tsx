@@ -1,6 +1,6 @@
 "use client";
 
-import { pushBreadcrumb, removeLastBreadcrumb } from "@/lib/utils";
+import { pushBreadcrumb, removeBreadcrumbByLabel } from "@/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,23 +21,91 @@ const getNormalizedUrl = (pathname: string, searchParams: URLSearchParams) => {
 const BreadcrumbTracker = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const params = useSearchParams();
 
   useEffect(() => {
     const fullUrl = getNormalizedUrl(pathname, searchParams);
     const label = getLabelFromRoute(pathname, searchParams);
 
     // Load session history
-    let history: string[] = JSON.parse(
+    const history: string[] = JSON.parse(
       sessionStorage.getItem(HISTORY_KEY) || "[]"
     );
 
     const last = history[history.length - 1];
-    console.log(last);
-    console.log(fullUrl);
+
+    const existingIndex = history.indexOf(fullUrl);
 
     if (fullUrl === "/?" || fullUrl === "/") {
       sessionStorage.setItem(HISTORY_KEY, JSON.stringify([]));
+      localStorage.setItem("breadcrumbs", JSON.stringify([]));
       return;
+    }
+
+    if (existingIndex === -1) {
+      if (label !== "Page") {
+        pushBreadcrumb(label, fullUrl);
+      }
+      history.push(fullUrl);
+      sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      return;
+    } else {
+      // starting here
+      if (pathname === "/eAuditNext/engagements") {
+        const data = history.filter((url) => {
+          if (url.includes("/eAuditNext/engagement?id")) {
+            removeBreadcrumbByLabel(url);
+            console.log("engagement present, removing:", url);
+            return false;
+          }
+          if (url.includes("/preferences?organization")) {
+            removeBreadcrumbByLabel(url);
+            console.log("preferences present, removing:", url);
+            return false;
+          }
+          return true;
+        });
+        sessionStorage.setItem(HISTORY_KEY, JSON.stringify(data));
+        return;
+      }
+
+      // starting here
+      if (pathname === "/eAuditNext/engagement") {
+        const data = history.filter((url) => {
+          if (url.includes("/preferences?organization")) {
+            removeBreadcrumbByLabel(url);
+            console.log("preferences present, removing:", url);
+            return false;
+          }
+          return true;
+        });
+        sessionStorage.setItem(HISTORY_KEY, JSON.stringify(data));
+        return;
+      }
+
+      // starting here
+      if (pathname === "/eAuditNext") {
+        const data = history.filter((url) => {
+          if (url.includes("/eAuditNext/engagement?id")) {
+            removeBreadcrumbByLabel(url);
+            console.log("engagement present, removing:", url);
+            return false;
+          }
+          if (url.includes("/preferences?organization")) {
+            removeBreadcrumbByLabel(url);
+            console.log("preferences present, removing:", url);
+            return false;
+          }
+          if (url.includes("/eAuditNext/engagements?id")) {
+            removeBreadcrumbByLabel(url);
+            console.log("annual engagements present, removing:", url);
+            return false;
+          }
+          return true;
+        });
+        sessionStorage.setItem(HISTORY_KEY, JSON.stringify(data));
+        return;
+      }
     }
 
     if (!last) {
@@ -50,24 +118,8 @@ const BreadcrumbTracker = () => {
       return;
     }
 
-    if (fullUrl === last) return; // Same as before, skip
-
-    const existingIndex = history.indexOf(fullUrl);
-
-    if (existingIndex > -1) {
-      // User went back to a previous page
-      removeLastBreadcrumb([]);
-      history = history.slice(0, existingIndex + 1);
-    } else {
-      if (label !== "Page") {
-        pushBreadcrumb(label, fullUrl);
-      }
-      history.push(fullUrl);
-    }
-
-    // Save updated history
-    sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-  }, [pathname, searchParams]);
+    if (fullUrl === last) return;
+  }, [pathname, searchParams, params]);
 
   return null;
 };

@@ -162,18 +162,16 @@ export const ModuleForm = ({
 
             <footer className="rounded-br rounded-bl flex px-4 py-2 gap-2">
               <Button
-                variant="ghost"
                 type="button"
                 onClick={() => setOpen(false)}
-                className="bg-red-800 font-serif font-semibold flex-1">
+                className="bg-black font-helvetica-13 text-white flex-1">
                 <CircleX size={16} strokeWidth={3} />
                 Cancel
               </Button>
               <Button
-                variant="ghost"
                 disabled={createModuleLoading}
                 type="submit"
-                className="bg-green-800 font-serif font-semibold flex-1">
+                className="bg-green-700 font-helvetica-13 text-white flex-1">
                 <Send size={16} strokeWidth={3} />
                 {"Submit"}
               </Button>

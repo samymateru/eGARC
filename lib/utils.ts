@@ -106,12 +106,13 @@ export const pushBreadcrumb = (label: string, href: string) => {
 };
 
 
-export const removeBreadcrumbByLabel = (label: string) => {
+export const removeBreadcrumbByLabel = (href: string) => {
+  console.log("Removing breadcrumb with label:", href);  
   if (typeof window === 'undefined') return;
 
   const existing: {label?: string, href?: string}[] = JSON.parse(localStorage.getItem('breadcrumbs') || '[]');
 
-  const filtered = existing.filter((b) => b.label !== label);
+  const filtered = existing.filter((b) => b.href !== href);
 
   localStorage.setItem('breadcrumbs', JSON.stringify(filtered));
   window.dispatchEvent(new Event('breadcrumbChange'));
