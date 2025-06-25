@@ -111,13 +111,19 @@ export default function PreferencesPage() {
         </TabsTrigger>
       </TabsList>
       <Separator orientation="vertical" className="bg-neutral-500 h-full" />
-      <TabsContent value="account" className="mt-0 flex-1 flex relative">
+      <TabsContent
+        value="account"
+        className="mt-0 flex-1 flex data-[state=inactive]:hidden">
         <Account />
       </TabsContent>
-      <TabsContent value="teams" className="mt-0 flex-1 flex">
+      <TabsContent
+        value="teams"
+        className="mt-0 flex-1 flex data-[state=inactive]:hidden">
         <Teams onStatusChange={setTeamStatus} />
       </TabsContent>
-      <TabsContent value="roles" className="mt-0 flex-1 flex">
+      <TabsContent
+        value="roles"
+        className="mt-0 flex-1 flex data-[state=inactive]:hidden">
         <Roles moduleId={moduleId} />
       </TabsContent>
     </Tabs>
@@ -218,10 +224,14 @@ const Teams = ({ onStatusChange }: TeamsProps) => {
         </section>
       </TabsList>
       <Separator className="bg-neutral-500" />
-      <TabsContent value="business" className="mt-0  w-[calc(100vw-310px)]">
+      <TabsContent
+        value="business"
+        className="mt-0  w-[calc(100vw-310px)] data-[state=inactive]:hidden">
         <TeamsTable data={businessUsers ?? []} type="business" />
       </TabsContent>
-      <TabsContent value="audit" className="mt-0 w-[calc(100vw-310px)]">
+      <TabsContent
+        value="audit"
+        className="mt-0 w-[calc(100vw-310px)] data-[state=inactive]:hidden">
         <TeamsTable data={auditUsers ?? []} type="audit" />
       </TabsContent>
     </Tabs>
@@ -279,11 +289,11 @@ const Account = () => {
   }, [isError, error]);
 
   return (
-    <section className="flex-1 flex items-center justify-center w-[calc(100vw-301px)] h-[calc(100vh-87px)] gap-2 px-2">
-      <section className="h-full py-2">
+    <section className="flex items-center flex-1  h-[calc(100vh-87px)] gap-2 px-2">
+      <section className="w-[370px] h-full py-2">
         <section
           id="profile"
-          className="w-[370px] shadow-lg bg-neutral-50 shadow-blue-300 h-full pl-2 flex flex-col gap-2 rounded-lg">
+          className="w-full shadow-lg bg-neutral-50 shadow-blue-300 h-full pl-2 flex flex-col gap-2 rounded-lg">
           <section className="px-5 flex justify-center pt-4">
             <Label className="text-[24px] font-bold font-[serif] text-black">
               Profile
@@ -452,12 +462,8 @@ const Account = () => {
           </section>
         </section>
       </section>
-      <section className="h-full py-2 flex-1 flex">
-        <section
-          id="recents"
-          className="bg-neutral-300 flex-1 h-full rounded-md">
-          <NotificationRecents />
-        </section>
+      <section className="h-full flex-1  flex py-2">
+        <NotificationRecents />
       </section>
     </section>
   );
@@ -469,7 +475,7 @@ const Roles = ({ moduleId }: RolesProps) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_module_roles_", moduleId],
     queryFn: async (): Promise<RolesValues[]> => {
-      const response = await fetch(`${BASE_URL}/roles`, {
+      const response = await fetch(`${BASE_URL}/roles/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${

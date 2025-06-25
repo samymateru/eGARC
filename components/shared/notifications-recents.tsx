@@ -33,12 +33,16 @@ export const NotificationRecents = () => {
             </TabsTrigger>
           </section>
         </TabsList>
-        <TabsContent value="notifications" className="mt-0  w-full flex-1">
+        <TabsContent
+          value="notifications"
+          className="mt-0  w-full flex-1 data-[state=inactive]:hidden">
           <section className="bg-inherit h-full">
             <Label className="text-black ">Notification</Label>
           </section>
         </TabsContent>
-        <TabsContent value="recents" className="mt-0 w-full flex-1">
+        <TabsContent
+          value="recents"
+          className="mt-0 w-full flex-1 data-[state=inactive]:hidden">
           <section className="bg-inherit h-full">
             <Label className="text-black ">Recents</Label>
           </section>
