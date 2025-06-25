@@ -69,7 +69,7 @@ export function ColoredBarChart({
   const { chartData, chartConfig } = buildChartDataAndConfig(data, colors);
 
   return (
-    <Card className="flex-1 border-none bg-neutral-100">
+    <Card className="flex-1 border-none h-full bg-inherit">
       <CardHeader>
         <CardTitle className="font-helvetica-medium">{title}</CardTitle>
         <CardDescription className="font-helvetica-13 text-neutral-700">

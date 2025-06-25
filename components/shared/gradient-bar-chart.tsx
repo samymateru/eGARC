@@ -63,7 +63,7 @@ export function GradientBarChart({
   const { chartData, chartConfig } = buildChartDataAndConfig(data, color);
 
   return (
-    <Card className="flex-1 border-none bg-neutral-100 pb-3">
+    <Card className="flex-1 border-none bg-inherit h-full pb-3">
       <CardHeader className="">
         <CardTitle className="font-helvetica-medium">{title}</CardTitle>
         <CardDescription className="font-helvetica-13 text-neutral-700">

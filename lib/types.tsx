@@ -721,3 +721,25 @@ export const ExitModuleSchema = z.object({
   reason: z.string().min(1, "Exit reason is required"),
   description: z.string().optional(),
 });
+
+const PermissionEnum = z.enum(["view", "create", "edit", "delete", "approve"]);
+
+export const RolesSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Role name required"),
+  section: z.enum(["e_audit", "engagement"]),
+  type: z.enum(["audit", "business"]),
+  settings: z.array(PermissionEnum),
+  audit_plans: z.array(PermissionEnum),
+  administration: z.array(PermissionEnum),
+  planning: z.array(PermissionEnum),
+  fieldwork: z.array(PermissionEnum),
+  reporting: z.array(PermissionEnum),
+  audit_program: z.array(PermissionEnum),
+  follow_up: z.array(PermissionEnum),
+  issue_management: z.array(PermissionEnum),
+  others: z.array(PermissionEnum),
+  archive_audit: z.enum(["yes", "no"]),
+  un_archive_audit: z.enum(["yes", "no"]),
+  created_at: z.string().datetime(),
+});

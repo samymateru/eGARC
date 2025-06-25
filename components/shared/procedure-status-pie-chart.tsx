@@ -69,7 +69,7 @@ export function ProcedureStatusPieChart({
   }, [data]);
 
   return (
-    <Card className="flex flex-col border-none bg-neutral-100">
+    <Card className="flex flex-col border-none bg-inherit h-full">
       <CardHeader className="">
         <CardTitle className="font-helvetica-medium text-left">
           Procudures Summary

@@ -6,7 +6,6 @@ import { ReviewCommentsStatusPieChart } from "../shared/review-comments-status-p
 import { ProcedureStatusPieChart } from "../shared/procedure-status-pie-chart";
 import { ColoredBarChart } from "../shared/colored-bar-chart";
 import { Label } from "../ui/label";
-import { Separator } from "../ui/separator";
 import { Loader } from "../shared/loader";
 import { ErrorQuery } from "../shared/error-query";
 import { ErrorMessage } from "@/lib/utils";
@@ -130,34 +129,37 @@ export const EngagementDashboard = () => {
 
   if (isSuccess) {
     return (
-      <section className="w-full flex flex-col bg-neutral-200 pt-2">
+      <section className="w-full flex flex-col pt-2">
         <section>
           <Label className="text-black font-helvetica-medium pl-2">
             Engagement Dashboard
           </Label>
         </section>
-        <Separator className="bg-neutral-400 mt-1" />
-        <div className="w-full flex flex-col gap-2 pt-2 h-[calc(100vh-148px)] pb-2 overflow-auto ">
-          <section className="flex items-center gap-1 px-2">
-            <GradientBarChart
-              color="#3b82f6"
-              data={rootCause}
-              title="Root Cause Summary"
-              description="Display the review comments status and their corresponding percentage"
-            />
-            <ColoredBarChart
-              colors={findingColors}
-              data={findingRating}
-              title="Audit Findings Rating"
-              description="cause"
-            />
+        <div className="w-full flex flex-col gap-2 pt-2 h-[calc(100vh-148px)] hide-scrollbar pb-2 overflow-auto ">
+          <section className="flex items-center gap-2 px-2">
+            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+              <GradientBarChart
+                color="#3b82f6"
+                data={rootCause}
+                title="Root Cause Summary"
+                description="Display the review comments status and their corresponding percentage"
+              />
+            </section>
+            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+              <ColoredBarChart
+                colors={findingColors}
+                data={findingRating}
+                title="Audit Findings Rating"
+                description="cause"
+              />
+            </section>
           </section>
 
-          <section className="flex items-center gap-1 px-2">
-            <section className="flex-1">
+          <section className="flex items-center gap-3 px-2">
+            <section className="flex-1 bg-neutral-200 h-full rounded-md">
               <ReviewCommentsStatusPieChart data={reviewComment} />
             </section>
-            <section className="flex-1">
+            <section className="flex-1 bg-neutral-200 h-full rounded-md">
               <ProcedureStatusPieChart data={procedure} />
             </section>
           </section>

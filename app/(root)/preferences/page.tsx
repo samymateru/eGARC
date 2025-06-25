@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowLeftCircle,
+  CirclePlus,
   Edit,
   Landmark,
   ListTodo,
@@ -18,25 +19,34 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { UserSchema } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { RolesSchema, UserSchema } from "@/lib/types";
 import { z } from "zod";
 import "@/app/globals.css";
 import { ErrorMessage } from "@/lib/utils";
-import { Eva } from "@/components/shared/loader";
+import { Eva, Loader } from "@/components/shared/loader";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { UpdateUserForm } from "@/components/forms/update-user-form";
 import { ExitModuleForm } from "@/components/forms/exit-module-form";
+import RolesTable from "@/components/data-table/roles-table";
+import { RoleDetails } from "@/components/shared/role-details";
+import { NotificationRecents } from "@/components/shared/notifications-recents";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type UserValuses = z.infer<typeof UserSchema>;
 
+type RolesValues = z.infer<typeof RolesSchema>;
+
 type TeamsProps = {
   onStatusChange: (status: { isLoading: boolean; isError: boolean }) => void;
 };
+
+interface RolesProps {
+  moduleId: string | null;
+}
 
 export default function PreferencesPage() {
   const [teamStatus, setTeamStatus] = useState<{
@@ -47,8 +57,28 @@ export default function PreferencesPage() {
     isError: false,
   });
 
+  const [moduleId, setModuleId] = useState<string | null>(null);
+  const params = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const moduleId = localStorage.getItem("moduleId");
+      setModuleId(moduleId);
+    }
+  }, []);
+
+  const onTabChange = (tab: string) => {
+    const param = new URLSearchParams(params.toString());
+    param.set("action", tab);
+    router.replace(`?${param.toString()}`, { scroll: false });
+  };
+
   return (
-    <Tabs defaultValue="account" className="flex-1 flex h-full">
+    <Tabs
+      defaultValue="account"
+      className="flex-1 flex h-full"
+      onValueChange={onTabChange}>
       <TabsList className="bg-white flex flex-col gap-[3px] justify-start min-w-[300px] pb-2 h-[100vh] rounded-none">
         <Label className="pl-1 flex items-center gap-1 font-helvetica-medium self-start pt-1 pb-2 text-black">
           <Settings size={16} strokeWidth={2} className="mb-[2px]" />
@@ -88,16 +118,13 @@ export default function PreferencesPage() {
         <Teams onStatusChange={setTeamStatus} />
       </TabsContent>
       <TabsContent value="roles" className="mt-0 flex-1 flex">
-        Roles
+        <Roles moduleId={moduleId} />
       </TabsContent>
     </Tabs>
   );
 }
 
 const Teams = ({ onStatusChange }: TeamsProps) => {
-  const [auditUsers, setAuditUsers] = useState<UserValuses[]>([]);
-  const [businessUsers, setBusinessUsers] = useState<UserValuses[]>();
-
   const params = useSearchParams();
   const [tab, setTab] = useState<string>("audit");
   const { data, isLoading, isError, error } = useQuery({
@@ -129,11 +156,18 @@ const Teams = ({ onStatusChange }: TeamsProps) => {
     enabled: !!params.get("moduleId"),
   });
 
-  useEffect(() => {
-    if (data && Array.isArray(data)) {
-      setAuditUsers(data?.filter((user) => user.type === "audit"));
-      setBusinessUsers(data?.filter((user) => user.type === "business"));
+  const auditUsers = useMemo(() => {
+    if (Array.isArray(data)) {
+      return data.filter((user) => user.type === "audit");
     }
+    return [];
+  }, [data]);
+
+  const businessUsers = useMemo(() => {
+    if (Array.isArray(data)) {
+      return data.filter((user) => user.type === "business");
+    }
+    return [];
   }, [data]);
 
   useEffect(() => {
@@ -421,10 +455,126 @@ const Account = () => {
       <section className="h-full py-2 flex-1 flex">
         <section
           id="recents"
-          className="bg-neutral-900 flex-1 h-full py-2 rounded-md">
-          k
+          className="bg-neutral-300 flex-1 h-full rounded-md">
+          <NotificationRecents />
         </section>
       </section>
+    </section>
+  );
+};
+
+const Roles = ({ moduleId }: RolesProps) => {
+  const params = useSearchParams();
+  const router = useRouter();
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["_module_roles_", moduleId],
+    queryFn: async (): Promise<RolesValues[]> => {
+      const response = await fetch(`${BASE_URL}/roles`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!moduleId,
+  });
+
+  const onTabChange = (tab: string) => {
+    const param = new URLSearchParams(params.toString());
+    param.set("action", tab);
+    router.replace(`?${param.toString()}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    if (isError) {
+      ErrorMessage(error);
+    }
+  }, [error, isError]);
+
+  if (isLoading) {
+    return (
+      <section className="w-full h-full relative">
+        <Loader title="Roles" />
+      </section>
+    );
+  }
+
+  return (
+    <section className="w-[calc(100vw-307px)]">
+      <Tabs className="w-full h-full" value={params.get("action") ?? "roles"}>
+        <TabsContent value="roles" className="mt-0">
+          <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
+            <section className="flex items-center">
+              <section>
+                <Label className="font-helvetica-medium">
+                  <Shield
+                    size={16}
+                    strokeWidth={2}
+                    className="mb-1 inline-block mr-2"
+                  />
+                  Roles Manager
+                </Label>
+              </section>
+            </section>
+            <section>
+              <Button className="flex items-center justify-start w-[130px] font-helvetica-13 text-white action h-[30px]">
+                <CirclePlus size={16} strokeWidth={2} />
+                Role
+              </Button>
+            </section>
+          </section>
+          <Separator className="bg-neutral-500 mb-2" />
+          <RolesTable data={data ?? []} />
+        </TabsContent>
+        {data?.map((role, index: number) => (
+          <TabsContent value={role.id ?? "roles"} key={index} className="mt-0">
+            <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
+              <section className="flex items-center">
+                <section>
+                  <Button
+                    onClick={() => onTabChange("roles")}
+                    className="flex items-center justify-self-center w-[30px] h-[30px]">
+                    <ArrowLeftCircle size={16} strokeWidth={2} />
+                  </Button>
+                </section>
+                <Separator
+                  orientation="vertical"
+                  className="h-[25px] mx-3 bg-neutral-500"
+                />
+                <Label className="font-helvetica-14">
+                  <Shield
+                    size={16}
+                    strokeWidth={2}
+                    className="mb-1 inline-block mr-2"
+                  />
+                  {role.name}
+                </Label>
+              </section>
+              <section>
+                <Button className="flex items-center justify-start w-[130px] font-helvetica-13 text-white action h-[30px]">
+                  <Edit size={16} strokeWidth={2} />
+                  Edit
+                </Button>
+              </section>
+            </section>
+            <Separator className="bg-neutral-500 mb-3" />
+            <RoleDetails role={role} />
+          </TabsContent>
+        ))}
+      </Tabs>
     </section>
   );
 };

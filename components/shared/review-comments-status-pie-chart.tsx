@@ -66,7 +66,7 @@ export function ReviewCommentsStatusPieChart({
     seTotal(totalValue);
   }, [data]);
   return (
-    <Card className="flex flex-col border-none bg-neutral-100">
+    <Card className="flex flex-col border-none h-full bg-inherit">
       <CardHeader className="">
         <CardTitle className="font-helvetica-medium text-left ">
           Review Comments Summary
