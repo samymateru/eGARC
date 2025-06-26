@@ -18,14 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  Ellipsis,
-  Trash2,
-} from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, Ellipsis, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,19 +30,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
+
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { RolesSchema } from "@/lib/types";
-import { useResponsiveTableWidth } from "@/hooks/use-responsive-table-width";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
+import { Paginator } from "../shared/paginator";
 
 type RolesValues = z.infer<typeof RolesSchema>;
 
@@ -63,7 +51,7 @@ function getColumns(
       header: () => (
         <Label className="font-helvetica-table-14">Reference</Label>
       ),
-      accessorKey: "id",
+      accessorKey: "reference",
       cell: ({ row }) => {
         const onTabChange = (tab: string) => {
           const param = new URLSearchParams(params.toString());
@@ -75,9 +63,9 @@ function getColumns(
           <Label
             role="button"
             tabIndex={0}
-            onClick={() => onTabChange(row.original.id ?? "table")}
+            onClick={() => onTabChange(row.original.reference ?? "table")}
             className="ml-2 font-helvetica-table-13 truncate text-blue-700 cursor-pointer hover:underline">
-            {row.original.id}
+            {row.original.reference}
           </Label>
         );
       },
@@ -89,6 +77,16 @@ function getColumns(
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
           {row.original.name}
+        </Label>
+      ),
+    },
+    {
+      id: "default",
+      header: () => <Label className="font-helvetica-table-14">Default</Label>,
+      accessorKey: "default",
+      cell: ({ row }) => (
+        <Label className="ml-2 font-helvetica-table-13 truncate">
+          {row.original.default === "yes" ? "Yes" : "No"}
         </Label>
       ),
     },
@@ -166,8 +164,7 @@ export default function RolesTable({ data }: RolesTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const router = useRouter();
   const params = useSearchParams();
-  const columns = getColumns(router, params);
-
+  const columns = useMemo(() => getColumns(router, params), [router, params]);
   const [name, setName] = useState("");
   const [section, setSection] = useState<string[]>([]);
   const [type, setType] = useState<string[]>([]);
@@ -203,7 +200,7 @@ export default function RolesTable({ data }: RolesTableProps) {
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 9,
+    pageSize: 20,
   });
 
   const table = useReactTable({
@@ -224,17 +221,15 @@ export default function RolesTable({ data }: RolesTableProps) {
     enableSortingRemoval: false,
   });
 
-  const tableWidth = useResponsiveTableWidth(table, 310);
-
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage: table.getState().pagination.pageIndex + 1,
     totalPages: table.getPageCount(),
-    paginationItemsToDisplay: 5,
+    paginationItemsToDisplay: 3,
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
+    <div className="w-full flex flex-col [&>div]:max-h-[calc(100vh-220px)]">
+      <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] pt-2  px-2">
         <section className="flex items-center gap-2">
           <SearchInput placeholder="Name" value={name} onChange={setName} />
           <MultiStatusFilter
@@ -254,16 +249,16 @@ export default function RolesTable({ data }: RolesTableProps) {
       <Table
         className="table-fixed"
         style={{
-          width: tableWidth,
+          width: Math.max(table.getCenterTotalSize(), window.innerWidth - 301),
         }}>
-        <TableHeader className="border-r border-r-neutral-800 text-black">
+        <TableHeader className=" text-black sticky top-0">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:bg-blue-400 last:[&>.cursor-col-resize]:w-[3px] last:[&>.cursor-col-resize]:mr-[7px] last:[&>.cursor-col-resize]:opacity-90"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -336,16 +331,14 @@ export default function RolesTable({ data }: RolesTableProps) {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="border-r border-r-neutral-800">
+        <TableBody className="">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className="truncate border-l border-l-neutral-500 text-black">
+                  <TableCell key={cell.id} className="truncate text-black">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -362,68 +355,16 @@ export default function RolesTable({ data }: RolesTableProps) {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
     </div>
   );
 }

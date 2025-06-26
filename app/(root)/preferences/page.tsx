@@ -33,6 +33,7 @@ import { ExitModuleForm } from "@/components/forms/exit-module-form";
 import RolesTable from "@/components/data-table/roles-table";
 import { RoleDetails } from "@/components/shared/role-details";
 import { NotificationRecents } from "@/components/shared/notifications-recents";
+import { RolesForm } from "@/components/forms/roles-form";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -475,7 +476,7 @@ const Roles = ({ moduleId }: RolesProps) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["_module_roles_", moduleId],
     queryFn: async (): Promise<RolesValues[]> => {
-      const response = await fetch(`${BASE_URL}/roles/`, {
+      const response = await fetch(`${BASE_URL}/roles/${moduleId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${
@@ -510,6 +511,15 @@ const Roles = ({ moduleId }: RolesProps) => {
     }
   }, [error, isError]);
 
+  const roles = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => {
+      const getRefNumber = (ref: string) =>
+        parseInt(ref.replace(/[^\d]/g, ""), 10);
+      return getRefNumber(b.reference ?? "") - getRefNumber(a.reference ?? "");
+    });
+  }, [data]);
+
   if (isLoading) {
     return (
       <section className="w-full h-full relative">
@@ -519,68 +529,73 @@ const Roles = ({ moduleId }: RolesProps) => {
   }
 
   return (
-    <section className="w-[calc(100vw-307px)]">
-      <Tabs className="w-full h-full" value={params.get("action") ?? "roles"}>
-        <TabsContent value="roles" className="mt-0">
-          <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
-            <section className="flex items-center">
-              <section>
-                <Label className="font-helvetica-medium">
-                  <Shield
-                    size={16}
-                    strokeWidth={2}
-                    className="mb-1 inline-block mr-2"
-                  />
-                  Roles Manager
-                </Label>
-              </section>
-            </section>
+    <Tabs
+      className="w-[calc(100vw-301px)] h-full"
+      value={params.get("action") ?? "roles"}>
+      <TabsContent value="roles" className="mt-0 data-[state=inactive]:hidden">
+        <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
+          <section className="flex items-center">
             <section>
+              <Label className="font-helvetica-medium">
+                <Shield
+                  size={16}
+                  strokeWidth={2}
+                  className="mb-1 inline-block mr-2"
+                />
+                Roles Manager
+              </Label>
+            </section>
+          </section>
+          <section>
+            <RolesForm title="New Role" endpoint="roles" id={moduleId}>
               <Button className="flex items-center justify-start w-[130px] font-helvetica-13 text-white action h-[30px]">
                 <CirclePlus size={16} strokeWidth={2} />
                 Role
               </Button>
-            </section>
+            </RolesForm>
           </section>
-          <Separator className="bg-neutral-500 mb-2" />
-          <RolesTable data={data ?? []} />
-        </TabsContent>
-        {data?.map((role, index: number) => (
-          <TabsContent value={role.id ?? "roles"} key={index} className="mt-0">
-            <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
-              <section className="flex items-center">
-                <section>
-                  <Button
-                    onClick={() => onTabChange("roles")}
-                    className="flex items-center justify-self-center w-[30px] h-[30px]">
-                    <ArrowLeftCircle size={16} strokeWidth={2} />
-                  </Button>
-                </section>
-                <Separator
-                  orientation="vertical"
-                  className="h-[25px] mx-3 bg-neutral-500"
-                />
-                <Label className="font-helvetica-14">
-                  <Shield
-                    size={16}
-                    strokeWidth={2}
-                    className="mb-1 inline-block mr-2"
-                  />
-                  {role.name}
-                </Label>
-              </section>
+        </section>
+        <Separator className="bg-neutral-500 mb-2" />
+        <RolesTable data={roles ?? []} />
+      </TabsContent>
+      {data?.map((role, index: number) => (
+        <TabsContent
+          value={role.reference ?? "roles"}
+          key={index}
+          className="mt-0 data-[state=inactive]:hidden">
+          <section className="pt-1 pb-[3px] flex items-center justify-between w-full px-2">
+            <section className="flex items-center">
               <section>
-                <Button className="flex items-center justify-start w-[130px] font-helvetica-13 text-white action h-[30px]">
-                  <Edit size={16} strokeWidth={2} />
-                  Edit
+                <Button
+                  onClick={() => onTabChange("roles")}
+                  className="flex items-center justify-self-center w-[30px] h-[30px]">
+                  <ArrowLeftCircle size={16} strokeWidth={2} />
                 </Button>
               </section>
+              <Separator
+                orientation="vertical"
+                className="h-[25px] mx-3 bg-neutral-500"
+              />
+              <Label className="font-helvetica-14">
+                <Shield
+                  size={16}
+                  strokeWidth={2}
+                  className="mb-1 inline-block mr-2"
+                />
+                {role.name}
+              </Label>
             </section>
-            <Separator className="bg-neutral-500 mb-3" />
-            <RoleDetails role={role} />
-          </TabsContent>
-        ))}
-      </Tabs>
-    </section>
+            <section>
+              <Button className="flex items-center justify-start w-[130px] font-helvetica-13 text-white action h-[30px]">
+                <Edit size={16} strokeWidth={2} />
+                Edit
+              </Button>
+            </section>
+          </section>
+          <Separator className="bg-neutral-500 mb-3" />
+          <RoleDetails role={role} />
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 };

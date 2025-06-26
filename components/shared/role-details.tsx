@@ -15,7 +15,6 @@ import {
   Edit,
   ListTodo,
   Notebook,
-  RectangleEllipsis,
   Settings,
   Trash,
   View,
@@ -48,7 +47,7 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
         className="flex flex-col gap-5 h-[calc(100vh-150px)] hide-scrollbar overflow-y-auto overflow-x-hidden">
         <section className="flex items-center pl-5 pt-3 gap-5">
           <section className="flex items-center gap-1">
-            <Label className="font-helvetica-14">Archive Audit:</Label>
+            <Label className="font-helvetica-13">Archive Audit:</Label>
             <Label className="font-helvetica-13 flex items-center justify-center">
               {role.archive_audit === "yes" ? (
                 <CheckCircle
@@ -66,7 +65,7 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
             </Label>
           </section>
           <section className="flex items-center gap-1">
-            <Label className="font-helvetica-14">Re-open Audit:</Label>
+            <Label className="font-helvetica-13">Re-open Audit:</Label>
             <Label className="font-helvetica-13 flex items-center justify-center">
               {role.archive_audit === "yes" ? (
                 <CheckCircle
@@ -148,19 +147,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Settings
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.settings.includes("view"))}
+                    {renderPermissionIcon(
+                      role.settings?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.settings.includes("create"))}
+                    {renderPermissionIcon(
+                      role.settings?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.settings.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.settings?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.settings.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.settings?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.settings.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.settings?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -173,19 +182,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Audit Plans
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_plans.includes("view"))}
+                    {renderPermissionIcon(
+                      role.audit_plans?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_plans.includes("create"))}
+                    {renderPermissionIcon(
+                      role.audit_plans?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_plans.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.audit_plans?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_plans.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.audit_plans?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_plans.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.audit_plans?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -198,24 +217,28 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Administration
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.administration.includes("view"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.administration.includes("create")
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.administration.includes("edit"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(
-                      role.administration.includes("delete")
+                      role.administration?.includes("view") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.administration.includes("approve")
+                      role.administration?.includes("create") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.administration?.includes("edit") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.administration?.includes("delete") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.administration?.includes("approve") ?? false
                     )}
                   </TableCell>
                 </TableRow>
@@ -229,19 +252,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Planning
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.planning.includes("view"))}
+                    {renderPermissionIcon(
+                      role.planning?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.planning.includes("create"))}
+                    {renderPermissionIcon(
+                      role.planning?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.planning.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.planning?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.planning.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.planning?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.planning.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.planning?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -254,19 +287,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Fieldwork
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.fieldwork.includes("view"))}
+                    {renderPermissionIcon(
+                      role.fieldwork?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.fieldwork.includes("create"))}
+                    {renderPermissionIcon(
+                      role.fieldwork?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.fieldwork.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.fieldwork?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.fieldwork.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.fieldwork?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.fieldwork.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.fieldwork?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -279,19 +322,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Reporting
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.reporting.includes("view"))}
+                    {renderPermissionIcon(
+                      role.reporting?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.reporting.includes("create"))}
+                    {renderPermissionIcon(
+                      role.reporting?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.reporting.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.reporting?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.reporting.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.reporting?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.reporting.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.reporting?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -304,24 +357,28 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Work Program
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_program.includes("view"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.audit_program.includes("create")
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.audit_program.includes("edit"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(
-                      role.audit_program.includes("delete")
+                      role.audit_program?.includes("view") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.audit_program.includes("approve")
+                      role.audit_program?.includes("create") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.audit_program?.includes("edit") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.audit_program?.includes("delete") ?? false
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 font-helvetica-13 text-center">
+                    {renderPermissionIcon(
+                      role.audit_program?.includes("approve") ?? false
                     )}
                   </TableCell>
                 </TableRow>
@@ -335,19 +392,29 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                     Follow Up
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.follow_up.includes("view"))}
+                    {renderPermissionIcon(
+                      role.follow_up?.includes("view") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.follow_up.includes("create"))}
+                    {renderPermissionIcon(
+                      role.follow_up?.includes("create") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.follow_up.includes("edit"))}
+                    {renderPermissionIcon(
+                      role.follow_up?.includes("edit") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.follow_up.includes("delete"))}
+                    {renderPermissionIcon(
+                      role.follow_up?.includes("delete") ?? false
+                    )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.follow_up.includes("approve"))}
+                    {renderPermissionIcon(
+                      role.follow_up?.includes("approve") ?? false
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
@@ -361,53 +428,28 @@ export const RoleDetails = ({ role }: RoleDetailsProps) => {
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.issue_management.includes("view")
+                      role.issue_management?.includes("view") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.issue_management.includes("create")
+                      role.issue_management?.includes("create") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.issue_management.includes("edit")
+                      role.issue_management?.includes("edit") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.issue_management.includes("delete")
+                      role.issue_management?.includes("delete") ?? false
                     )}
                   </TableCell>
                   <TableCell className="py-2 font-helvetica-13 text-center">
                     {renderPermissionIcon(
-                      role.issue_management.includes("approve")
+                      role.issue_management?.includes("approve") ?? false
                     )}
-                  </TableCell>
-                </TableRow>
-                <TableRow className="*:border-border hover:bg-neutral-200 [&>:not(:last-child)]:border-r">
-                  <TableCell className="font-helvetica-13 text-black">
-                    <RectangleEllipsis
-                      size={16}
-                      strokeWidth={2}
-                      className="inline-block mb-[5px] mr-[6px]"
-                    />
-                    Others
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.others.includes("view"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.others.includes("create"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.others.includes("edit"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.others.includes("delete"))}
-                  </TableCell>
-                  <TableCell className="py-2 font-helvetica-13 text-center">
-                    {renderPermissionIcon(role.others.includes("approve"))}
                   </TableCell>
                 </TableRow>
               </TableBody>

@@ -66,11 +66,20 @@ body {
 /* globals.css or your styles file */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+  
 }
 .hide-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  scrollbar-width: none; 
 }
+
+.adjust-scrollbar::-webkit-scrollbar {
+  position: relative;
+  right: 20px;
+  width: 1px;
+}
+
+
 
 /* Prevent autofill background color from becoming white and maintain text color */
 input:-webkit-autofill {
