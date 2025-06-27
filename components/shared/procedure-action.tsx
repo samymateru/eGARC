@@ -11,6 +11,7 @@ import {
   Edit,
   ListTodoIcon,
   MessagesSquare,
+  Paperclip,
   Share,
   Trash,
   TriangleAlert,
@@ -23,6 +24,7 @@ import { IssueForm } from "../forms/issue-form";
 import { SubProgramForm } from "../forms/sub-program-form";
 import { RaiseReviewComment } from "../forms/raise-review_comment-form";
 import { RaiseTask } from "../forms/raise-task-form";
+import { ProcedureFileUploaderForm } from "../forms/procedure-file-uploader-form";
 
 interface ProcedureActionProps {
   children?: ReactNode;
@@ -129,6 +131,18 @@ export const ProcedureAction = ({
               Edit
             </Button>
           </SubProgramForm>
+          <ProcedureFileUploaderForm
+            title="Upload file"
+            endpoint="attachments"
+            engagement_id={params.get("id")}
+            procedure_id={params.get("action")}>
+            <Button
+              variant={"ghost"}
+              className="w-full flex justify-start hover:bg-blue-400 items-center font-helvetica-13 h-[30px]">
+              <Paperclip size={16} strokeWidth={2} />
+              Attach File
+            </Button>
+          </ProcedureFileUploaderForm>
 
           <Button
             variant="ghost"

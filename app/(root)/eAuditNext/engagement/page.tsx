@@ -39,6 +39,7 @@ import {
   Settings,
   Star,
 } from "lucide-react";
+import { RiskMaturityRatingTable } from "@/components/data-table/risk-maturity-table";
 
 type IssueValues = z.infer<typeof SummaryFindingSchema>;
 type CommentAndTaskValues = z.infer<typeof ReviewCommentsSchema>;
@@ -402,7 +403,14 @@ export default function EngagementPage() {
                 </section>
               </section>
               <Separator className="mt-1 mb-3 bg-neutral-500" />
-              <SummaryProcess />
+              <section className="flex flex-col gap-3 h-[calc(100vh-200px)] overflow-x-hidden overflow-y-auto">
+                <section>
+                  <SummaryProcess />
+                </section>
+                <section className="self-start">
+                  <RiskMaturityRatingTable />
+                </section>
+              </section>
             </TabsContent>
           );
         }

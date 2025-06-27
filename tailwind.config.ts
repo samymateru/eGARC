@@ -187,8 +187,7 @@ const config: Config = {
 				".font-helvetica-table-14":{
 					fontFamily: 'Helvetica',
 					fontWeight: "700",
-					fontSize: "14px",
-					color: "#262626"
+					fontSize: "14px"
 				},
 				".font-helvetica-input-13":{
 					fontFamily: 'Helvetica',
@@ -208,7 +207,11 @@ const config: Config = {
 				".text-editor-action":{
 					backgroundColor: "#334155",
 					color: "white"
-				}        		
+				},
+				".table-header-color":{
+					backgroundColor: "black",
+					color: "white"
+				}  		
 			});
 		}),
 	],

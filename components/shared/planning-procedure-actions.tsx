@@ -10,10 +10,16 @@ import { Label } from "../ui/label";
 import { RaiseTask } from "../forms/raise-task-form";
 import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-import { AlertTriangle, ListTodoIcon, MessagesSquare } from "lucide-react";
+import {
+  AlertTriangle,
+  ListTodoIcon,
+  MessagesSquare,
+  Paperclip,
+} from "lucide-react";
 import { RaiseReviewComment } from "../forms/raise-review_comment-form";
 import { Separator } from "../ui/separator";
 import { PRCMForm } from "../forms/prcm-form";
+import { ProcedureFileUploaderForm } from "../forms/procedure-file-uploader-form";
 
 interface PlanningProcedureActionsProps {
   children?: ReactNode;
@@ -67,6 +73,19 @@ export const PlanningProcedureActions = ({
               Raise Comment
             </Button>
           </RaiseReviewComment>
+          <ProcedureFileUploaderForm
+            title="Upload file"
+            endpoint="attachments"
+            engagement_id={params.get("id")}
+            procedure_id={params.get("action")}>
+            <Button
+              variant={"ghost"}
+              className="w-full flex justify-start hover:bg-blue-400 items-center font-helvetica-13 h-[30px]">
+              <Paperclip size={16} strokeWidth={2} />
+              Attach File
+            </Button>
+          </ProcedureFileUploaderForm>
+
           {data?.type === "risk" ? (
             <PRCMForm
               data={{

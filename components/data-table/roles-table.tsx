@@ -49,7 +49,7 @@ function getColumns(
     {
       id: "reference",
       header: () => (
-        <Label className="font-helvetica-table-14">Reference</Label>
+        <Label className="font-helvetica-table-14 text-center">Reference</Label>
       ),
       accessorKey: "reference",
       cell: ({ row }) => {
@@ -247,13 +247,13 @@ export default function RolesTable({ data }: RolesTableProps) {
         </section>
       </div>
       <Table
-        className="table-fixed"
+        className="table-fixed "
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 301),
         }}>
-        <TableHeader className=" text-black sticky top-0">
+        <TableHeader className="">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id} className="">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
@@ -276,7 +276,7 @@ export default function RolesTable({ data }: RolesTableProps) {
                       <div
                         className={cn(
                           header.column.getCanSort() &&
-                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
+                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none text-white"
                         )}
                         onClick={header.column.getToggleSortingHandler()}
                         onKeyDown={(e) => {

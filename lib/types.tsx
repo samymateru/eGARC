@@ -745,3 +745,44 @@ export const RolesSchema = z.object({
   un_archive_audit: z.enum(["yes", "no"]).optional().default("no"),
   created_at: z.string().datetime().optional(),
 });
+
+export const AttachmentSections = z.enum([
+  "Planning",
+  "Finalization",
+  "Reporting",
+  "Program",
+]);
+
+export const AttachmentSchema = z.object({
+  id: z.string().optional(),
+  engagement: z.string(),
+  procedure: z.string(),
+  name: z.string(),
+  url: z.string().url(),
+  size: z.number(),
+  type: z.string(),
+  section: AttachmentSections,
+  creator_name: z.string().optional(),
+  creator_email: z.string().email().optional(),
+  created_at: z.date().default(() => new Date()),
+});
+
+export const MaturitySchema = z.object({
+  maturity_rating: z.string(),
+  rationale: z.string(),
+});
+
+export const RiskMaturityRatingSchema = z.object({
+  engagement_id: z.string(),
+  operational_risk: MaturitySchema,
+  strategic_risk: MaturitySchema,
+  credit_risk: MaturitySchema,
+  liquidity_risk: MaturitySchema,
+  compliance_risk: MaturitySchema,
+  market_risk: MaturitySchema,
+  overall: MaturitySchema,
+});
+
+export const FileUploadSchema = z.object({
+  id: z.string().optional(),
+});

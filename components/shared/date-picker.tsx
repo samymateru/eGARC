@@ -3,7 +3,6 @@
 import * as React from "react";
 import { format, getYear, setYear, setMonth, getMonth } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useState } from "react";
 
 interface DatePickerProps {
   value: Date | undefined;
@@ -36,6 +36,7 @@ export function DatePicker({
 }: DatePickerProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [month, setMonthState] = React.useState<Date>(new Date());
+  const [openSelect, setOpenSelect] = useState<"month" | "year" | null>(null);
 
   const years = Array.from(
     { length: 30 },
@@ -66,6 +67,14 @@ export function DatePicker({
     setMonthState(updated);
   };
 
+  const handleMonthOpenChange = (open: boolean) => {
+    setOpenSelect(open ? "month" : null);
+  };
+
+  const handleYearOpenChange = (open: boolean) => {
+    setOpenSelect(open ? "year" : null);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>
@@ -78,13 +87,13 @@ export function DatePicker({
           {value ? (
             format(value, "PPP")
           ) : (
-            <span className="text-black">Pick a date</span>
+            <span className="text-black font-helvetica-13"> Pick a date</span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="w-auto p-2 flex flex-col dark:bg-black"
+        className="w-auto p-2 flex flex-col bg-neutral-200"
         side={side}
         align="center"
         sideOffset={offset}>
@@ -93,18 +102,23 @@ export function DatePicker({
           <Select
             key={"month"}
             value={getMonth(month).toString()}
+            open={openSelect === "month"}
+            onOpenChange={handleMonthOpenChange}
             onValueChange={(val) => handleMonthChange(parseInt(val))}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Select month" />
+            <SelectTrigger className="w-[140px] font-helvetica-13 border border-neutral-500">
+              <SelectValue
+                placeholder="Select month"
+                className="font-helvetica-13"
+              />
             </SelectTrigger>
 
-            <SelectContent>
-              <SelectGroup className="max-h-[250px] overflow-y-auto">
+            <SelectContent className="w-[250px]">
+              <SelectGroup className="max-h-[250px] overflow-y-auto hide-scrollbar">
                 {months.map((name, index) => (
                   <SelectItem
                     key={name}
                     value={index.toString()}
-                    className="dark:hover:bg-neutral-800 cursor-pointer">
+                    className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
                     {name}
                   </SelectItem>
                 ))}
@@ -116,18 +130,26 @@ export function DatePicker({
           <Select
             key={"year"}
             value={getYear(month).toString()}
+            open={openSelect === "year"}
+            onOpenChange={handleYearOpenChange}
             onValueChange={(val) => handleYearChange(parseInt(val))}>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Select year" />
+            <SelectTrigger className="w-[100px] font-helvetica-13 border border-neutral-500">
+              <SelectValue
+                placeholder="Select year"
+                className="font-helvetica-13"
+              />
             </SelectTrigger>
 
-            <SelectContent position="popper" className="">
-              <SelectGroup className="max-h-[min(26rem,var(--radix-select-content-available-height))] overflow-y-auto">
+            <SelectContent
+              position="popper"
+              className="w-[150px]"
+              alignOffset={-30}>
+              <SelectGroup className="max-h-[min(26rem,var(--radix-select-content-available-height))] overflow-y-auto hide-scrollbar">
                 {years.map((year) => (
                   <SelectItem
                     key={year}
                     value={year.toString()}
-                    className="dark:hover:bg-neutral-800 cursor-pointer">
+                    className="hover:bg-blue-400 cursor-pointer font-helvetica-13">
                     {year}
                   </SelectItem>
                 ))}

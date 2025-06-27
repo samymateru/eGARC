@@ -484,7 +484,7 @@ const Contacts = ({ data }: ContactsProps) => {
           <Label className="font-helvetica-14 text-black">Owners</Label>
           <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
-            {data.lod1_owner.map((user) => {
+            {data?.lod1_owner.map((user) => {
               return (
                 <Label
                   key={user.email}
@@ -502,7 +502,7 @@ const Contacts = ({ data }: ContactsProps) => {
           <Label className="font-helvetica-14 text-black">Implementers</Label>
           <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1 ">
-            {data.lod1_implementer.map((user) => {
+            {data?.lod1_implementer.map((user) => {
               return (
                 <Label
                   key={user.email}
@@ -522,7 +522,7 @@ const Contacts = ({ data }: ContactsProps) => {
           <Label className="font-helvetica-14 text-black">Risk Managers</Label>
           <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
-            {data.lod2_risk_manager.map((user) => {
+            {data?.lod2_risk_manager?.map((user) => {
               return (
                 <Label
                   key={user.email}
@@ -542,7 +542,7 @@ const Contacts = ({ data }: ContactsProps) => {
           </Label>
           <Separator className="my-1 bg-neutral-400" />
           <ul className="flex flex-col flex-1">
-            {data.lod2_compliance_officer.map((user) => {
+            {data?.lod2_compliance_officer?.map((user) => {
               return (
                 <Label
                   key={user.email}

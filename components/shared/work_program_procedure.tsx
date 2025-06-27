@@ -6,6 +6,7 @@ import {
   Info,
   Menu,
   PanelLeft,
+  Paperclip,
   Save,
   UserCheck,
   UserCog,
@@ -48,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { ProcedureAttachmentTable } from "../data-table/procedure-attachments-table";
 
 const items = [
   {
@@ -407,6 +409,21 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
               conclusion={conclusion}
               setConclusion={setConclusion}
             />
+            <section id="attachments" className="px-2 my-3 flex-col gap-1">
+              <section>
+                <Label className="font-helvetica-13 text-black">
+                  <Paperclip
+                    size={16}
+                    strokeWidth={2}
+                    className="inline-block mb-[2px] mr-[5px]"
+                  />
+                  Attachments
+                </Label>
+              </section>
+              <section>
+                <ProcedureAttachmentTable data={[]} />
+              </section>
+            </section>
             <section className="flex items-center gap-2 pt-3 pb-2 w-full px-2">
               {!preparedBy ? (
                 <Button

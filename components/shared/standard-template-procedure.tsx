@@ -5,6 +5,7 @@ import {
   FileText,
   Menu,
   PanelLeft,
+  Paperclip,
   Save,
   UserCheck,
   UserCog,
@@ -59,7 +60,7 @@ import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
 import { PlanningProcedureActions } from "./planning-procedure-actions";
 import { ToggleProcedureVisibility } from "./toggle-procedure-visibility";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "./toast";
 import { useSearchParams } from "next/navigation";
 import {
@@ -68,6 +69,8 @@ import {
 } from "@/hooks/use-prepare-review-std-template";
 import PreparedReviewedBy from "./prepared_reviewed_by";
 import { Attachments } from "./attachments";
+import { ProcedureAttachmentTable } from "../data-table/procedure-attachments-table";
+import { ErrorMessage } from "@/lib/utils";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface PlanningHomeProps {
@@ -125,6 +128,47 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
   }, [data]);
 
   const query_client = useQueryClient();
+
+  const {
+    data: attachmentData,
+    isError: attachmentIsError,
+    error: attachmentError,
+  } = useQuery({
+    queryKey: ["_attachments_", params.get("id"), data?.id],
+    queryFn: async () => {
+      const response = await fetch(
+        `${BASE_URL}/attachments/${params.get("id")}?procedure_id=${params.get(
+          "action"
+        )}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!params.get("id"),
+  });
+
+  useEffect(() => {
+    if (attachmentIsError) {
+      ErrorMessage(attachmentError);
+    }
+  }, [attachmentError, attachmentIsError]);
 
   const { mutate: saveProcedure, isPending: saveProcedureLoading } =
     useMutation({
@@ -318,6 +362,21 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           observation={observation}
           conclusion={conclusion}
         />
+        <section id="attachments" className="px-2 my-3 flex-col gap-1">
+          <section>
+            <Label className="font-helvetica-13 text-black">
+              <Paperclip
+                size={16}
+                strokeWidth={2}
+                className="inline-block mb-[2px] mr-[5px]"
+              />
+              Attachments
+            </Label>
+          </section>
+          <section>
+            <ProcedureAttachmentTable data={attachmentData ?? []} />
+          </section>
+        </section>
         <section id="letters" className="px-2 my-2">
           {data?.type === "letter" ? (
             <section id="letters">

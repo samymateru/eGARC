@@ -183,7 +183,6 @@ export const Administration = () => {
               </section>
             )}
           </div>
-
           <TabsTrigger
             value="business_contacts"
             className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
