@@ -40,7 +40,7 @@ import {
   Star,
 } from "lucide-react";
 import { RiskMaturityRatingTable } from "@/components/data-table/risk-maturity-table";
-
+import { useHotkeys } from "react-hotkeys-hook";
 type IssueValues = z.infer<typeof SummaryFindingSchema>;
 type CommentAndTaskValues = z.infer<typeof ReviewCommentsSchema>;
 
@@ -145,6 +145,16 @@ export default function EngagementPage() {
     ],
   });
 
+  useHotkeys("ctrl+s", (e) => {
+    e.preventDefault();
+    console.log("Saved!");
+  });
+
+  useHotkeys("esc", () => {
+    console.log("Escape key pressed!");
+    // For example, close a modal or reset form
+  });
+
   useEffect(() => {
     if (results[0].isError) {
       if (!error) {
@@ -228,7 +238,7 @@ export default function EngagementPage() {
       className="w-full flex-1 h-full flex flex-col">
       <TabsContent
         value="dashboard"
-        className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden">
+        className="flex-1 text-white mt-0 flex w-full data-[state=inactive]:hidden bg-neutral-900">
         <EngagementDashboard />
       </TabsContent>
       <TabsContent
@@ -403,11 +413,11 @@ export default function EngagementPage() {
                 </section>
               </section>
               <Separator className="mt-1 mb-3 bg-neutral-500" />
-              <section className="flex flex-col gap-3 h-[calc(100vh-200px)] overflow-x-hidden overflow-y-auto">
-                <section>
+              <section className="flex flex-col gap-3 h-[calc(100vh-200px)] overflow-x-hidden overflow-y-auto hide-scrollbar">
+                <section className="self-center w-full px-2">
                   <SummaryProcess />
                 </section>
-                <section className="self-start">
+                <section className="self-center w-full px-2">
                   <RiskMaturityRatingTable />
                 </section>
               </section>

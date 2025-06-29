@@ -70,7 +70,7 @@ export function ProcedureStatusPieChart({
 
   return (
     <Card className="flex flex-col border-none bg-inherit h-full">
-      <CardHeader className="">
+      <CardHeader className="pt-3 px-3 pb-2">
         <CardTitle className="font-helvetica-medium text-left">
           Procudures Summary
         </CardTitle>
@@ -82,7 +82,7 @@ export function ProcedureStatusPieChart({
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-pie-label-text]:fill-foreground  mx-auto aspect-square max-h-[250px] pb-0">
+          className="[&_.recharts-pie-label-text]:fill-foreground  mx-auto aspect-square max-h-[300px] pb-0">
           <PieChart>
             <ChartTooltip
               content={<ChartTooltipContent nameKey="value" hideLabel />}

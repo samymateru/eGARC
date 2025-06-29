@@ -2,11 +2,13 @@ import z from "zod";
 import { Button } from "../ui/button";
 import {
   CircleAlert,
+  CircleCheck,
   FileText,
   Info,
+  InfoIcon,
+  Loader,
   Menu,
   PanelLeft,
-  Paperclip,
   Save,
   UserCheck,
   UserCog,
@@ -343,6 +345,27 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
                 <Label className="font-helvetica-13 truncate">
                   {data?.reference}
                 </Label>
+                {data?.prepared_by && !data.reviewed_by && (
+                  <Loader
+                    size={14}
+                    strokeWidth={3}
+                    className="inline-block mr-3 text-amber-600"
+                  />
+                )}
+                {!data?.prepared_by && !data?.reviewed_by && (
+                  <InfoIcon
+                    size={16}
+                    strokeWidth={3}
+                    className="ml-1 text-red-600"
+                  />
+                )}
+                {data?.prepared_by && data.reviewed_by && (
+                  <CircleCheck
+                    size={16}
+                    strokeWidth={3}
+                    className="ml-1 text-green-600"
+                  />
+                )}
               </section>
             </section>
             <section className="flex-1 flex items-center justify-end gap-2 h-[30px]">
@@ -382,7 +405,6 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
           <Separator className="bg-neutral-500 mt-1" />
           <main className="pt-3 w-[calc(100vw-332px)] h-[calc(100vh-132px)] pb-2 overflow-y-auto overflow-x-hidden hide-scrollbar">
             <ProcedureRiskControlMatrix />
-            <Separator className="bg-neutral-400 my-2" />
             <TemplateWrapper
               briefDescription={briefDescription}
               setBriefDescription={setBriefDescription}
@@ -410,16 +432,6 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
               setConclusion={setConclusion}
             />
             <section id="attachments" className="px-2 my-3 flex-col gap-1">
-              <section>
-                <Label className="font-helvetica-13 text-black">
-                  <Paperclip
-                    size={16}
-                    strokeWidth={2}
-                    className="inline-block mb-[2px] mr-[5px]"
-                  />
-                  Attachments
-                </Label>
-              </section>
               <section>
                 <ProcedureAttachmentTable data={[]} />
               </section>

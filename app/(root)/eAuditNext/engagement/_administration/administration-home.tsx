@@ -141,11 +141,11 @@ export const Administration = () => {
       defaultValue="profile"
       className="flex-1 flex flex-col"
       onValueChange={handleTabChage}>
-      <TabsList className="flex justify-between  items-center bg-white rounded-none px-2">
+      <TabsList className="flex justify-between relative  items-center bg-white rounded-none px-2">
         <section className="flex-1 flex items-center gap-1">
           <TabsTrigger
             value="profile"
-            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Briefcase size={16} strokeWidth={3} />
             Profile
           </TabsTrigger>
@@ -154,29 +154,29 @@ export const Administration = () => {
             tabIndex={0}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="rounded-md py-1 px-2 relative h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+            className="rounded-md py-1 px-2 relative h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Cog size={16} />
             Contexts
             {isClient && showSubmenu && (
-              <section className="bg-neutral-300 px-2 py-3 flex flex-col gap-1 absolute top-[calc(100%+3px)] right-[-30px] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[250px] z-10">
+              <section className="bg-neutral-300 px-2 py-3 flex flex-col gap-1 absolute top-[calc(100%+3px)] right-[-30px] divide-y mr-1 dark:bg-black shadow-md rounded-md border w-[250px] z-[999]">
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="policies"
-                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+                  className="h-8 flex items-center gap-2 justify-start text-white  bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <Shield size={16} />
                   Policies
                 </TabsTrigger>
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="regulations"
-                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+                  className="h-8 flex items-center gap-2 text-white  justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <Book size={16} />
                   Regulations
                 </TabsTrigger>
                 <TabsTrigger
                   onClick={handleMouseLeave}
                   value="engagement_processes"
-                  className="h-8 flex items-center gap-2 justify-start bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+                  className="h-8 flex items-center gap-2 justify-start text-white  bg-black w-full font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
                   <MonitorUp size={16} />
                   Processes
                 </TabsTrigger>
@@ -185,13 +185,13 @@ export const Administration = () => {
           </div>
           <TabsTrigger
             value="business_contacts"
-            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] text-white font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Contact size={16} />
             Contacts
           </TabsTrigger>
           <TabsTrigger
             value="staffing"
-            className="h-8 flex items-center gap-2 justify-start bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
+            className="h-8 flex items-center gap-2 justify-start text-white bg-black w-[150px] font-helvetica-13 data-[state=active]:text-white data-[state=active]:border-l-[5px] data-[state=active]:border-l-blue-800">
             <Users size={16} />
             Staffing
           </TabsTrigger>
@@ -280,12 +280,12 @@ export const Administration = () => {
       <Separator className="bg-neutral-500" />
       <TabsContent
         value="profile"
-        className="mt-0 overflow-auto  h-[calc(100vh-124px)] pb-[10px] hide-scrollbar">
+        className="mt-0 overflow-auto relative  h-[calc(100vh-124px)] pb-[10px] hide-scrollbar">
         <TemplateWrapper ref={templateRef} />
       </TabsContent>
       <TabsContent
         value="business_context"
-        className="mt-0 w-full  overflow-auto h-[calc(100vh-90px)] ">
+        className="mt-0 w-full relative overflow-auto h-[calc(100vh-90px)] ">
         Context
       </TabsContent>
       <TabsContent
@@ -300,17 +300,17 @@ export const Administration = () => {
       </TabsContent>
       <TabsContent
         value="policies"
-        className="mt-0 w-full  overflow-auto h-[calc(100vh-90px)] ">
+        className="mt-0 w-full relative  overflow-auto h-[calc(100vh-90px)] ">
         <Policies />
       </TabsContent>
       <TabsContent
         value="regulations"
-        className="mt-0 w-full  overflow-auto h-[calc(100vh-90px)] ">
+        className="mt-0 w-full relative overflow-auto h-[calc(100vh-90px)] ">
         <Regulations />
       </TabsContent>
       <TabsContent
         value="engagement_processes"
-        className="mt-0 w-full  overflow-auto h-[calc(100vh-90px)] ">
+        className="mt-0 w-full relative  overflow-auto h-[calc(100vh-90px)] ">
         <EngagementProcesses />
       </TabsContent>
     </Tabs>

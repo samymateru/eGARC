@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { Loader } from "@/components/shared/loader";
 import { ErrorMessage } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -71,7 +70,6 @@ export default function HomePage() {
           </p>
         </section>
       </section>
-      <Separator className="bg-neutral-400 my-2" />
       <section className="flex flex-col h-full gap-1  flex-1 px-2">
         <div>
           {isLoading ? (

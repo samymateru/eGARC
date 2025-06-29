@@ -3,12 +3,14 @@ import {
   AlertTriangle,
   AtSignIcon,
   BookCheck,
+  CircleCheck,
   CirclePlus,
   CommandIcon,
   EclipseIcon,
   Ellipsis,
   FileText,
   Folder,
+  Loader,
   Mail,
   MessageCircle,
   Settings,
@@ -24,7 +26,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -168,6 +170,20 @@ export default function Component() {
     }
   }, [results]);
 
+  const planningStatus = useMemo(() => {
+    if (!results[0].data) return [];
+    return [...results[0].data].filter((procedure) => {
+      return procedure.reviewed_by && procedure.prepared_by;
+    });
+  }, [results[0].data]);
+
+  const finalizationStatus = useMemo(() => {
+    if (!results[1].data) return [];
+    return [...results[1].data].filter((procedure) => {
+      return procedure.reviewed_by && procedure.prepared_by;
+    });
+  }, [results[1].data]);
+
   const setAction = (action: string, stage?: string) => {
     const param = new URLSearchParams(params.toString());
     param.set("action", action);
@@ -191,13 +207,51 @@ export default function Component() {
             <AccordionTrigger
               onClick={() => setUpdateMenu((prev) => !prev)}
               className="px-4 py-4  h-9 rounded-md leading-6 w-full font-helvetica-13 bg-black hover:bg-neutral-900 text-white hover:no-underline">
-              <span className="flex items-center gap-3">
-                <item.icon
-                  size={16}
-                  className="shrink-0 opacity-90"
-                  aria-hidden="true"
-                />
-                <span>{item.title}</span>
+              <span className="flex items-center justify-between w-full">
+                <section className="flex items-center gap-3">
+                  <item.icon
+                    size={16}
+                    className="shrink-0 opacity-90"
+                    aria-hidden="true"
+                  />
+                  <span>{item.title}</span>
+                </section>
+                {item.id === "1" ? (
+                  <>
+                    {planningStatus.length === results[0].data?.length ? (
+                      <CircleCheck
+                        size={16}
+                        strokeWidth={3}
+                        className="inline-block mr-3 text-green-600"
+                      />
+                    ) : planningStatus.length > 0 &&
+                      planningStatus.length !== results[0].data?.length ? (
+                      <Loader
+                        size={16}
+                        strokeWidth={3}
+                        className="inline-block mr-3 text-amber-600"
+                      />
+                    ) : null}
+                  </>
+                ) : null}
+                {item.id === "4" ? (
+                  <>
+                    {finalizationStatus.length === results[1].data?.length ? (
+                      <CircleCheck
+                        size={16}
+                        strokeWidth={2}
+                        className="inline-block mr-3 text-green-600"
+                      />
+                    ) : finalizationStatus.length > 0 &&
+                      finalizationStatus.length !== results[1].data?.length ? (
+                      <Loader
+                        size={16}
+                        strokeWidth={3}
+                        className="inline-block mr-3 text-amber-600"
+                      />
+                    ) : null}
+                  </>
+                ) : null}
               </span>
             </AccordionTrigger>
             <AccordionContent className="pt-1">
@@ -355,7 +409,14 @@ export default function Component() {
         ))}
         <Separator className="bg-neutral-400 mt-2" />
         <section className="py-2 flex justify-between items-center">
-          <Label className="font-hel-heading-bold ">Work Proram</Label>
+          <Label className="font-helvetica-medium">
+            <Folder
+              size={16}
+              strokeWidth={2}
+              className="mb-[3px] mr-2 inline-block ml-2"
+            />
+            Work Proram
+          </Label>
           <MainProgramForm
             title="Main Program"
             id={params.get("id")}

@@ -70,7 +70,7 @@ export function ColoredBarChart({
 
   return (
     <Card className="flex-1 border-none h-full bg-inherit">
-      <CardHeader>
+      <CardHeader className="pt-3 px-3 pb-2">
         <CardTitle className="font-helvetica-medium">{title}</CardTitle>
         <CardDescription className="font-helvetica-13 text-neutral-700">
           {description}

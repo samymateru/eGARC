@@ -67,7 +67,7 @@ export function ReviewCommentsStatusPieChart({
   }, [data]);
   return (
     <Card className="flex flex-col border-none h-full bg-inherit">
-      <CardHeader className="">
+      <CardHeader className="pt-3 px-3 pb-2">
         <CardTitle className="font-helvetica-medium text-left ">
           Review Comments Summary
         </CardTitle>
@@ -76,10 +76,10 @@ export function ReviewCommentsStatusPieChart({
           <Label className="text-neutral-700 font-helvetica-13">{total}</Label>
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-1">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px]">
+          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[300px]">
           <PieChart>
             <ChartTooltip
               content={<ChartTooltipContent nameKey="value" hideLabel />}

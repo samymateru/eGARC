@@ -47,7 +47,7 @@ export const PRCM = () => {
   }, [error, isError]);
 
   return (
-    <section className="w-[calc(100vw-332px)]">
+    <section className="w-[calc(100vw-332px)] px-2 py-2">
       <PRCMTable data={data ?? []} />
     </section>
   );

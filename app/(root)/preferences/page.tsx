@@ -228,12 +228,16 @@ const Teams = ({ onStatusChange }: TeamsProps) => {
       <TabsContent
         value="business"
         className="mt-0  w-[calc(100vw-310px)] data-[state=inactive]:hidden">
-        <TeamsTable data={businessUsers ?? []} type="business" />
+        <section className="px-2 pt-2">
+          <TeamsTable data={businessUsers ?? []} type="business" />
+        </section>
       </TabsContent>
       <TabsContent
         value="audit"
         className="mt-0 w-[calc(100vw-310px)] data-[state=inactive]:hidden">
-        <TeamsTable data={auditUsers ?? []} type="audit" />
+        <section className="px-2 pt-2">
+          <TeamsTable data={auditUsers ?? []} type="audit" />
+        </section>
       </TabsContent>
     </Tabs>
   );
@@ -556,7 +560,9 @@ const Roles = ({ moduleId }: RolesProps) => {
           </section>
         </section>
         <Separator className="bg-neutral-500 mb-2" />
-        <RolesTable data={roles ?? []} />
+        <section className="px-2">
+          <RolesTable data={roles ?? []} />
+        </section>
       </TabsContent>
       {data?.map((role, index: number) => (
         <TabsContent

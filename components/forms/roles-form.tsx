@@ -130,16 +130,14 @@ export const RolesForm = ({
     control,
     formState: { errors },
   } = methods;
-  console.log(errors);
   const onSubmit = (data: RolesValues) => {
-    console.log(data);
     const resolveData: RolesValues = {
       ...data,
     };
     createRole(resolveData, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
-          queryKey: ["_summary_tasks_", params.get("id")],
+          queryKey: ["_module_roles_", params.get("moduleId")],
         });
         showToast(data.detail, "success");
       },

@@ -1,7 +1,5 @@
 "use client";
-
 import { useEffect, useMemo, useState } from "react";
-
 import {
   ColumnDef,
   flexRender,
@@ -17,8 +15,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-import { ChevronDownIcon, ChevronUpIcon, Ellipsis, Trash2 } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Ellipsis,
+  EllipsisVertical,
+  Trash2,
+  User,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +53,14 @@ function getColumns(
     {
       id: "reference",
       header: () => (
-        <Label className="font-helvetica-table-14 text-center">Reference</Label>
+        <Label className="font-helvetica-table-14 text-center">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Reference
+        </Label>
       ),
       accessorKey: "reference",
       cell: ({ row }) => {
@@ -72,7 +83,16 @@ function getColumns(
     },
     {
       id: "name",
-      header: () => <Label className="font-helvetica-table-14">Name</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Name
+        </Label>
+      ),
       accessorKey: "name",
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -82,7 +102,16 @@ function getColumns(
     },
     {
       id: "default",
-      header: () => <Label className="font-helvetica-table-14">Default</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Default
+        </Label>
+      ),
       accessorKey: "default",
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -92,7 +121,16 @@ function getColumns(
     },
     {
       id: "section",
-      header: () => <Label className="font-helvetica-table-14">Section</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Section
+        </Label>
+      ),
       accessorKey: "section",
       cell: ({ row }) => {
         const sectionMap: Record<string, string> = {
@@ -108,7 +146,16 @@ function getColumns(
     },
     {
       id: "type",
-      header: () => <Label className="font-helvetica-table-14">Type</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Type
+        </Label>
+      ),
       cell: ({ row }) => {
         const typeMap: Record<string, string> = {
           audit: "Audit",
@@ -126,6 +173,11 @@ function getColumns(
       id: "actions",
       header: () => (
         <Label className="font-helvetica-table-14 flex justify-center">
+          <EllipsisVertical
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
           Actions
         </Label>
       ),
@@ -228,7 +280,7 @@ export default function RolesTable({ data }: RolesTableProps) {
   });
 
   return (
-    <div className="w-full flex flex-col [&>div]:max-h-[calc(100vh-220px)]">
+    <section className="table-container [&>div]:max-h-[220px]">
       <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] pt-2  px-2">
         <section className="flex items-center gap-2">
           <SearchInput placeholder="Name" value={name} onChange={setName} />
@@ -258,7 +310,7 @@ export default function RolesTable({ data }: RolesTableProps) {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:bg-blue-400 last:[&>.cursor-col-resize]:w-[3px] last:[&>.cursor-col-resize]:mr-[7px] last:[&>.cursor-col-resize]:opacity-90"
+                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:bg-blue-400 last:[&>.cursor-col-resize]:w-[3px] last:[&>.cursor-col-resize]:mr-[7px] last:[&>.cursor-col-resize]:opacity-100"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -276,7 +328,7 @@ export default function RolesTable({ data }: RolesTableProps) {
                       <div
                         className={cn(
                           header.column.getCanSort() &&
-                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none text-white"
+                            "flex h-full cursor-pointer items-center justify-between gap-2 select-none"
                         )}
                         onClick={header.column.getToggleSortingHandler()}
                         onKeyDown={(e) => {
@@ -331,14 +383,16 @@ export default function RolesTable({ data }: RolesTableProps) {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="">
+        <TableBody className="border-r border-r-neutral-500 border-b border-b-neutral-500">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="truncate text-black">
+                  <TableCell
+                    key={cell.id}
+                    className="truncate text-black border-l border-l-neutral-500">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -365,6 +419,6 @@ export default function RolesTable({ data }: RolesTableProps) {
         showLeftEllipsis={showLeftEllipsis}
         showRightEllipsis={showRightEllipsis}
       />
-    </div>
+    </section>
   );
 }

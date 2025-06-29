@@ -29,7 +29,7 @@ export default function EngagementLayout({
           <section className="w-[320px] px-1 pt-2">
             <EngagementSidebarMenu />
           </section>
-          <Separator orientation="vertical" className="bg-neutral-500 mx-1" />
+          <Separator orientation="vertical" className="bg-neutral-500 ml-1" />
           <section className="flex-1 flex h-[100vh]">{children}</section>
         </main>
       </div>

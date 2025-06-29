@@ -17,14 +17,15 @@ import {
 } from "@/components/ui/popover";
 import { cn, parseQueryParams } from "@/lib/utils";
 import {
+  AlertTriangle,
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   Edit,
   Ellipsis,
+  EllipsisVertical,
   Pencil,
   Trash,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,25 +38,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PRCMSchema, QueryParams } from "@/lib/types";
 import { SummaryAuditProgramForm } from "../forms/summary-audit-program-form";
 import { PRCMForm } from "../forms/prcm-form";
 import Link from "next/link";
+import { Paginator } from "../shared/paginator";
 
 type PRCMValues = z.infer<typeof PRCMSchema>;
 
 const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "reference",
-    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Reference
+      </Label>
+    ),
     accessorKey: "summary_audit_program",
     cell: ({ row }) => {
       if (typeof window !== undefined) {
@@ -79,7 +84,16 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "process",
-    header: () => <Label className="font-helvetica-table-14">Process</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Process
+      </Label>
+    ),
     accessorKey: "process",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-input-13 truncate">
@@ -89,7 +103,16 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "risk",
-    header: () => <Label className="font-helvetica-table-14">Risk</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Risk
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-input-13 truncate">
         {row.original.risk}
@@ -98,8 +121,45 @@ const columns: ColumnDef<PRCMValues>[] = [
     accessorKey: "risk",
   },
   {
+    id: "risk_rating",
+    header: () => (
+      <Label className="font-helvetica-table-14">Risk Rating</Label>
+    ),
+    cell: ({ row }) => {
+      const rating: { [key: string]: string } = {
+        "Low Risk": "bg-green-700",
+        "Medium Risk": "bg-yellow-400",
+        "High Risk": "bg-amber-700",
+        "Very High Risk": "bg-red-700",
+      };
+      return (
+        <section className="flex items-center">
+          <div
+            className={`w-3 h-3  ${
+              rating[row.original.risk_rating]
+            } rounded-full`}
+          />
+
+          <Label className="ml-2 font-helvetica-table-13 truncate">
+            {row.original.risk_rating}
+          </Label>
+        </section>
+      );
+    },
+    accessorKey: "risk_rating",
+  },
+  {
     id: "control",
-    header: () => <Label className="font-helvetica-table-14">Control</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Control
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-input-13 truncate">
         {row.original.control}
@@ -110,7 +170,14 @@ const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "control_type",
     header: () => (
-      <Label className="font-helvetica-table-14">Control Type</Label>
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Control Type
+      </Label>
     ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-input-13 truncate">
@@ -122,7 +189,14 @@ const columns: ColumnDef<PRCMValues>[] = [
   {
     id: "control_objective",
     header: () => (
-      <Label className="font-helvetica-table-14">Control Objective</Label>
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Control Objective
+      </Label>
     ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-input-13 truncate">
@@ -133,7 +207,16 @@ const columns: ColumnDef<PRCMValues>[] = [
   },
   {
     id: "actions",
-    header: () => <Label className="font-helvetica-table-14">More</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        More
+      </Label>
+    ),
     cell: ({ row }) => {
       return (
         <div className="flex justify-center items-center w-full h-full">
@@ -235,20 +318,30 @@ export const PRCMTable = ({ data }: PRCMTableProps) => {
   });
 
   return (
-    <div className="w-full [&>div]:max-h-[400px]">
+    <section className="table-container [&>div]:max-h-[400px]">
+      <section>
+        <Label className="font-helvetica-14">
+          <AlertTriangle
+            size={20}
+            strokeWidth={3}
+            className="inline-block mr-2 mb-[6px] text-red-700"
+          />
+          Process Risk Control Matrix
+        </Label>
+      </section>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-t-neutral-500"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -347,68 +440,16 @@ export const PRCMTable = ({ data }: PRCMTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

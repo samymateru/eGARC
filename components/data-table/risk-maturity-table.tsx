@@ -7,7 +7,7 @@ type RiskMaturityValues = z.infer<typeof RiskMaturityRatingSchema>;
 export const RiskMaturityRatingTable = () => {
   const data: RiskMaturityValues = {
     engagement_id: "",
-    operational_risk: { maturity_rating: "", rationale: "" },
+    operational_risk: { maturity_rating: "helo", rationale: "helo" },
     strategic_risk: { maturity_rating: "", rationale: "" },
     credit_risk: { maturity_rating: "", rationale: "" },
     liquidity_risk: { maturity_rating: "", rationale: "" },
@@ -17,15 +17,15 @@ export const RiskMaturityRatingTable = () => {
   };
 
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto w-full">
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableBody>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
-              <TableCell className="font-helvetica-13 text-black">
+              <TableCell className="font-helvetica-13 text-black w-[200px]">
                 Risk Category
               </TableCell>
-              <TableCell className="py-2 font-helvetica-13 text-black">
+              <TableCell className="py-2 font-helvetica-13 text-black w-[300px]">
                 Maturity Rating
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
@@ -37,10 +37,10 @@ export const RiskMaturityRatingTable = () => {
                 Operational Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.operational_risk.maturity_rating}
+                {data?.operational_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.operational_risk.rationale}
+                {data?.operational_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -48,10 +48,10 @@ export const RiskMaturityRatingTable = () => {
                 Strategic Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.strategic_risk.maturity_rating}
+                {data?.strategic_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.strategic_risk.rationale}
+                {data?.strategic_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -59,10 +59,10 @@ export const RiskMaturityRatingTable = () => {
                 Credit Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.credit_risk.maturity_rating}
+                {data?.credit_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.credit_risk.rationale}
+                {data?.credit_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -70,10 +70,10 @@ export const RiskMaturityRatingTable = () => {
                 Liquidity Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.liquidity_risk.maturity_rating}
+                {data?.liquidity_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.liquidity_risk.rationale}
+                {data?.liquidity_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -81,10 +81,10 @@ export const RiskMaturityRatingTable = () => {
                 Compliance Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.compliance_risk.maturity_rating}
+                {data?.compliance_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.compliance_risk.rationale}
+                {data?.compliance_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -92,10 +92,10 @@ export const RiskMaturityRatingTable = () => {
                 Market Risk
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.market_risk.maturity_rating}
+                {data?.market_risk?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.market_risk.rationale}
+                {data?.market_risk?.rationale}
               </TableCell>
             </TableRow>
             <TableRow className="*:border-border  [&>:not(:last-child)]:border-r">
@@ -103,10 +103,10 @@ export const RiskMaturityRatingTable = () => {
                 Overall Risk Rating
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.overall.maturity_rating}
+                {data.overall?.maturity_rating}
               </TableCell>
               <TableCell className="py-2 font-helvetica-13 text-black">
-                {data.overall.rationale}
+                {data?.overall?.rationale}
               </TableCell>
             </TableRow>
           </TableBody>

@@ -14,11 +14,14 @@ import {
 
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   CirclePlus,
+  Clock,
   Ellipsis,
+  EllipsisVertical,
+  Mail,
+  Phone,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,12 +34,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { OrganizationSchema } from "@/lib/types";
@@ -44,13 +41,23 @@ import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { OrganizationForm } from "../forms/organization-form";
 import { ModuleSelect } from "../shared/module-select";
+import { Paginator } from "../shared/paginator";
 
 type OrganizationValues = z.infer<typeof OrganizationSchema>;
 
 const columns: ColumnDef<OrganizationValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-helvetica-table-14">Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Name
+      </Label>
+    ),
     accessorKey: "name",
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13">
@@ -60,7 +67,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "email",
-    header: () => <Label className="font-helvetica-table-14">Email</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Mail
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Email
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.email}
@@ -70,7 +86,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "telephone",
-    header: () => <Label className="font-helvetica-table-14">Phone</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Phone
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Phone
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.telephone}
@@ -80,7 +105,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "default",
-    header: () => <Label className="font-helvetica-table-14">Default</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Default
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.default ? "Yes" : "No"}
@@ -90,7 +124,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "type",
-    header: () => <Label className="font-helvetica-table-14">Type</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Type
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13">
         {row.original.type}
@@ -100,7 +143,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "mode",
-    header: () => <Label className="font-helvetica-table-14">Mode</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Mode
+      </Label>
+    ),
     cell: () => (
       <Label className="ml-2  truncate font-helvetica-table-13">
         {typeof window === "undefined"
@@ -114,7 +166,16 @@ const columns: ColumnDef<OrganizationValues>[] = [
   },
   {
     id: "status",
-    header: () => <Label className="font-helvetica-table-14">Status</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Clock
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Status
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2  truncate font-helvetica-table-13 text-center w-full">
         {row.original.status}
@@ -126,6 +187,11 @@ const columns: ColumnDef<OrganizationValues>[] = [
     id: "actions",
     header: () => (
       <Label className="font-helvetica-table-14 flex justify-center">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
         Actions
       </Label>
     ),
@@ -233,7 +299,7 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
   }, [table]);
 
   return (
-    <div className="w-full">
+    <section className="table-container !bg-neutral-100 [&>div]:max-h-[calc(100vh-240px)]">
       <div className="flex items-center justify-between my-3">
         <section className="flex items-center gap-3">
           <SearchInput
@@ -273,14 +339,14 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
         style={{
           width: tableWidth ?? "100%",
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-x border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-x-neutral-500 border-y-neutral-500 text-black"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -379,67 +445,16 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="bg-neutral-200 hover:bg-blue-400"
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 }

@@ -3,7 +3,6 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import {
   ArrowLeft,
-  AtSignIcon,
   Calendar,
   CommandIcon,
   Dot,
@@ -51,11 +50,6 @@ const items = [
     id: "3",
     icon: ZapIcon,
     title: "Contacts",
-  },
-  {
-    id: "4",
-    icon: AtSignIcon,
-    title: "Responses",
   },
 ];
 
@@ -192,15 +186,12 @@ export const IssueDetails = ({ data }: IssueDetailsProps) => {
                     <div className="w-full">
                       <Contacts data={data} />
                     </div>
-                  ) : item.id === "4" ? (
-                    <div className="w-full">
-                      <IssueResponsesTable data={responses ?? []} />
-                    </div>
                   ) : null}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
+          <IssueResponsesTable data={responses ?? []} />
         </section>
       </main>
     </section>

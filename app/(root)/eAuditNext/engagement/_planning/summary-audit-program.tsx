@@ -47,7 +47,7 @@ export const SummaryAuditProgram = () => {
   }, [error, isError]);
 
   return (
-    <section className="w-[calc(100vw-332px)]">
+    <section className="w-[calc(100vw-332px)] px-2 py-2">
       <SummaryAuditProgramTable data={data ?? []} />
     </section>
   );

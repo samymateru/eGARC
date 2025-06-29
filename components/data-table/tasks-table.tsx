@@ -18,16 +18,19 @@ import {
 } from "@/components/ui/popover";
 
 import {
+  Calendar,
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   CircleCheck,
+  Clock,
   Ellipsis,
+  EllipsisVertical,
   Info,
+  Mail,
   Pencil,
   SendHorizonal,
   Trash,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,12 +43,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { TasksSchema } from "@/lib/types";
@@ -57,6 +54,7 @@ import { TaskDecisionForm } from "../forms/task-decision-form";
 import { RaiseTask } from "../forms/raise-task-form";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import SearchInput from "../shared/search-input";
+import { Paginator } from "../shared/paginator";
 
 enum Status {
   PENDING = "Pending",
@@ -75,7 +73,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "reference",
       header: () => (
-        <Label className="font-helvetica-table-14">Reference</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Reference
+        </Label>
       ),
       accessorKey: "reference",
       cell: ({ row }) => (
@@ -89,7 +94,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "title",
-      header: () => <Label className="font-helvetica-table-14">Title</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Title
+        </Label>
+      ),
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13  truncate">
           {row.original.title}
@@ -100,7 +114,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "status",
-      header: () => <Label className="font-helvetica-table-14">Status</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <Clock
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Status
+        </Label>
+      ),
       accessorKey: "status",
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -110,7 +133,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "decision",
-      header: () => <Label className="font-helvetica-table-14">Decision</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Decision
+        </Label>
+      ),
       accessorKey: "decision",
       cell: ({ row }) => {
         if (row.original.decision !== null) {
@@ -128,7 +160,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     },
     {
       id: "due_date",
-      header: () => <Label className="font-helvetica-table-14">Due Date</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <Calendar
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Due Date
+        </Label>
+      ),
       cell: ({ row }) => {
         if (row.original.due_date !== null) {
           const formatted = new Intl.DateTimeFormat("en-US", {
@@ -150,7 +191,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "issuer_name",
       header: () => (
-        <Label className="font-helvetica-table-14">Issuer Name</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Issuer Name
+        </Label>
       ),
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -164,7 +212,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "issuer_email",
       header: () => (
-        <Label className="font-helvetica-table-14">Issuer Email</Label>
+        <Label className="font-helvetica-table-14">
+          <Mail
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Issuer Email
+        </Label>
       ),
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -178,7 +233,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "issued_on",
       header: () => (
-        <Label className="font-helvetica-table-14">Date Raised</Label>
+        <Label className="font-helvetica-table-14">
+          <Calendar
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Date Raised
+        </Label>
       ),
       cell: ({ row }) => {
         if (row.original.raised_by !== null) {
@@ -201,7 +263,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "resolver_name",
       header: () => (
-        <Label className="font-helvetica-table-14">Resolver Name</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Resolver Name
+        </Label>
       ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
@@ -222,7 +291,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "resolver_email",
       header: () => (
-        <Label className="font-helvetica-table-14">Resolver Email</Label>
+        <Label className="font-helvetica-table-14">
+          <Mail
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Resolver Email
+        </Label>
       ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
@@ -242,7 +318,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
     {
       id: "resolved_on",
       header: () => (
-        <Label className="font-helvetica-table-14">Date Resolved</Label>
+        <Label className="font-helvetica-table-14">
+          <Calendar
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Date Resolved
+        </Label>
       ),
       cell: ({ row }) => {
         if (row.original.resolved_by !== null) {
@@ -268,6 +351,11 @@ export const TasksTable = ({ data }: TasksTableProps) => {
       id: "actions",
       header: () => (
         <Label className="font-helvetica-table-14 flex justify-center">
+          <EllipsisVertical
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
           More
         </Label>
       ),
@@ -416,7 +504,7 @@ export const TasksTable = ({ data }: TasksTableProps) => {
   });
 
   return (
-    <div className="w-full [&>div]:max-h-[calc(100vh-230px)]">
+    <section className="table-container [&>div]:max-h-[230px]">
       <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
         <section className="flex items-center gap-2">
           <SearchInput placeholder="Title" value={title} onChange={setTitle} />
@@ -439,14 +527,14 @@ export const TasksTable = ({ data }: TasksTableProps) => {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y-neutral-500 text-black bg-neutral-300"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -545,68 +633,16 @@ export const TasksTable = ({ data }: TasksTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

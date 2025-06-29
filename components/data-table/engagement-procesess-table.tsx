@@ -19,12 +19,13 @@ import {
 
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   Ellipsis,
+  EllipsisVertical,
+  Info,
   Pencil,
   Trash,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,16 +38,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { EngagementProcessSchema } from "@/lib/types";
 import { EngagementProcessForm } from "../forms/engagement-process-form";
+import { Paginator } from "../shared/paginator";
 
 type EngagementProcessesValues = z.infer<typeof EngagementProcessSchema>;
 
@@ -54,7 +50,14 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "process",
     header: () => (
-      <Label className="ml-2 font-helvetica-table-14">Process</Label>
+      <Label className="ml-2 font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Process
+      </Label>
     ),
     accessorKey: "process",
     cell: ({ row }) => (
@@ -66,7 +69,14 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "sub_process",
     header: () => (
-      <Label className="ml-2 font-helvetica-table-14">Sub Process</Label>
+      <Label className="ml-2 font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Sub Process
+      </Label>
     ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -78,7 +88,14 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "description",
     header: () => (
-      <Label className="ml-2 font-helvetica-table-14">Description</Label>
+      <Label className="ml-2 font-helvetica-table-14">
+        <Info
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Description
+      </Label>
     ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -90,7 +107,14 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
   {
     id: "business_unit",
     header: () => (
-      <Label className="ml-2 font-helvetica-table-14">Business Unit</Label>
+      <Label className="ml-2 font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Business Unit
+      </Label>
     ),
     accessorKey: "business_unit",
     cell: ({ row }) => (
@@ -102,7 +126,16 @@ const columns: ColumnDef<EngagementProcessesValues>[] = [
 
   {
     id: "actions",
-    header: () => <Label className="ml-2 font-helvetica-table-14">More</Label>,
+    header: () => (
+      <Label className="ml-2 font-helvetica-table-14">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        More
+      </Label>
+    ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -190,20 +223,20 @@ export const EngagementProcessesTable = ({
   });
 
   return (
-    <div className="w-full">
+    <section className="table-container [&>div]:max-h-[400px]">
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 text-black">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-neutral-500"
+                    className="relative h-10select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -302,68 +335,16 @@ export const EngagementProcessesTable = ({
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

@@ -2,10 +2,12 @@ import { Response, StandardTemplateSchema } from "@/lib/types";
 import z from "zod";
 import { Button } from "../ui/button";
 import {
+  CircleCheck,
   FileText,
+  InfoIcon,
+  Loader,
   Menu,
   PanelLeft,
-  Paperclip,
   Save,
   UserCheck,
   UserCog,
@@ -322,6 +324,27 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             <Label className="font-helvetica-table-13 truncate">
               {data?.reference}
             </Label>
+            {data?.prepared_by && !data.reviewed_by && (
+              <Loader
+                size={14}
+                strokeWidth={3}
+                className="inline-block mr-3 text-amber-600"
+              />
+            )}
+            {!data?.prepared_by && !data?.reviewed_by && (
+              <InfoIcon
+                size={16}
+                strokeWidth={3}
+                className="ml-1 text-red-600"
+              />
+            )}
+            {data?.prepared_by && data.reviewed_by && (
+              <CircleCheck
+                size={16}
+                strokeWidth={3}
+                className="ml-1 text-green-600"
+              />
+            )}
           </section>
         </section>
         <section className="flex-1 flex items-center justify-end gap-2 pr-1 h-[30px]">
@@ -362,28 +385,16 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
           observation={observation}
           conclusion={conclusion}
         />
-        <section id="attachments" className="px-2 my-3 flex-col gap-1">
-          <section>
-            <Label className="font-helvetica-13 text-black">
-              <Paperclip
-                size={16}
-                strokeWidth={2}
-                className="inline-block mb-[2px] mr-[5px]"
-              />
-              Attachments
-            </Label>
-          </section>
+        <section id="attachments" className="pt-3 px-2">
           <section>
             <ProcedureAttachmentTable data={attachmentData ?? []} />
           </section>
         </section>
-        <section id="letters" className="px-2 my-2">
-          {data?.type === "letter" ? (
-            <section id="letters">
-              <Attachments />
-            </section>
-          ) : null}
-        </section>
+        {data?.type === "letter" ? (
+          <section id="letters">
+            <Attachments />
+          </section>
+        ) : null}
         <section>
           <section className="flex items-center gap-2 pt-3 pb-2 w-[calc(100vw-340px)] px-2">
             {!preparedBy ? (
@@ -412,23 +423,9 @@ export const StandardTemplateProcedure = ({ data }: PlanningHomeProps) => {
             />
           </div>
         </section>
-        <section className="pt-2 w-full overflow-x-hidden mt-2">
-          {data?.type === "risk" ? (
-            <section className="flex flex-col gap-2">
-              <Label className="font-helvetica-medium ml-2">
-                Process Risk Control Matrix
-              </Label>
-              <PRCM />
-            </section>
-          ) : null}
-          {data?.type === "program" ? (
-            <section className="flex flex-col gap-2">
-              <Label className="font-helvetica-medium ml-2 text-black">
-                Engagement Work Program
-              </Label>
-              <SummaryAuditProgram />
-            </section>
-          ) : null}
+        <section className="overflow-x-hidden">
+          {data?.type === "risk" ? <PRCM /> : null}
+          {data?.type === "program" ? <SummaryAuditProgram /> : null}
         </section>
       </main>
     </section>

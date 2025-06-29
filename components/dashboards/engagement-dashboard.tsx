@@ -131,13 +131,13 @@ export const EngagementDashboard = () => {
     return (
       <section className="w-full flex flex-col pt-2">
         <section>
-          <Label className="text-black font-helvetica-medium pl-2">
+          <Label className="text-white font-serif text-[20px] font-semibold pl-4">
             Engagement Dashboard
           </Label>
         </section>
-        <div className="w-full flex flex-col gap-2 pt-2 h-[calc(100vh-148px)] hide-scrollbar pb-2 overflow-auto ">
-          <section className="flex items-center gap-2 px-2">
-            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+        <div className="w-full py-3 flex flex-col gap-2 h-[calc(100vh-136px)] hide-scrollbar overflow-auto">
+          <section className="flex items-center gap-3 px-4">
+            <section className="flex-1 bg-white h-full rounded-md">
               <GradientBarChart
                 color="#3b82f6"
                 data={rootCause}
@@ -145,7 +145,7 @@ export const EngagementDashboard = () => {
                 description="Display the review comments status and their corresponding percentage"
               />
             </section>
-            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+            <section className="flex-1 bg-white h-full rounded-md">
               <ColoredBarChart
                 colors={findingColors}
                 data={findingRating}
@@ -155,11 +155,11 @@ export const EngagementDashboard = () => {
             </section>
           </section>
 
-          <section className="flex items-center gap-3 px-2">
-            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+          <section className="flex items-center gap-3 px-4">
+            <section className="flex-1 bg-white h-full rounded-md">
               <ReviewCommentsStatusPieChart data={reviewComment} />
             </section>
-            <section className="flex-1 bg-neutral-200 h-full rounded-md">
+            <section className="flex-1 bg-white h-full rounded-md">
               <ProcedureStatusPieChart data={procedure} />
             </section>
           </section>

@@ -21,7 +21,7 @@ export const ToggleProcedureVisibility = () => {
         View
       </span>
       <Switch
-        className="data-[state=checked]:bg-black data-[state=unchecked]:bg-black data-[state=unchecked]:[&_span]:bg-white data-[state=checked]:[&_span]:bg-neutral-500 [&_span]:px-2"
+        className="data-[state=checked]:bg-black data-[state=unchecked]:bg-black data-[state=unchecked]:[&_span]:bg-white data-[state=checked]:[&_span]:bg-amber-600 [&_span]:px-2"
         id={id}
         checked={openProcedureEditor}
         onCheckedChange={toggleSwitch}

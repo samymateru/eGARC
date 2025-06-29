@@ -18,15 +18,18 @@ import {
 } from "@/components/ui/popover";
 
 import {
+  Calendar,
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   CirclePlus,
+  Clock,
   Edit,
   Ellipsis,
+  EllipsisVertical,
   Eye,
+  Paperclip,
   Trash2,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,12 +42,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PlanSchema } from "@/lib/types";
@@ -53,13 +50,23 @@ import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { PlanningForm } from "../forms/create-audit-plan-form";
 import { useSearchParams } from "next/navigation";
+import { Paginator } from "../shared/paginator";
 
 type AnnualAuditPlanningValues = z.infer<typeof PlanSchema>;
 
 const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   {
     id: "reference",
-    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Reference
+      </Label>
+    ),
     accessorKey: "reference",
     cell: ({ row }) => (
       <Link
@@ -74,7 +81,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "name",
-    header: () => <Label className="font-helvetica-table-14">Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Name
+      </Label>
+    ),
     accessorKey: "name",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -84,7 +100,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "year",
-    header: () => <Label className="font-helvetica-table-14">Year</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Calendar
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Year
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.year}
@@ -94,7 +119,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "status",
-    header: () => <Label className="font-helvetica-table-14">Status</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Clock
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Status
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.status}
@@ -104,7 +138,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "start",
-    header: () => <Label className="font-helvetica-table-14">Start</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Calendar
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Start
+      </Label>
+    ),
     accessorKey: "start",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -121,7 +164,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "end",
-    header: () => <Label className="font-helvetica-table-14">End</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Calendar
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        End
+      </Label>
+    ),
     accessorKey: "end",
     cell: ({ row }) => {
       const formatted = new Intl.DateTimeFormat("en-US", {
@@ -138,7 +190,16 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
   },
   {
     id: "attachment",
-    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Paperclip
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Attachment
+      </Label>
+    ),
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
@@ -154,6 +215,11 @@ const columns: ColumnDef<AnnualAuditPlanningValues>[] = [
     id: "actions",
     header: () => (
       <Label className="font-helvetica-table-14 flex justify-center">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
         Actions
       </Label>
     ),
@@ -279,7 +345,7 @@ export default function AnnualAuditPlanningTable({
   });
 
   return (
-    <div className="">
+    <section className="table-container [&>div]:max-h-[185px]">
       <div className="flex justify-between items-center  py-3 px-2">
         <section className="flex items-center gap-3">
           <SearchInput
@@ -315,14 +381,14 @@ export default function AnnualAuditPlanningTable({
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 320),
         }}>
-        <TableHeader className="border-r border-r-neutral-500">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border- border-x border-x-neutral-500 select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800 border-y border-y-neutral-500 text-black"
+                    className="relative h-10 border-x-neutral-500 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -421,68 +487,16 @@ export default function AnnualAuditPlanningTable({
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 }

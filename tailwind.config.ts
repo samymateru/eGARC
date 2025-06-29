@@ -187,7 +187,7 @@ const config: Config = {
 				".font-helvetica-table-14":{
 					fontFamily: 'Helvetica',
 					fontWeight: "700",
-					fontSize: "14px"
+					fontSize: "13px"
 				},
 				".font-helvetica-input-13":{
 					fontFamily: 'Helvetica',
@@ -209,9 +209,20 @@ const config: Config = {
 					color: "white"
 				},
 				".table-header-color":{
-					backgroundColor: "black",
-					color: "white"
-				}  		
+					backgroundColor: "#171717",
+					color: "#f59e0b"
+				},
+				".table-container":{
+					width: "100%",
+					display: "flex",
+					flexDirection: "column",
+					gap: "8px",
+					padding: "8px",
+					borderRadius: "calc(var(--radius) - 2px)",
+					borderWidth: "1px",
+					borderColor: "black",
+					backgroundColor: "#e5e5e5"
+				}    		
 			});
 		}),
 	],

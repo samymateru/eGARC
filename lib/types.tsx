@@ -773,14 +773,14 @@ export const MaturitySchema = z.object({
 });
 
 export const RiskMaturityRatingSchema = z.object({
-  engagement_id: z.string(),
-  operational_risk: MaturitySchema,
-  strategic_risk: MaturitySchema,
-  credit_risk: MaturitySchema,
-  liquidity_risk: MaturitySchema,
-  compliance_risk: MaturitySchema,
-  market_risk: MaturitySchema,
-  overall: MaturitySchema,
+  engagement_id: z.string().optional(),
+  operational_risk: MaturitySchema.optional(),
+  strategic_risk: MaturitySchema.optional(),
+  credit_risk: MaturitySchema.optional(),
+  liquidity_risk: MaturitySchema.optional(),
+  compliance_risk: MaturitySchema.optional(),
+  market_risk: MaturitySchema.optional(),
+  overall: MaturitySchema.optional(),
 });
 
 export const FileUploadSchema = z.object({

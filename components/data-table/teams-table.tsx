@@ -20,13 +20,16 @@ import {
 
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   CirclePlus,
   Ellipsis,
+  EllipsisVertical,
+  Mail,
   Pencil,
+  Phone,
+  Shield,
   Trash,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,12 +42,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { UserSchema } from "@/lib/types";
@@ -52,13 +49,23 @@ import { UsersForm } from "../forms/user-form";
 import SearchInput from "../shared/search-input";
 import MultiStatusFilter from "../shared/multi-status-filter";
 import { useSearchParams } from "next/navigation";
+import { Paginator } from "../shared/paginator";
 
 type UsersValues = z.infer<typeof UserSchema>;
 
 const columns: ColumnDef<UsersValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-helvetica-table-14">Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Name
+      </Label>
+    ),
     accessorKey: "name",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -68,7 +75,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "email",
-    header: () => <Label className="font-helvetica-table-14">Email</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Mail
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Email
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.email}
@@ -78,7 +94,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "title",
-    header: () => <Label className="font-helvetica-table-14">Title</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Title
+      </Label>
+    ),
     accessorKey: "title",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -88,7 +113,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "role",
-    header: () => <Label className="font-helvetica-table-14">Role</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Shield
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Role
+      </Label>
+    ),
     accessorKey: "role",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -98,7 +132,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "telephone",
-    header: () => <Label className="font-helvetica-table-14">Telephone</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Phone
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Telephone
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.telephone}
@@ -108,7 +151,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "type",
-    header: () => <Label className="font-helvetica-table-14">Type</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Type
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.type === "audit" ? "Audit" : "Business"}
@@ -118,7 +170,16 @@ const columns: ColumnDef<UsersValues>[] = [
   },
   {
     id: "actions",
-    header: () => <Label className="font-helvetica-table-14">More</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        More
+      </Label>
+    ),
     cell: ({ row }) => (
       <div className="flex justify-center items-center w-full h-full">
         <Popover>
@@ -233,7 +294,7 @@ export const TeamsTable = ({ data, type }: TeamsTableProps) => {
   });
 
   return (
-    <div className="w-full">
+    <section className="table-container [&>div]:max-h-[185px]">
       <div className="flex justify-between items-center  py-3 px-2 mt-2">
         <section className="flex items-center gap-3">
           <SearchInput
@@ -272,14 +333,14 @@ export const TeamsTable = ({ data, type }: TeamsTableProps) => {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 310),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 text-black">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -378,68 +439,16 @@ export const TeamsTable = ({ data, type }: TeamsTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

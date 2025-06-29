@@ -14,13 +14,15 @@ import {
 } from "@tanstack/react-table";
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   CircleCheck,
   CircleX,
+  Clock,
   Ellipsis,
+  EllipsisVertical,
   SendHorizontal,
+  Star,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,12 +35,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { SummaryFindingSchema } from "@/lib/types";
@@ -50,6 +46,7 @@ import { showToast } from "../shared/toast";
 import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import MultiStatusFilter from "../shared/multi-status-filter";
+import { Paginator } from "../shared/paginator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -83,7 +80,14 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     {
       id: "ref",
       header: () => (
-        <Label className="font-helvetica-table-14">Reference</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Reference
+        </Label>
       ),
       accessorKey: "ref",
       cell: ({ row }) => (
@@ -104,7 +108,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     },
     {
       id: "title",
-      header: () => <Label className="font-helvetica-table-14">Title</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Title
+        </Label>
+      ),
       accessorKey: "title",
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -114,7 +127,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     },
     {
       id: "source",
-      header: () => <Label className="font-helvetica-table-14">Source</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Source
+        </Label>
+      ),
       accessorKey: "source",
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -124,7 +146,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     },
     {
       id: "status",
-      header: () => <Label className="font-helvetica-table-14">Status</Label>,
+      header: () => (
+        <Label className="font-helvetica-table-14">
+          <Clock
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Status
+        </Label>
+      ),
       cell: ({ row }) => (
         <Label className="ml-2 font-helvetica-table-13 truncate text-center">
           {row.original.status}
@@ -134,18 +165,49 @@ export const IssueTable = ({ data }: IssueTableProps) => {
     },
     {
       id: "rating",
-      header: () => <Label className="font-helvetica-table-14">Rating</Label>,
-      cell: ({ row }) => (
-        <Label className="ml-2 font-helvetica-table-13 truncate">
-          {row.original.risk_rating}
+      header: () => (
+        <Label className="font-helvetica-table-14 gr">
+          <Star
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Rating
         </Label>
       ),
+      cell: ({ row }) => {
+        const rating: { [key: string]: string } = {
+          Acceptable: "bg-green-700",
+          "Improvement Required": "bg-yellow-400",
+          "Significant Improvement Required": "bg-amber-700",
+          Unacceptable: "bg-red-700",
+        };
+        return (
+          <section className="flex items-center">
+            <div
+              className={`w-3 h-3  ${
+                rating[row.original.risk_rating]
+              } rounded-full`}
+            />
+            <Label className="ml-2 font-helvetica-table-13 truncate flex-1">
+              {row.original.risk_rating}
+            </Label>
+          </section>
+        );
+      },
       accessorKey: "rating",
     },
     {
       id: "regulatory",
       header: () => (
-        <Label className="font-helvetica-table-14">Regulatory</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Regulatory
+        </Label>
       ),
       cell: ({ row }) => (
         <div className="ml-7">
@@ -157,11 +219,20 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         </div>
       ),
       accessorKey: "regulatory",
+      maxSize: 120,
+      size: 120,
     },
     {
       id: "reportable",
       header: () => (
-        <Label className="font-helvetica-table-14">Reportable</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Reportable
+        </Label>
       ),
       cell: ({ row }) => (
         <div className="ml-7">
@@ -173,11 +244,20 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         </div>
       ),
       accessorKey: "reportable",
+      maxSize: 120,
+      size: 120,
     },
     {
       id: "recurring",
       header: () => (
-        <Label className="font-helvetica-table-14">Recurring</Label>
+        <Label className="font-helvetica-table-14">
+          <User
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
+          Recurring
+        </Label>
       ),
       cell: ({ row }) => (
         <div className="ml-7">
@@ -189,11 +269,18 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         </div>
       ),
       accessorKey: "recurring_status",
+      maxSize: 120,
+      size: 120,
     },
     {
       id: "actions",
       header: () => (
         <Label className="font-helvetica-table-14 flex justify-center">
+          <EllipsisVertical
+            size={15}
+            strokeWidth={2}
+            className="inline-block mb-1 mr-[3px]"
+          />
           Actions
         </Label>
       ),
@@ -211,7 +298,7 @@ export const IssueTable = ({ data }: IssueTableProps) => {
           </Popover>
         </div>
       ),
-      maxSize: 70,
+      maxSize: 90,
       size: 100,
     },
   ];
@@ -335,7 +422,7 @@ export const IssueTable = ({ data }: IssueTableProps) => {
   };
 
   return (
-    <div className="w-full flex flex-col [&>div]:max-h-[calc(100vh-230px)]">
+    <section className="table-container [&>div]:max-h-[230px]">
       <div className="flex items-center justify-between  pb-1 w-[calc(100vw-332px)] py-2 px-2">
         <section className="flex items-center gap-2">
           <SearchInput
@@ -376,16 +463,14 @@ export const IssueTable = ({ data }: IssueTableProps) => {
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r  border-r-neutral-500  sticky top-0 z-10">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="bg-muted/50 border-t border-t-neutral-500">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-y select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-500 border-y-neutral-500 text-black bg-neutral-300"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -484,68 +569,16 @@ export const IssueTable = ({ data }: IssueTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

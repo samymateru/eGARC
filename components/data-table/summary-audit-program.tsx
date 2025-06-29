@@ -11,20 +11,19 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   Ellipsis,
+  EllipsisVertical,
+  Folder,
   Trash,
+  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,23 +36,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { QueryParams, SummaryAuditProgramSchema } from "@/lib/types";
 import Link from "next/link";
+import { Paginator } from "../shared/paginator";
 
 type SummaryAuditProgramValues = z.infer<typeof SummaryAuditProgramSchema>;
 
 const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   {
     id: "reference",
-    header: () => <Label className="font-helvetica-table-14">Reference</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Reference
+      </Label>
+    ),
     accessorKey: "summary_audit_program",
     cell: ({ row }) => {
       if (typeof window !== undefined) {
@@ -77,7 +80,16 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "process",
-    header: () => <Label className="font-helvetica-table-14">Process</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Process
+      </Label>
+    ),
     accessorKey: "process",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -87,7 +99,16 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "risk",
-    header: () => <Label className="font-helvetica-table-14">Risk</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Risk
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.risk}
@@ -97,7 +118,16 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "control",
-    header: () => <Label className="font-helvetica-table-14">Control</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Control
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.control}
@@ -108,7 +138,14 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   {
     id: "control_type",
     header: () => (
-      <Label className="font-helvetica-table-14">Control Type</Label>
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Control Type
+      </Label>
     ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -119,7 +156,16 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "program",
-    header: () => <Label className="font-helvetica-table-14">Program</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Program
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.program}
@@ -129,7 +175,16 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
   },
   {
     id: "procedure",
-    header: () => <Label className="font-helvetica-table-14">Procedure</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Procedure
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.procedure}
@@ -141,6 +196,11 @@ const columns: ColumnDef<SummaryAuditProgramValues>[] = [
     id: "actions",
     header: () => (
       <Label className="font-helvetica-table-14 flex justify-center">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
         More
       </Label>
     ),
@@ -214,13 +274,23 @@ export const SummaryAuditProgramTable = ({
   });
 
   return (
-    <div className="w-full [&>div]:max-h-[400px]">
+    <section className="table-container [&>div]:max-h-[400px]">
+      <section>
+        <Label className="font-helvetica-14">
+          <Folder
+            size={20}
+            strokeWidth={3}
+            className="inline-block mr-2 mb-[6px]"
+          />
+          Summary Audit Program
+        </Label>
+      </section>
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-500 sticky top-0 z-10">
+        <TableHeader className="border-r border-r-neutral-500">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="bg-muted/50">
               {headerGroup.headers.map((header) => {
@@ -326,68 +396,16 @@ export const SummaryAuditProgramTable = ({
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

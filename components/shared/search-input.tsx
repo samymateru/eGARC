@@ -34,7 +34,7 @@ export default function SearchInput({
       <div className="relative">
         <Input
           id={id}
-          className="peer ps-9 pe-9 h-[31px] w-[270px] border border-neutral-600 placeholder:font-helvetica-13"
+          className="peer ps-9 pe-9 h-[31px] w-[270px] border border-neutral-600 placeholder:font-helvetica-13 text-black"
           placeholder={placeholder}
           type="search"
           value={value}

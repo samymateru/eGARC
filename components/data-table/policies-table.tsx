@@ -16,17 +16,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
   Ellipsis,
+  EllipsisVertical,
+  Paperclip,
   Pencil,
   Trash,
+  User,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -37,23 +36,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { PolicySchema } from "@/lib/types";
 import { PolicyForm } from "../forms/policy-form";
+import { Paginator } from "../shared/paginator";
 
 type PoliciesValues = z.infer<typeof PolicySchema>;
 
 const columns: ColumnDef<PoliciesValues>[] = [
   {
     id: "name",
-    header: () => <Label className="font-helvetica-table-14">Name</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Name
+      </Label>
+    ),
     accessorKey: "name",
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
@@ -63,7 +66,16 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "key_areas",
-    header: () => <Label className="font-helvetica-table-14">Key areas</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Key areas
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.key_areas}
@@ -73,7 +85,16 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "version",
-    header: () => <Label className="font-helvetica-table-14">Version</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <User
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Version
+      </Label>
+    ),
     cell: ({ row }) => (
       <Label className="ml-2 font-helvetica-table-13 truncate">
         {row.original.version}
@@ -83,7 +104,16 @@ const columns: ColumnDef<PoliciesValues>[] = [
   },
   {
     id: "attachment",
-    header: () => <Label className="font-helvetica-table-14">Attachment</Label>,
+    header: () => (
+      <Label className="font-helvetica-table-14">
+        <Paperclip
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
+        Attachment
+      </Label>
+    ),
     accessorKey: "attachment",
     cell: ({ row }) => (
       <a
@@ -99,6 +129,11 @@ const columns: ColumnDef<PoliciesValues>[] = [
     id: "actions",
     header: () => (
       <Label className="font-helvetica-table-14 flex justify-center">
+        <EllipsisVertical
+          size={15}
+          strokeWidth={2}
+          className="inline-block mb-1 mr-[3px]"
+        />
         More
       </Label>
     ),
@@ -191,20 +226,20 @@ export const PoliciesTable = ({ data }: PoliciesTableProps) => {
   });
 
   return (
-    <div className="w-full">
+    <section className="table-container [&>div]:max-h-[400px]">
       <Table
         className="table-fixed"
         style={{
           width: Math.max(table.getCenterTotalSize(), window.innerWidth - 332),
         }}>
-        <TableHeader className="border-r border-r-neutral-800 bg-neutral-500 text-black">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-muted/50">
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="relative h-10 border-t select-none last:[&>.cursor-col-resize]:opacity-0 border-l border-l-neutral-800"
+                    className="relative h-10 select-none"
                     aria-sort={
                       header.column.getIsSorted() === "asc"
                         ? "ascending"
@@ -303,68 +338,16 @@ export const PoliciesTable = ({ data }: PoliciesTableProps) => {
           )}
         </TableBody>
       </Table>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            {/* Previous page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page">
-                <ChevronLeftIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-
-            {/* Left ellipsis (...) */}
-            {showLeftEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Page number buttons */}
-            {pages.map((page) => {
-              const isActive =
-                page === table.getState().pagination.pageIndex + 1;
-              return (
-                <PaginationItem key={page}>
-                  <Button
-                    size="icon"
-                    variant={`${isActive ? "outline" : "ghost"}`}
-                    onClick={() => table.setPageIndex(page - 1)}
-                    aria-current={isActive ? "page" : undefined}>
-                    {page}
-                  </Button>
-                </PaginationItem>
-              );
-            })}
-
-            {/* Right ellipsis (...) */}
-            {showRightEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {/* Next page button */}
-            <PaginationItem>
-              <Button
-                size="icon"
-                variant="outline"
-                className="disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Go to next page">
-                <ChevronRightIcon size={16} aria-hidden="true" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-    </div>
+      <Paginator
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={table.setPageIndex}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        pages={pages}
+        showLeftEllipsis={showLeftEllipsis}
+        showRightEllipsis={showRightEllipsis}
+      />
+    </section>
   );
 };

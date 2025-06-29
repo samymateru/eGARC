@@ -64,7 +64,7 @@ export function GradientBarChart({
 
   return (
     <Card className="flex-1 border-none bg-inherit h-full pb-3">
-      <CardHeader className="">
+      <CardHeader className="pt-3 px-3 pb-2">
         <CardTitle className="font-helvetica-medium">{title}</CardTitle>
         <CardDescription className="font-helvetica-13 text-neutral-700">
           {description}
