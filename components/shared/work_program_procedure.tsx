@@ -219,6 +219,47 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
 
   const [userEmail, setUserEmail] = useState<string | null>();
 
+  const {
+    data: attachmentData,
+    isError: attachmentIsError,
+    error: attachmentError,
+  } = useQuery({
+    queryKey: ["_attachments_", params.get("id"), data?.id],
+    queryFn: async () => {
+      const response = await fetch(
+        `${BASE_URL}/attachments/${params.get("id")}?procedure_id=${params.get(
+          "action"
+        )}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!params.get("id"),
+  });
+
+  useEffect(() => {
+    if (attachmentIsError) {
+      ErrorMessage(attachmentError);
+    }
+  }, [attachmentError, attachmentIsError]);
+
   const onSubmit = (mode: string) => {
     const procedure: SaveWorkProgramProcedure = {
       brief_description: briefDescription,
@@ -433,7 +474,7 @@ export const WorkProgramProcedure = ({}: WorkProgramProcedureProps) => {
             />
             <section id="attachments" className="px-2 my-3 flex-col gap-1">
               <section>
-                <ProcedureAttachmentTable data={[]} />
+                <ProcedureAttachmentTable data={attachmentData ?? []} />
               </section>
             </section>
             <section className="flex items-center gap-2 pt-3 pb-2 w-full px-2">

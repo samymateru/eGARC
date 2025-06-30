@@ -29,6 +29,7 @@ import { showToast } from "../shared/toast";
 import { useSearchParams } from "next/navigation";
 import { ErrorMessage } from "@/lib/utils";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RiskMaturityValues = z.infer<typeof RiskMaturityRatingSchema>;
@@ -82,6 +83,7 @@ export const EngagementRatingForm = ({
     | "overall"
     | "credit"
     | "compliance"
+    | "overall_rating"
   >(null);
 
   const query_client = useQueryClient();
@@ -104,6 +106,7 @@ export const EngagementRatingForm = ({
       | "overall"
       | "credit"
       | "compliance"
+      | "overall_rating"
   ) => {
     setOpenSelect((prev) => (prev === select ? null : select));
   };
@@ -175,6 +178,14 @@ export const EngagementRatingForm = ({
   const marketRisk = useWatch({
     control: methods.control,
     name: "market_risk",
+  });
+  const overallOpinionRating = useWatch({
+    control: methods.control,
+    name: "overall_opinion_rating",
+  });
+  const overallRating = useWatch({
+    control: methods.control,
+    name: "overall_rating",
   });
   const overallRisk = useWatch({ control: methods.control, name: "overall" });
 
@@ -580,6 +591,56 @@ export const EngagementRatingForm = ({
                   </Table>
                 </div>
               </div>
+              <section className="flex items-center gap-3">
+                <div className="*:not-first:mt-2 flex-1">
+                  <Label
+                    htmlFor="overall_opinion_rating"
+                    className="font-helvetica-13">
+                    Overall opinion rating{" "}
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="overall_opinion_rating"
+                    placeholder="Overall opinion rating"
+                    value={overallOpinionRating ?? ""}
+                    onChange={(e) =>
+                      methods.setValue("overall_opinion_rating", e.target.value)
+                    }
+                    className="font-helvetica-input-13"
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="overall_opinion_rating"
+                    className="font-helvetica-13">
+                    Overall rating
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    open={openSelect === "overall_rating"}
+                    onOpenChange={() => handleToggle("overall_rating")}
+                    onValueChange={(value) =>
+                      methods.setValue("overall_rating", value)
+                    }
+                    value={overallRating}>
+                    <SelectTrigger className="border border-neutral-500 font-helvetica-13 w-[300px]">
+                      <SelectValue placeholder="Select overall risk" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-neutral-100">
+                      <ScrollArea className="max-h-[260px] h-auto overflow-auto">
+                        {results[0]?.data?.values?.map((type, index) => (
+                          <SelectItem
+                            key={index}
+                            value={type}
+                            className="font-helvetica-13 hover:bg-blue-400 cursor-pointer w-[calc(100%-4px)] focus:bg-blue-400 focus:text-black">
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </section>
             </main>
             <Separator />
             <footer className="flex justify-center gap-2 px-4 py-2">

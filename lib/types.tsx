@@ -768,8 +768,8 @@ export const AttachmentSchema = z.object({
 });
 
 export const MaturitySchema = z.object({
-  maturity_rating: z.string(),
-  rationale: z.string(),
+  maturity_rating: z.string().default(""),
+  rationale: z.string().default(""),
 });
 
 export const RiskMaturityRatingSchema = z.object({
@@ -781,6 +781,8 @@ export const RiskMaturityRatingSchema = z.object({
   compliance_risk: MaturitySchema.optional(),
   market_risk: MaturitySchema.optional(),
   overall: MaturitySchema.optional(),
+  overall_opinion_rating: z.string().default(""),
+  overall_rating: z.string().default(""),
 });
 
 export const FileUploadSchema = z.object({

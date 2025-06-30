@@ -473,7 +473,9 @@ export default function Component() {
                       <Button
                         key={procedure.procedure_id}
                         className="w-full h-8 bg-neutral-200 text-black font-helvetica-13 flex items-center justify-start hover:bg-neutral-400"
-                        onClick={() => setAction(procedure.procedure_id ?? "")}>
+                        onClick={() =>
+                          setAction(procedure.procedure_id ?? "", "Program")
+                        }>
                         <span className="flex items-center justify-between w-full">
                           <span className="flex items-center gap-3 truncate">
                             <Settings size={16} strokeWidth={2} />
