@@ -8,7 +8,6 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { showToast } from "../shared/toast";
 import { useRouter } from "next/navigation";
 import { FormError } from "../shared/form-error";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -17,9 +16,6 @@ type Content = {
   id?: string;
   name?: string;
   email?: string;
-  telephone?: string;
-  entity_email?: string;
-  entity_id?: string;
 };
 
 export type SignupResponse = {
@@ -76,30 +72,19 @@ export function LoginForm({
   ) => {
     mutate(data, {
       onSuccess: (data: SignupResponse) => {
-        if (data.status_code === 203) {
-          if (typeof window !== undefined) {
-            localStorage.setItem("token", data?.token);
-            localStorage.setItem("user_id", data?.content?.id ?? "");
-            localStorage.setItem("user_name", data?.content?.name ?? "");
-            localStorage.setItem("user_email", data?.content?.email ?? "");
-            localStorage.setItem(
-              "user_telephone",
-              data?.content?.telephone ?? ""
-            );
-            localStorage.setItem(
-              "entity_email",
-              data?.content?.entity_email ?? ""
-            );
-            localStorage.setItem("entity_id", data?.content?.entity_id ?? "");
-          }
-          reset();
-          router.push("/");
-        } else {
-          showToast(data.detail, "error");
+        if (typeof window !== undefined) {
+          localStorage.setItem("token", data?.token ?? "");
+          localStorage.setItem("user_id", data?.content?.id ?? "");
+          localStorage.setItem("user_name", data?.content?.name ?? "");
+          localStorage.setItem("user_email", data?.content?.email ?? "");
         }
       },
-      onError: (error: unknown) => {
+      onError: (error) => {
         ErrorMessage(error);
+      },
+      onSettled: () => {
+        reset();
+        router.push("/");
       },
     });
   };

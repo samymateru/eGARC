@@ -33,6 +33,10 @@ type ModuleResponse = {
   status?: string;
 };
 
+type TokenResponse = {
+  token?: string;
+};
+
 interface ModuleSelectProps {
   children: ReactNode;
   organizationName: string;
@@ -53,6 +57,8 @@ export const ModuleSelect = ({
   organizationId,
 }: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [moduleId, setModuleId] = useState<string | null>(null);
+
   const { data, isError, error } = useQuery({
     queryKey: ["_modules_", id],
     queryFn: async (): Promise<ModuleResponse[]> => {
@@ -77,6 +83,57 @@ export const ModuleSelect = ({
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
+
+  const {
+    data: tokenData,
+    isError: tokenisError,
+    error: tokenError,
+    isSuccess: tokenisSuccess,
+    refetch: refreshToken,
+  } = useQuery({
+    queryKey: ["_token_", moduleId],
+    queryFn: async (): Promise<TokenResponse> => {
+      const response = await fetch(`${BASE_URL}/token/${moduleId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            typeof window === "undefined" ? "" : localStorage.getItem("token")
+          }`,
+        },
+      });
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!moduleId,
+  });
+
+  useEffect(() => {
+    if (moduleId) {
+      refreshToken();
+    }
+  }, [moduleId, refreshToken]);
+
+  console.log(tokenData?.token);
+
+  useEffect(() => {
+    if (tokenisError) {
+      ErrorMessage(tokenError);
+    }
+    if (tokenisSuccess) {
+      if (typeof window !== undefined) {
+        localStorage.setItem("token", tokenData.token ?? "");
+      }
+    }
+  }, [tokenData, tokenError, tokenisError, tokenisSuccess]);
 
   useEffect(() => {
     if (isError) {
@@ -156,14 +213,15 @@ export const ModuleSelect = ({
             <ul className="flex flex-col gap-1 max-h-[200px] overflow-auto">
               {data.map((module) => (
                 <Link
-                  onClick={() =>
+                  onClick={() => {
                     setProfile(
                       module.id,
                       module.name,
                       organizationId,
                       organizationName
-                    )
-                  }
+                    );
+                    setModuleId(module.id ?? "");
+                  }}
                   className="font-helvetica-13 px-2 w-[calc(100%-30px)] mx-auto bg-neutral-300 h-8 rounded-md flex items-center gap-2"
                   key={module.id}
                   href={{
