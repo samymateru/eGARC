@@ -72,11 +72,12 @@ export function LoginForm({
   ) => {
     mutate(data, {
       onSuccess: (data: SignupResponse) => {
-        if (typeof window !== undefined) {
+        if (data.token) {
           localStorage.setItem("token", data?.token ?? "");
           localStorage.setItem("user_id", data?.content?.id ?? "");
           localStorage.setItem("user_name", data?.content?.name ?? "");
           localStorage.setItem("user_email", data?.content?.email ?? "");
+          router.push("/");
         }
       },
       onError: (error) => {
@@ -84,7 +85,6 @@ export function LoginForm({
       },
       onSettled: () => {
         reset();
-        router.push("/");
       },
     });
   };
