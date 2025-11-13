@@ -18,14 +18,17 @@ export default function HomePage() {
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["organizations"],
     queryFn: async (): Promise<OrganizationValues[]> => {
-      const response = await fetch(`${BASE_URL}/organization/`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-      });
+      const response = await fetch(
+        `${BASE_URL}/organization/entity/8e7fd5133152`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw {
