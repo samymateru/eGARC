@@ -10,10 +10,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormError } from "../shared/form-error";
+import { LoginResponseSchema } from "@/lib/types";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type Content = {
-  id?: string;
+  user_id?: string;
+  entity_id: string;
   name?: string;
   email?: string;
 };
@@ -24,6 +26,8 @@ export type SignupResponse = {
   status_code?: number;
   content?: Content;
 };
+
+type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
 const SignupSchema = z.object({
   email: z.string().email("Provide valid email please"),
@@ -71,14 +75,13 @@ export function LoginForm({
     data
   ) => {
     mutate(data, {
-      onSuccess: (data: SignupResponse) => {
-        if (data.token) {
-          localStorage.setItem("token", data?.token ?? "");
-          localStorage.setItem("user_id", data?.content?.id ?? "");
-          localStorage.setItem("user_name", data?.content?.name ?? "");
-          localStorage.setItem("user_email", data?.content?.email ?? "");
-          router.push("/");
-        }
+      onSuccess: (data: LoginResponse) => {
+        localStorage.setItem("token", data?.token ?? "");
+        localStorage.setItem("user_id", data?.user_id ?? "");
+        localStorage.setItem("entity_id", data?.entity_id ?? "");
+        localStorage.setItem("name", data?.name ?? "");
+        localStorage.setItem("email", data?.email ?? "");
+        router.push(`/?entityId=${data?.entity_id}`);
       },
       onError: (error) => {
         ErrorMessage(error);

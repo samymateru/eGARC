@@ -7,7 +7,7 @@ import { FormProvider, useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/shared/form-error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Send, CircleX } from "lucide-react";
 
 import {
@@ -101,6 +101,7 @@ export const UsersForm = ({
 
   const query_client = useQueryClient();
   const params = useSearchParams();
+  const [entityId, setEntityId] = useState<string | null>(null);
 
   const { mutate: updateUser, isPending: updateUserLoading } = useMutation({
     mutationKey: ["_update_teams_", id],
@@ -126,19 +127,31 @@ export const UsersForm = ({
     },
   });
 
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const entityId = localStorage.getItem("entity_id");
+      setEntityId(entityId);
+    }
+  }, []);
+
   const { mutate: createUser, isPending: createUserLoading } = useMutation({
     mutationKey: ["_create_teams_", id],
     mutationFn: async (data: UsersValues): Promise<Response> => {
-      const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            typeof window === "undefined" ? "" : localStorage.getItem("token")
-          }`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${BASE_URL}/${endpoint}/${entityId}?organization_id=${params.get(
+          "organizationId"
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         throw {
@@ -165,7 +178,7 @@ export const UsersForm = ({
       telephone: data.telephone,
       role: data.role,
       title: data.title,
-      module: params.get("moduleId") ?? "",
+      module_id: params.get("moduleId") ?? "",
       type: member,
     };
 

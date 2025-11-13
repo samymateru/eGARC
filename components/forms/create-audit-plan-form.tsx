@@ -56,12 +56,7 @@ export const PlanningForm = ({
   const query_client = useQueryClient();
   const methods = useForm<PlanFormValues>({
     resolver: zodResolver(PlanSchema),
-    defaultValues: {
-      name: data.name,
-      year: data.year,
-      start: data.start,
-      end: data.end,
-    },
+    defaultValues: { ...data },
   });
 
   const { mutate: createMutation, isPending } = useMutation({

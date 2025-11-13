@@ -84,6 +84,37 @@ export default function AuditNextPage() {
     enabled: !!params.get("id"),
   });
 
+  const { data: url } = useQuery({
+    queryKey: ["response", params.get("id")],
+    queryFn: async () => {
+      const response = await fetch(
+        `${BASE_URL}/session/${params.get("id")}?sub_domain=audit`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    enabled: !!params.get("id"),
+  });
+
+  console.log(url);
+
   useEffect(() => {
     if (isError) {
       ErrorMessage(error);

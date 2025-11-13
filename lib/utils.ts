@@ -1,11 +1,11 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { QueryParams, Search } from "./types";
 import { ErrorHandler } from "@/components/shared/error-handler";
 import { showToast } from "@/components/shared/toast";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatLabel(text?: string): string {
@@ -16,16 +16,17 @@ export function formatLabel(text?: string): string {
   const fixed = spaced?.replace(/Requiered/g, "Required");
 
   // Step 3: Capitalize each word (optional)
-  const capitalized = fixed ?? ""
-    .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+  const capitalized =
+    fixed ??
+    ""
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
 
   return capitalized;
 }
 
 export const saveSearchToLocalStorage = (search: Search) => {
-
   const stored = localStorage.getItem("search");
 
   let searchArray: Search[] = [];
@@ -39,13 +40,13 @@ export const saveSearchToLocalStorage = (search: Search) => {
   } catch {
     searchArray = [];
   }
-  const isDuplicate = searchArray.some(item => item.value === search.value);
+  const isDuplicate = searchArray.some((item) => item.value === search.value);
 
   if (!isDuplicate) {
     searchArray.push(search);
     localStorage.setItem("search", JSON.stringify(searchArray));
   }
-}
+};
 
 export const deleteSearchFromLocalStorage = (valueToRemove: string) => {
   const stored = localStorage.getItem("search");
@@ -62,34 +63,35 @@ export const deleteSearchFromLocalStorage = (valueToRemove: string) => {
     searchArray = [];
   }
 
-  const updatedArray = searchArray.filter(item => item.value !== valueToRemove);
+  const updatedArray = searchArray.filter(
+    (item) => item.value !== valueToRemove
+  );
 
   localStorage.setItem("search", JSON.stringify(updatedArray));
 };
 
-
 export const ErrorMessage = (error: unknown) => {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "body" in error &&
-      "status" in error
-    ) {
-      const err = error as { status: number; body?: { detail?: string } };
-      ErrorHandler({
-        status: err.status,
-        body: { detail: err.body?.detail },
-      });
-    } else {
-      showToast("Service Down", "error");
-    }
-}
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "body" in error &&
+    "status" in error
+  ) {
+    const err = error as { status: number; body?: { detail?: string } };
+    ErrorHandler({
+      status: err.status,
+      body: { detail: err.body?.detail },
+    });
+  } else {
+    showToast("Service Down", "error");
+  }
+};
 
 export const pushBreadcrumb = (label: string, href: string) => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   let existing: { label: string; href: string }[] = JSON.parse(
-    localStorage.getItem('breadcrumbs') || '[]'
+    localStorage.getItem("breadcrumbs") || "[]"
   );
 
   // ✅ Prevent adding duplicate label+href
@@ -101,46 +103,44 @@ export const pushBreadcrumb = (label: string, href: string) => {
   existing = existing.filter((b) => b.label !== label); // optional if you want to remove same-label entries
   existing.push({ label, href });
 
-  localStorage.setItem('breadcrumbs', JSON.stringify(existing));
-  window.dispatchEvent(new Event('breadcrumbChange'))
+  localStorage.setItem("breadcrumbs", JSON.stringify(existing));
+  window.dispatchEvent(new Event("breadcrumbChange"));
 };
 
-
 export const removeBreadcrumbByLabel = (href: string) => {
-  console.log("Removing breadcrumb with label:", href);  
-  if (typeof window === 'undefined') return;
+  console.log("Removing breadcrumb with label:", href);
+  if (typeof window === "undefined") return;
 
-  const existing: {label?: string, href?: string}[] = JSON.parse(localStorage.getItem('breadcrumbs') || '[]');
+  const existing: { label?: string; href?: string }[] = JSON.parse(
+    localStorage.getItem("breadcrumbs") || "[]"
+  );
 
   const filtered = existing.filter((b) => b.href !== href);
 
-  localStorage.setItem('breadcrumbs', JSON.stringify(filtered));
-  window.dispatchEvent(new Event('breadcrumbChange'));
+  localStorage.setItem("breadcrumbs", JSON.stringify(filtered));
+  window.dispatchEvent(new Event("breadcrumbChange"));
 };
 
 export const removeLastBreadcrumb = (labelsToRemove: string[]) => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   const breadcrumbs: { label: string; url: string }[] = JSON.parse(
-    localStorage.getItem('breadcrumbs') || '[]'
+    localStorage.getItem("breadcrumbs") || "[]"
   );
 
-  const updated = breadcrumbs.filter(
-    (b) => !labelsToRemove.includes(b.label)
-  );
+  const updated = breadcrumbs.filter((b) => !labelsToRemove.includes(b.label));
 
-  localStorage.setItem('breadcrumbs', JSON.stringify(updated));
+  localStorage.setItem("breadcrumbs", JSON.stringify(updated));
 
   // Optional: Notify UI
-  window.dispatchEvent(new Event('breadcrumbChange'));
-
+  window.dispatchEvent(new Event("breadcrumbChange"));
 };
 
 export function capitalizeWords(input: string): string {
   return input
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export function parseQueryParams(query: string): QueryParams {
@@ -150,4 +150,23 @@ export function parseQueryParams(query: string): QueryParams {
     action: params.get("action"),
     name: params.get("name"),
   };
+}
+
+export function removeSubdomainFromFakeIP(urlStr: string): string {
+  // Match protocol, subdomain.IP, port (optional), and path
+  const regex =
+    /^(https?:\/\/)([^.]+\.)?((\d{1,3}\.){3}\d{1,3})(:\d+)?(\/.*)?$/;
+
+  const match = urlStr.match(regex);
+
+  if (!match) {
+    throw new Error("Invalid URL format");
+  }
+
+  const protocol = match[1]; // http:// or https://
+  const ip = match[3]; // e.g. 192.168.1.10
+  const port = match[5] || ""; // e.g. :3000 (optional)
+  const path = match[6] || "/"; // e.g. /auth (optional)
+
+  return `${protocol}${ip}${port}${path}`;
 }

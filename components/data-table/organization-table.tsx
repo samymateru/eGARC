@@ -240,17 +240,6 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
 
   const [tableWidth, setTableWidth] = useState<number | null>(null);
 
-  const [shouldRender, setShouldRender] = useState(false);
-
-  useEffect(() => {
-    const userEmail = localStorage.getItem("user_email");
-    const entityEmail = localStorage.getItem("entity_email");
-
-    if (userEmail && userEmail === entityEmail) {
-      setShouldRender(true);
-    }
-  }, []);
-
   useEffect(() => {
     const filtered = data.filter((row) => {
       const matchesName = row.name
@@ -313,26 +302,24 @@ export default function OrganizationTable({ data }: OrganizationTableProps) {
             onChange={setSelectedStatuses}
           />
         </section>
-        {shouldRender && (
-          <OrganizationForm
-            data={{
-              name: "",
-              type: "",
-              telephone: "",
-              email: "",
-            }}
-            endpoint="organization"
-            title="Organization"
-            mode="create"
-            id={localStorage.getItem("entity_id") ?? ""}>
-            <Button
-              variant="ghost"
-              className="bg-neutral-800 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[150px] justify-start font-serif tracking-wide scroll-m-0">
-              <CirclePlus size={16} strokeWidth={3} />
-              Organization
-            </Button>
-          </OrganizationForm>
-        )}
+
+        <OrganizationForm
+          data={{
+            name: "",
+            type: "",
+            telephone: "",
+            email: "",
+          }}
+          endpoint="organization"
+          title="Organization"
+          mode="create">
+          <Button
+            variant="ghost"
+            className="bg-neutral-800 text-white hover:text-white hover:bg-neutral-900 flex items-center gap-2 h-[30px] w-[150px] justify-start font-serif tracking-wide scroll-m-0">
+            <CirclePlus size={16} strokeWidth={3} />
+            Organization
+          </Button>
+        </OrganizationForm>
       </div>
       <Table
         className="table-fixed "

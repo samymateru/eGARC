@@ -1,3 +1,4 @@
+"use client";
 import { LoginForm } from "@/components/forms/signin-form";
 import Image from "next/image";
 import placeholder from "../../assets/placeholder.svg";

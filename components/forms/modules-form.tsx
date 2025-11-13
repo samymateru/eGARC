@@ -24,12 +24,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FormError } from "../shared/form-error";
 import { showToast } from "../shared/toast";
-import { ModuleSchema } from "@/lib/types";
 import { ErrorMessage } from "@/lib/utils";
+import { NewModuleSchema } from "@/lib/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-type ModuleValues = z.infer<typeof ModuleSchema>;
+type ModuleValues = z.infer<typeof NewModuleSchema>;
 
 const moduleName = [
   "eAuditNext",
@@ -81,7 +81,7 @@ export const ModuleForm = ({
   });
 
   const methods = useForm<ModuleValues>({
-    resolver: zodResolver(ModuleSchema),
+    resolver: zodResolver(NewModuleSchema),
   });
 
   const {
@@ -92,7 +92,12 @@ export const ModuleForm = ({
   } = methods;
 
   const onSubmit = (data: ModuleValues) => {
-    createModule(data, {
+    const moduleData: ModuleValues = {
+      name: data.name,
+      licence_id: "cb67a203f8da",
+    };
+
+    createModule(moduleData, {
       onSuccess: (data) => {
         query_client.invalidateQueries({
           queryKey: ["_modules_"],

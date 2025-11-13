@@ -23,6 +23,7 @@ import { useAdministrationEditorVisibility } from "@/lib/store";
 
 export interface TextEditorRef {
   getEditor: () => Editor | null;
+  content: JSONContent;
 }
 
 function isValidTipTapContent(content: unknown): content is JSONContent {
@@ -71,6 +72,7 @@ const JsonTextEditor = forwardRef<TextEditorRef, TextEditorProps>(
 
     useImperativeHandle(ref, () => ({
       getEditor: () => editor,
+      content: safeContent,
     }));
 
     useEffect(() => {

@@ -27,6 +27,7 @@ import { showToast } from "../shared/toast";
 import { OrganizationSchema } from "@/lib/types";
 import { Input } from "../ui/input";
 import { ErrorMessage } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -58,7 +59,6 @@ const organization_types = [
 interface OrganizationFormProps {
   children: ReactNode;
   title: string;
-  id: string | null;
   endpoint: string;
   mode?: "create" | "update";
   data: OrganizationValues;
@@ -67,29 +67,34 @@ interface OrganizationFormProps {
 export const OrganizationForm = ({
   children,
   title,
-  id,
   endpoint,
   data,
   mode,
 }: OrganizationFormProps) => {
   const [open, setOpen] = useState<boolean>(false);
 
+  const params = useSearchParams();
   const query_client = useQueryClient();
 
   const { mutate: createOrganization, isPending: createOrganizationLoading } =
     useMutation({
-      mutationKey: ["signin"],
+      mutationKey: ["create_organization"],
       mutationFn: async (data: OrganizationValues) => {
-        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              typeof window === "undefined" ? "" : localStorage.getItem("token")
-            }`,
-          },
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(
+          `${BASE_URL}/${endpoint}/${params.get("entityId")}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                typeof window === "undefined"
+                  ? ""
+                  : localStorage.getItem("token")
+              }`,
+            },
+            body: JSON.stringify(data),
+          }
+        );
         if (!response.ok) {
           const errorBody = await response.json().catch(() => ({}));
           throw {
@@ -105,7 +110,7 @@ export const OrganizationForm = ({
     useMutation({
       mutationKey: ["update_organization"],
       mutationFn: async (data: OrganizationValues) => {
-        const response = await fetch(`${BASE_URL}/${endpoint}/${id}`, {
+        const response = await fetch(`${BASE_URL}/${endpoint}/`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

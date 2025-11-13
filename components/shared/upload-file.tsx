@@ -23,7 +23,9 @@ export default function UploadFile() {
     mutationKey: ["_upload_file_", params.get("id")],
     mutationFn: async (data: FormData): Promise<Response> => {
       const response = await fetch(
-        `${BASE_URL}/engagements/engagement_letter/${params.get("id")}`,
+        `${BASE_URL}/engagements/engagement_letter/${params.get(
+          "id"
+        )}?procedure_id=${params.get("action")}`,
         {
           method: "PUT",
           headers: {

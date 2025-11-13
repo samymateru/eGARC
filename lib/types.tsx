@@ -437,6 +437,11 @@ export const ModuleSchema = z.object({
   status: z.string().optional(),
 });
 
+export const NewModuleSchema = z.object({
+  name: z.string(),
+  licence_id: z.string().optional(),
+});
+
 export const OrganizationSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Organization name is required"),
@@ -451,6 +456,18 @@ export const OrganizationSchema = z.object({
   created_at: z.string().datetime().optional(),
 });
 
+export const LoginResponseSchema = z.object({
+  user_id: z.string(), // or z.number() if it's numeric
+  entity_id: z.string(), // same here
+  name: z.string(),
+  email: z.string().email(),
+  telephone: z.string().nullable(), // in case it's optional/null
+  administrator: z.boolean(),
+  owner: z.boolean(),
+  organizations: z.array(z.any()), // refine this if you know the shape
+  token: z.string(),
+});
+
 export const UserSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Please provide member name"),
@@ -459,7 +476,7 @@ export const UserSchema = z.object({
   engagements: z.array(z.string()).optional(),
   role: z.string({ required_error: "Provide user role" }),
   title: z.string({ required_error: "Provide user title" }),
-  module: z.string().optional(),
+  module_id: z.string().optional(),
   type: z.string().optional(),
 });
 
@@ -471,6 +488,7 @@ export const StaffSchema = z.object({
   start_date: z.date({ required_error: "Start date is required" }),
   end_date: z.date({ required_error: "End date is required" }),
   role: z.string().optional(),
+  module_id: z.string().optional(),
 });
 
 export const IssueResponder = z.object({

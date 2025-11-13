@@ -17,13 +17,13 @@ import {
   TriangleAlert,
   X,
 } from "lucide-react";
-import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ModuleForm } from "../forms/modules-form";
 import { Separator } from "../ui/separator";
 import { OrganizationForm } from "../forms/organization-form";
 import { ErrorMessage } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -47,6 +47,20 @@ interface ModuleSelectProps {
   id: string;
 }
 
+const setProfile = (
+  moduleId?: string,
+  moduleName?: string,
+  organizationId?: string,
+  organizationName?: string
+) => {
+  if (typeof window !== undefined) {
+    localStorage.setItem("moduleId", moduleId ?? "");
+    localStorage.setItem("moduleName", moduleName ?? "");
+    localStorage.setItem("organizationId", organizationId ?? "");
+    localStorage.setItem("organizationName", organizationName ?? "");
+  }
+};
+
 export const ModuleSelect = ({
   children,
   id,
@@ -58,6 +72,8 @@ export const ModuleSelect = ({
 }: ModuleSelectProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [moduleId, setModuleId] = useState<string | null>(null);
+  const [moduleName, setModuleName] = useState<string | null>(null);
+  const router = useRouter();
 
   const { data, isError, error } = useQuery({
     queryKey: ["_modules_", id],
@@ -82,6 +98,36 @@ export const ModuleSelect = ({
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
+  });
+
+  const {
+    data: sessionData,
+    error: sessionError,
+    refetch: sessionFetch,
+  } = useQuery({
+    queryKey: ["session_code"],
+    queryFn: async (): Promise<{ redirect_url?: string }> => {
+      const response = await fetch(
+        `${BASE_URL}/session/${moduleId}?sub_domain=${"eRisk"}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              typeof window === "undefined" ? "" : localStorage.getItem("token")
+            }`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw {
+          status: response.status,
+          body: errorBody,
+        };
+      }
+      return await response.json();
+    },
+    enabled: !!moduleId,
   });
 
   const {
@@ -122,8 +168,6 @@ export const ModuleSelect = ({
     }
   }, [moduleId, refreshToken]);
 
-  console.log(tokenData?.token);
-
   useEffect(() => {
     if (tokenisError) {
       ErrorMessage(tokenError);
@@ -141,18 +185,31 @@ export const ModuleSelect = ({
     }
   }, [data, isError, error]);
 
-  const setProfile = (
-    moduleId?: string,
-    moduleName?: string,
-    organizationId?: string,
-    organizationName?: string
-  ) => {
-    if (typeof window !== undefined) {
-      localStorage.setItem("moduleId", moduleId ?? "");
-      localStorage.setItem("moduleName", moduleName ?? "");
-      localStorage.setItem("organizationId", organizationId ?? "");
-      localStorage.setItem("organizationName", organizationName ?? "");
+  useEffect(() => {
+    if (sessionData) {
+      const params = new URL(sessionData.redirect_url ?? "http://localhost");
+      const session_code = params.searchParams.get("session_code");
+      if (session_code && moduleName === "eRisk") {
+        router.push(
+          `http://192.168.100.18:3000/welcome?session_code=${session_code}`
+        );
+      }
+      if (session_code === null) {
+        alert("Session Code is Null");
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moduleId, sessionData, sessionError]);
+
+  // handling module navigation
+
+  const handleModuleNavigation = (module: ModuleResponse) => {
+    setProfile(module.id, module.name, organizationId, organizationName);
+    setModuleId(module.id ?? "");
+    if (module.name === "eRisk" && moduleId) {
+      sessionFetch();
+    }
+    setModuleName(module.name ?? "eAuditNext");
   };
 
   return (
@@ -189,8 +246,7 @@ export const ModuleSelect = ({
             }}
             endpoint="organization"
             title="Edit Organization"
-            mode="update"
-            id={id}>
+            mode="update">
             <Button className="h-[30px] font-helvetica-13 flex-1 flex items-center justify-start">
               <Edit size={16} />
               Edit
@@ -212,26 +268,10 @@ export const ModuleSelect = ({
           {data && data.length > 0 ? (
             <ul className="flex flex-col gap-1 max-h-[200px] overflow-auto">
               {data.map((module) => (
-                <Link
-                  onClick={() => {
-                    setProfile(
-                      module.id,
-                      module.name,
-                      organizationId,
-                      organizationName
-                    );
-                    setModuleId(module.id ?? "");
-                  }}
-                  className="font-helvetica-13 px-2 w-[calc(100%-30px)] mx-auto bg-neutral-300 h-8 rounded-md flex items-center gap-2"
-                  key={module.id}
-                  href={{
-                    pathname: `/${module.name}`,
-                    query: {
-                      id: module.id,
-                      organizationId: id,
-                      action: "dashboard",
-                    },
-                  }}>
+                <Button
+                  onClick={() => handleModuleNavigation(module)}
+                  className="font-helvetica-13 px-2 w-[calc(100%-30px)] mx-auto bg-blue-700 hover:bg-blue-900 h-8 rounded-md flex justify-start items-center gap-2"
+                  key={module.id}>
                   {module.name === "eAuditNext" ? (
                     <Activity size={16} />
                   ) : module.name === "eRisk" ? (
@@ -239,7 +279,7 @@ export const ModuleSelect = ({
                   ) : null}
 
                   {module.name}
-                </Link>
+                </Button>
               ))}
             </ul>
           ) : (
